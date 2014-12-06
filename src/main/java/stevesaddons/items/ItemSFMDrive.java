@@ -24,6 +24,7 @@ public class ItemSFMDrive extends Item
     {
         this.setCreativeTab(ModBlocks.creativeTab);
         this.setUnlocalizedName(Names.DRIVE);
+        this.setTextureName(Reference.ID.toLowerCase()+":" + Names.DRIVE);
         this.setMaxStackSize(1);
     }
 
@@ -40,12 +41,6 @@ public class ItemSFMDrive extends Item
         }
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
-        itemIcon = iconRegister.registerIcon((Reference.ID+":" + getUnlocalizedName()).toLowerCase());
-    }
-
     private boolean validateNBT(ItemStack stack)
     {
         if (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName"))return true;
@@ -56,8 +51,7 @@ public class ItemSFMDrive extends Item
     @Override
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
     {
-        if (!player.isSneaking()) return true;
-        if (!world.isRemote )
+        if (!world.isRemote && player.isSneaking())
         {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof TileEntityManager)
