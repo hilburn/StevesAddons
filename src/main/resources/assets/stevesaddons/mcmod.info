@@ -1,0 +1,19 @@
+[
+  {
+    "modid": "StevesAddons",
+    "name": "Steve's Addons",
+    "description": "Adds extra things to improve SFM",
+    "version": "1.0.0",
+    "mcversion": "1.7.10",
+    "url": "",
+    "updateUrl": "",
+    "authors": [
+      "hilburn"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "parent":"",
+    "dependencies": []
+  }
+]

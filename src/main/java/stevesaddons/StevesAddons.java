@@ -1,0 +1,46 @@
+package stevesaddons;
+
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import stevesaddons.proxy.CommonProxy;
+import stevesaddons.reference.Reference;
+import stevesaddons.registry.ItemRegistry;
+
+
+@Mod(modid = Reference.ID, name = Reference.NAME, version = Reference.VERSION_FULL, dependencies = "required-after:StevesFactoryManager")
+public class StevesAddons
+{
+    @Mod.Instance(value = Reference.ID)
+    public static StevesAddons INSTANCE = new StevesAddons();
+
+    @SidedProxy(clientSide = "stevesaddons.proxy.ClientProxy", serverSide = "stevesaddons.proxy.CommonProxy")
+    public static CommonProxy PROXY;
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        ItemRegistry.registerItems();
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e)
+    {
+        ItemRegistry.registerRecipes();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent e)
+    {
+    }
+
+    @Mod.EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event)
+    {
+
+    }
+}
