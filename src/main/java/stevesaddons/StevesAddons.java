@@ -7,8 +7,10 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import stevesaddons.helpers.StevesEnum;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.reference.Reference;
+import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.ItemRegistry;
 
 
@@ -25,6 +27,8 @@ public class StevesAddons
     public void preInit(FMLPreInitializationEvent event)
     {
         ItemRegistry.registerItems();
+        BlockRegistry.registerBlocks();
+        new StevesEnum();
     }
 
     @Mod.EventHandler
@@ -36,11 +40,12 @@ public class StevesAddons
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e)
     {
+
     }
 
     @Mod.EventHandler
     public void loadComplete(FMLLoadCompleteEvent event)
     {
-
+        StevesEnum.replaceCluster();
     }
 }
