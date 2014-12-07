@@ -15,6 +15,8 @@ import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.blocks.TileEntityManager;
+import vswe.stevesfactory.components.Connection;
+import vswe.stevesfactory.components.FlowComponent;
 
 import java.util.List;
 
@@ -58,11 +60,7 @@ public class ItemSFMDrive extends Item
             {
                 if (stack.hasTagCompound() && validateNBT(stack))
                 {
-                    NBTTagCompound tagCompound = stack.getTagCompound();
-                    tagCompound.setInteger("x", x);
-                    tagCompound.setInteger("y", y);
-                    tagCompound.setInteger("z", z);
-                    te.readFromNBT(tagCompound);
+                    te.readFromNBT(correctNBT((TileEntityManager)te, stack.getTagCompound()));
                     stack.setTagCompound(null);
                 }
                 else
@@ -76,5 +74,43 @@ public class ItemSFMDrive extends Item
             }
         }
         return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
+    }
+
+    private static NBTTagCompound correctNBT(TileEntityManager manager, NBTTagCompound tagCompound)
+    {
+        tagCompound.setInteger("x", manager.xCoord);
+        tagCompound.setInteger("y", manager.yCoord);
+        tagCompound.setInteger("z", manager.zCoord);
+        int currentFlow = manager.getFlowItems().size();
+        if (currentFlow>0)
+        {
+            byte version = tagCompound.getByte("ProtocolVersion");
+            NBTTagList components = tagCompound.getTagList("Components", 10);
+            NBTTagList newComponents = new NBTTagList();
+            for(int variablesTag = 0; variablesTag < components.tagCount(); ++variablesTag) {
+                NBTTagCompound flowComponent = components.getCompoundTagAt(variablesTag);
+                NBTTagList connections = flowComponent.getTagList("Connection", 10);
+                NBTTagList newConnections = new NBTTagList();
+                for(int i = 0; i < connections.tagCount(); ++i)
+                {
+                    NBTTagCompound connection = connections.getCompoundTagAt(i);
+                    if (connection.hasKey("ConnectionComponent"))
+                    {
+                        if (version < 9)
+                        {
+                            connection.setByte("ConnectionComponent", (byte) (connection.getByte("ConnectionComponent") + currentFlow));
+                        } else
+                        {
+                            connection.setShort("ConnectionComponent", (short) (connection.getShort("ConnectionComponent") + currentFlow));
+                        }
+                    }
+                    newConnections.appendTag(connection);
+                }
+                flowComponent.setTag("Connection",newConnections);
+                newComponents.appendTag(flowComponent);
+            }
+            tagCompound.setTag("Components",newComponents);
+        }
+        return tagCompound;
     }
 }
