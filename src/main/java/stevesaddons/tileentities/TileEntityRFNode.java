@@ -51,7 +51,11 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
             {
                 TileEntity te = worldObj.getTileEntity(manager.getX(), manager.getY(), manager.getZ());
                 if (te instanceof TileEntityManager)
-                    managers.add((TileEntityManager) te);
+                {
+                    TileEntityManager tileEntityManager = (TileEntityManager) te;
+                    tileEntityManager.updateInventories();
+                    managers.add(tileEntityManager);
+                }
             }
         }
         addManagers=null;
@@ -198,9 +202,16 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
         if (from != ForgeDirection.UNKNOWN)
         {
             if (!inputSides[from.ordinal()]) return 0;
+            Set<TileEntityRFNode> outputs = new HashSet<TileEntityRFNode>();
+            int outputPacket = toReceive/connections.size();
             for (TileEntityRFNode connected : connections)
             {
-                toReceive-=connected.receiveEnergy(ForgeDirection.UNKNOWN,toReceive,simulate);
+                if (connected.receiveEnergy(ForgeDirection.UNKNOWN,outputPacket,true)>0) outputs.add(connected);
+            }
+            outputPacket = maxReceive/outputs.size();
+            for (TileEntityRFNode connected : outputs)
+            {
+                toReceive-=connected.receiveEnergy(ForgeDirection.UNKNOWN,outputPacket,simulate);
                 if (toReceive==0) return maxReceive;
             }
         }
@@ -229,9 +240,16 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
         if (from != ForgeDirection.UNKNOWN)
         {
             if (!outputSides[from.ordinal()]) return 0;
+            int outputPacket = toExtract/connections.size();
+            Set<TileEntityRFNode> inputs = new HashSet<TileEntityRFNode>();
             for (TileEntityRFNode connected : connections)
             {
-                toExtract-=connected.extractEnergy(ForgeDirection.UNKNOWN,toExtract,simulate);
+                if (connected.extractEnergy(ForgeDirection.UNKNOWN,outputPacket,true)>0) inputs.add(connected);
+            }
+            outputPacket = toExtract/inputs.size();
+            for (TileEntityRFNode connected : inputs)
+            {
+                toExtract-=connected.extractEnergy(ForgeDirection.UNKNOWN,outputPacket,simulate);
                 if (toExtract==0) return maxExtract;
             }
         }
