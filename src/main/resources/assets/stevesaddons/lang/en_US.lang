@@ -1,2 +1,20 @@
 #Item Localization
 item.duplicator.name=Manager Duplicator
+
+gui.sfm.RfInputLong=RF Input
+gui.sfm.RfInputShort=RF Input
+
+gui.sfm.RfOutputLong=RF Output
+gui.sfm.RfOutputShort=RF Output
+
+gui.sfm.TypeRf=RF Nodes
+gui.sfm.NoRfError=No RF Node Selected
+
+gui.sfm.RfConditionShort=RF Condition
+gui.sfm.RfConditionLong=RF Condition
+gui.sfm.RfConditionMenu=RF Level
+gui.sfm.RfConditionInfo=Set the trigger level in the text box, and trigger above or below
+gui.sfm.RfConditionError=Invalid trigger level
+gui.sfm.Below=Trigger low
+
+tile.cable_rf.name=RF Node

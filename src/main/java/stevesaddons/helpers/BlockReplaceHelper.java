@@ -61,7 +61,7 @@ public class BlockReplaceHelper{
         }
 
         if (classTest[0] != classTest[1] || classTest[0] != classTest[2] || classTest[0] == null || classTest[3] != itemBlockClass){
-            throw new RuntimeException("HardcoreEnderExpansion was unable to replace block "+toReplace.getUnlocalizedName()+"! Debug info to report: "+classTest[0]+","+classTest[1]+","+classTest[2]+","+classTest[3],exception);
+            throw new RuntimeException("Steve\'s Addons was unable to replace block "+toReplace.getUnlocalizedName()+"! Debug info to report: "+classTest[0]+","+classTest[1]+","+classTest[2]+","+classTest[3],exception);
         }
     }
 }

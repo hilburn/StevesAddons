@@ -10,7 +10,7 @@ public class ComponentMenuRF extends ComponentMenuContainer
 {
     public ComponentMenuRF(FlowComponent parent)
     {
-        super(parent, StevesEnum.RF);
+        super(parent, StevesEnum.RF_HANDLER);
     }
 
     public String getName() {

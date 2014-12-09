@@ -3,15 +3,14 @@ package stevesaddons.tileentities;
 import cofh.api.energy.IEnergyHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import stevesaddons.components.ComponentMenuRF;
-import stevesaddons.components.ComponentMenuTargetRF;
 import stevesaddons.helpers.StevesEnum;
+import stevesaddons.network.MessageHandler;
+import stevesaddons.network.MessageHelper;
+import stevesaddons.network.message.RFNodeUpdateMessage;
 import vswe.stevesfactory.blocks.*;
-import vswe.stevesfactory.components.ComponentMenuResult;
-import vswe.stevesfactory.components.Connection;
-import vswe.stevesfactory.components.FlowComponent;
 
 import java.util.*;
 
@@ -19,135 +18,44 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
 {
     private boolean[] inputSides = new boolean[6];
     private boolean[] outputSides = new boolean[6];
-    private boolean[] oldConnectionSides = new boolean[6];
-    private int tickCount;
-    Set<TileEntityRFNode> connections = new HashSet<TileEntityRFNode>();
+    private boolean[] oldSides = new boolean[12];
     Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
     private static final String MANAGERS = "Managers";
+    private static final String INPUTS = "Inputs";
+    private static final String OUTPUTS = "Outputs";
     private static final String X="x";
     private static final String Y="y";
     private static final String Z="z";
     private List<WorldCoordinate> addManagers = new ArrayList<WorldCoordinate>();
-    private boolean loaded;
+    private boolean updated;
 
     @Override
     public void updateEntity()
     {
         super.updateEntity();
-        if (!loaded) loadManagers();
-        if (!worldObj.isRemote && tickCount++>=20)
-        {
-            tickCount = 0;
-            updateConnections();
-        }
-        //TODO: load inventory list in connected managers
+        if (!this.isPartOfCluster() && updated && checkUpdate()) sendUpdatePacket();
     }
 
-    private void loadManagers()
+    private boolean checkUpdate()
     {
-        if (!worldObj.isRemote)
+        if (worldObj.isRemote) return false;
+        updated = false;
+        for (int i=0;i<6;i++)
         {
-            for (WorldCoordinate manager : addManagers)
-            {
-                TileEntity te = worldObj.getTileEntity(manager.getX(), manager.getY(), manager.getZ());
-                if (te instanceof TileEntityManager)
-                {
-                    TileEntityManager tileEntityManager = (TileEntityManager) te;
-                    tileEntityManager.updateInventories();
-                    managers.add(tileEntityManager);
-                }
-            }
+            if (inputSides[i]!=oldSides[i] || outputSides[i]!=oldSides[i+6]) return true;
         }
-        addManagers=null;
-        loaded=true;
+        return false;
     }
 
-    private void updateConnections()
+    private void sendUpdatePacket()
     {
-        connections = new HashSet<TileEntityRFNode>();
-        inputSides = new boolean[6];
-        outputSides = new boolean[6];
-        for (TileEntityManager tileEntityManager:managers)
-        {
-            Map<Integer,TileEntityRFNode> rfNodeMap = getRFNodeMap(tileEntityManager);
-            Integer thisInt = null;
-            for (Map.Entry<Integer,TileEntityRFNode> entry : rfNodeMap.entrySet())
+        if (worldObj!=null && !worldObj.isRemote) {
+            MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
+            for (int i=0;i<6;i++)
             {
-                if (entry.getValue() == this)
-                {
-                    thisInt = entry.getKey();
-                    break;
-                }
+                oldSides[i]=inputSides[i];
+                oldSides[i+6]=outputSides[i];
             }
-            if (thisInt==null) continue;
-            Set<Integer> visited = new TreeSet<Integer>();
-            List<FlowComponent> items = tileEntityManager.getFlowItems();
-            for (FlowComponent component: items)
-            {
-                if (component.getType()!= StevesEnum.RF_COMPONENT || visited.contains(component.getId())) continue;
-                ComponentMenuRF menu = (ComponentMenuRF)component.getMenus().get(0);
-                if (menu.getSelectedInventories().contains(thisInt))
-                {
-                    scanConnections(rfNodeMap, visited, component,items);
-                }
-            }
-        }
-        checkForConnectionUpdate();
-    }
-
-    private void checkForConnectionUpdate()
-    {
-        for (int i=0; i<6; i++)
-        {
-            if ((inputSides[i]|outputSides[i])!=oldConnectionSides[i])
-            {
-                notifyNeighbour(i);
-                oldConnectionSides[i] = inputSides[i]|outputSides[i];
-            }
-        }
-    }
-
-    private void notifyNeighbour(int i)
-    {
-        ForgeDirection dir = ForgeDirection.getOrientation(i);
-        int x = xCoord + dir.offsetX;
-        int y = yCoord + dir.offsetY;
-        int z = zCoord + dir.offsetZ;
-        worldObj.notifyBlockOfNeighborChange(x,y,z,worldObj.getBlock(xCoord,yCoord,zCoord));
-    }
-
-    private void scanConnections(Map<Integer,TileEntityRFNode> rfNodeMap, Set<Integer> visited, FlowComponent component, List<FlowComponent> components)
-    {
-        if (visited.contains(component.getId())) return;
-        visited.add(component.getId());
-        if (component.getType()== StevesEnum.RF_COMPONENT)
-        {
-            ComponentMenuRF menu = (ComponentMenuRF)component.getMenus().get(0);
-            for (int inventory : menu.getSelectedInventories())
-            {
-                TileEntityRFNode node = rfNodeMap.get(inventory);
-                if (node==null) continue;
-                if (node == this)
-                {
-                    ComponentMenuTargetRF targetRF = (ComponentMenuTargetRF)component.getMenus().get(1);
-                    ComponentMenuResult result = (ComponentMenuResult)component.getMenus().get(2);
-                    NBTTagCompound dataRetriever = new NBTTagCompound();
-                    result.writeToNBT(dataRetriever,false);
-                    boolean output = dataRetriever.getByte("SelectedOption")==1;
-                    for (int i = 0; i<6;i++)
-                        if (output)
-                            outputSides[i]|=targetRF.isActive(i);
-                        else
-                            inputSides[i]|=targetRF.isActive(i);
-
-                }
-                connections.add(node);
-            }
-        }
-        for (Connection i : component.getConnections().values())
-        {
-            if (i==null) continue;
-            scanConnections(rfNodeMap, visited,components.get(i.getComponentId()),components);
         }
     }
 
@@ -164,6 +72,8 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
             managers.appendTag(thisManager);
         }
         tagCompound.setTag(MANAGERS,managers);
+        tagCompound.setByte(INPUTS, MessageHelper.booleanToByte(inputSides));
+        tagCompound.setByte(OUTPUTS, MessageHelper.booleanToByte(outputSides));
     }
 
     @Override
@@ -178,94 +88,55 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
             int z = manager.getInteger(Z);
             this.addManagers.add(new WorldCoordinate(x,y,z));
         }
-
+        inputSides = MessageHelper.byteToBooleanArray(tagCompound.getByte(INPUTS));
+        outputSides = MessageHelper.byteToBooleanArray(tagCompound.getByte(OUTPUTS));
+        updated = true;
     }
 
-    private Map<Integer, TileEntityRFNode> getRFNodeMap(TileEntityManager tileEntityManager)
-    {
-        Map<Integer,TileEntityRFNode> result = new HashMap<Integer, TileEntityRFNode>();
-        for (ConnectionBlock connectionBlock : tileEntityManager.getConnectedInventories())
-        {
-            if (connectionBlock.isOfType(StevesEnum.RF))
-            {
-                result.put(connectionBlock.getId(),(TileEntityRFNode)connectionBlock.getTileEntity());
-            }
-        }
-        return result;
-    }
 
 
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
     {
         int toReceive = maxReceive;
-        if (from != ForgeDirection.UNKNOWN)
+        for (int i=0;i<6;i++)
         {
-            if (!inputSides[from.ordinal()]) return 0;
-            Set<TileEntityRFNode> outputs = new HashSet<TileEntityRFNode>();
-            int outputPacket = toReceive/connections.size();
-            for (TileEntityRFNode connected : connections)
+            if (outputSides[i])
             {
-                if (connected.receiveEnergy(ForgeDirection.UNKNOWN,outputPacket,true)>0) outputs.add(connected);
-            }
-            outputPacket = maxReceive/outputs.size();
-            for (TileEntityRFNode connected : outputs)
-            {
-                toReceive-=connected.receiveEnergy(ForgeDirection.UNKNOWN,outputPacket,simulate);
-                if (toReceive==0) return maxReceive;
-            }
-        }
-        else
-        {
-            for (int i = 0; i< outputSides.length; i++)
-            {
-                if (!outputSides[i]) continue;
-                ForgeDirection dir = ForgeDirection.getOrientation(i);
-                int x = xCoord + dir.offsetX;
-                int y = yCoord + dir.offsetY;
-                int z = zCoord + dir.offsetZ;
-                TileEntity te = worldObj.getTileEntity(x,y,z);
-                if (te instanceof IEnergyHandler)
+                TileEntity te = getTileEntityOnSide(i);
+                if (te!=null && te instanceof IEnergyHandler)
+                {
                     toReceive-=((IEnergyHandler)te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]),toReceive,simulate);
-                if (toReceive==0) return maxReceive;
+                    if (toReceive==0)break;
+                }
             }
         }
         return maxReceive-toReceive;
+    }
+
+    private TileEntity getTileEntityOnSide(int side)
+    {
+        ForgeDirection dir = ForgeDirection.getOrientation(side);
+        int x = xCoord + dir.offsetX;
+        int y = yCoord + dir.offsetY;
+        int z = zCoord + dir.offsetZ;
+        return worldObj.getTileEntity(x,y,z);
     }
 
     @Override
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
     {
         int toExtract = maxExtract;
-        if (from != ForgeDirection.UNKNOWN)
+        for (int i=0;i<6;i++)
         {
-            if (!outputSides[from.ordinal()]) return 0;
-            int outputPacket = toExtract/connections.size();
-            Set<TileEntityRFNode> inputs = new HashSet<TileEntityRFNode>();
-            for (TileEntityRFNode connected : connections)
+            if (inputSides[i])
             {
-                if (connected.extractEnergy(ForgeDirection.UNKNOWN,outputPacket,true)>0) inputs.add(connected);
-            }
-            outputPacket = toExtract/inputs.size();
-            for (TileEntityRFNode connected : inputs)
-            {
-                toExtract-=connected.extractEnergy(ForgeDirection.UNKNOWN,outputPacket,simulate);
-                if (toExtract==0) return maxExtract;
-            }
-        }
-        else
-        {
-            for (int i = 0; i< outputSides.length; i++)
-            {
-                if (!inputSides[i]) continue;
-                ForgeDirection dir = ForgeDirection.getOrientation(i);
-                int x = xCoord + dir.offsetX;
-                int y = yCoord + dir.offsetY;
-                int z = zCoord + dir.offsetZ;
-                TileEntity te = worldObj.getTileEntity(x,y,z);
-                if (te instanceof IEnergyHandler)
+                TileEntity te = getTileEntityOnSide(i);
+                if (te!=null && te instanceof IEnergyHandler)
+                {
                     toExtract-=((IEnergyHandler)te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
-                if (toExtract==0) return maxExtract;
+                    if (toExtract==0)break;
+                }
             }
         }
         return maxExtract-toExtract;
@@ -305,5 +176,67 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     protected EnumSet<ClusterMethodRegistration> getRegistrations()
     {
         return EnumSet.of(StevesEnum.CONNECT_ENERGY, StevesEnum.EXTRACT_ENERGY, StevesEnum.RECEIVE_ENERGY);
+    }
+
+    public boolean isInput(int side)
+    {
+        return inputSides[side];
+    }
+
+    public boolean isOutput(int side)
+    {
+        return outputSides[side];
+    }
+
+    public void setInputSides(Integer[] sides)
+    {
+        if (!updated) resetArrays();
+        for (int side:sides)
+        {
+            inputSides[side] = true;
+        }
+    }
+
+    private void resetArrays()
+    {
+        inputSides = new boolean[6];
+        outputSides = new boolean[6];
+        updated = true;
+    }
+
+    public void setOutputSides(Integer[] sides)
+    {
+        if (!updated) resetArrays();
+        for (int side:sides)
+        {
+            outputSides[side] = true;
+        }
+    }
+
+    public void setOutputSides(boolean[] outputSides)
+    {
+        this.outputSides = outputSides;
+    }
+
+    public void setInputSides(boolean[] inputSides)
+    {
+        this.inputSides = inputSides;
+    }
+
+    public boolean[] getOutputs()
+    {
+        return outputSides;
+    }
+
+    public boolean[] getInputs()
+    {
+        return inputSides;
+    }
+
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        writeToNBT(new NBTTagCompound());
+        return MessageHandler.INSTANCE.getPacketFrom(new RFNodeUpdateMessage(this));
     }
 }

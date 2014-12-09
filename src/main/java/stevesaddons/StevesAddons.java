@@ -8,6 +8,7 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import stevesaddons.helpers.StevesEnum;
+import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.reference.Reference;
 import stevesaddons.registry.BlockRegistry;
@@ -28,6 +29,7 @@ public class StevesAddons
     {
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();
+        MessageHandler.init();
         new StevesEnum();
     }
 
