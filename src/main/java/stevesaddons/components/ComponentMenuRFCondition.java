@@ -20,20 +20,6 @@ public class ComponentMenuRFCondition extends ComponentMenu
     private WideNumberBox textBox;
     private boolean triggerBelow;
 
-    private static final int CHECK_BOX_X = 5;
-    private static final int CHECK_BOX_Y = 50;
-    private static final int TEXT_BOX_X_LEFT = 10;
-    private static final int TEXT_BOX_X_RIGHT = 77;
-    private static final int TEXT_BOX_Y = 30;
-    private static final int TEXT_BOX_TEXT_X = 46;
-    private static final int TEXT_BOX_TEXT_Y = 33;
-    private static final int MENU_WIDTH = 120;
-    private static final int TEXT_MARGIN_X = 5;
-    private static final int TEXT_Y = 5;
-    private static final String NBT_LOW = "textBox";
-    private static final String NBT_HIGH = "HighRange";
-    private static final String NBT_INVERTED = "Inverted";
-
     public ComponentMenuRFCondition(FlowComponent parent) {
         super(parent);
         this.checkBoxes.addCheckBox(new CheckBox(StevesEnum.BELOW, 5, 50) {

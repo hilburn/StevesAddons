@@ -2,7 +2,6 @@ package stevesaddons.helpers;
 
 import cofh.api.energy.IEnergyHandler;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.EnumHelper;
 import stevesaddons.blocks.BlockCableRFCluster;
 import stevesaddons.blocks.BlockRFManager;
@@ -15,7 +14,6 @@ import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.blocks.ItemCluster;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.components.*;
-import vswe.stevesfactory.interfaces.GuiManager;
 
 public class StevesEnum
 {
