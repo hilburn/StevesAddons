@@ -37,6 +37,7 @@ public class StevesAddons
     public void init(FMLInitializationEvent e)
     {
         ItemRegistry.registerRecipes();
+        BlockRegistry.registerRecipes();
     }
 
     @Mod.EventHandler
