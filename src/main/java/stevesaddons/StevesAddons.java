@@ -30,7 +30,7 @@ public class StevesAddons
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();
         MessageHandler.init();
-        new StevesEnum();
+        StevesEnum.replaceBlocks();
     }
 
     @Mod.EventHandler
@@ -49,6 +49,6 @@ public class StevesAddons
     @Mod.EventHandler
     public void loadComplete(FMLLoadCompleteEvent event)
     {
-        StevesEnum.replaceCluster();
+
     }
 }

@@ -43,7 +43,7 @@ public class StevesEnum
     public static final ClusterMethodRegistration EXTRACT_ENERGY = EnumHelper.addEnum(clusterMethodClasses, ClusterMethodRegistration.class, "EXTRACT_ENERGY");
     public static final ClusterMethodRegistration RECEIVE_ENERGY = EnumHelper.addEnum(clusterMethodClasses, ClusterMethodRegistration.class, "RECEIVE_ENERGY");
 
-    public static void replaceCluster()
+    public static void replaceBlocks()
     {
         BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockCableCluster, BlockCableRFCluster.class, ItemCluster.class);
         BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockManager, BlockRFManager.class, ItemBlock.class);

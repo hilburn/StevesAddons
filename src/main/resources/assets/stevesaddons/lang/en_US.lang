@@ -7,8 +7,8 @@ gui.sfm.RfInputShort=RF Input
 gui.sfm.RfOutputLong=RF Output
 gui.sfm.RfOutputShort=RF Output
 
-gui.sfm.TypeRf=RF Nodes
-gui.sfm.NoRfError=No RF Node Selected
+gui.sfm.TypeRf=RF Storage
+gui.sfm.NoRfError=No RF Storage Selected
 
 gui.sfm.RfConditionShort=RF Condition
 gui.sfm.RfConditionLong=RF Condition
