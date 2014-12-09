@@ -13,17 +13,21 @@ public class ComponentMenuRF extends ComponentMenuContainer
         super(parent, StevesEnum.RF_HANDLER);
     }
 
-    public String getName() {
+    public String getName()
+    {
         return StevesEnum.TYPE_RF.toString();
     }
 
     @Override
-    public void addErrors(List<String> errors) {
-        if(this.selectedInventories.isEmpty() && this.isVisible()) {
+    public void addErrors(List<String> errors)
+    {
+        if (this.selectedInventories.isEmpty() && this.isVisible())
+        {
             errors.add(StevesEnum.NO_RF_ERROR.toString());
         }
     }
 
-    protected void initRadioButtons() {
+    protected void initRadioButtons()
+    {
     }
 }

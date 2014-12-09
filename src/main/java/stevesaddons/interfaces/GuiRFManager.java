@@ -2,9 +2,6 @@ package stevesaddons.interfaces;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -17,13 +14,14 @@ import vswe.stevesfactory.animation.AnimationController;
 import vswe.stevesfactory.blocks.TileEntityManager;
 import vswe.stevesfactory.blocks.TileEntityManager.Button;
 import vswe.stevesfactory.components.FlowComponent;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiBase;
 import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.interfaces.IInterfaceRenderer;
-import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiRFManager extends GuiManager
@@ -47,66 +45,89 @@ public class GuiRFManager extends GuiManager
     private List<GuiRFManager.SecretCode> codes = new ArrayList();
     private TileEntityManager manager;
 
-    public GuiRFManager(TileEntityManager manager, InventoryPlayer player) {
+    public GuiRFManager(TileEntityManager manager, InventoryPlayer player)
+    {
         super(manager, player);
-        this.codes.add(new GuiRFManager.SecretCode("animate") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("animate")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 2);
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("animslow") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("animslow")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 1);
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("animfast") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("animfast")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 5);
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("animrapid") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("animrapid")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 20);
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("animinstant") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("animinstant")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 100);
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("green") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("green")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.useGreenScreen = !GuiRFManager.this.useGreenScreen;
                 GuiRFManager.this.useBlueScreen = false;
                 GuiRFManager.this.usePinkScreen = false;
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("blue") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("blue")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.useBlueScreen = !GuiRFManager.this.useBlueScreen;
                 GuiRFManager.this.useGreenScreen = false;
                 GuiRFManager.this.usePinkScreen = false;
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("pink") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("pink")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.usePinkScreen = !GuiRFManager.this.usePinkScreen;
                 GuiRFManager.this.useGreenScreen = false;
                 GuiRFManager.this.useBlueScreen = false;
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("buttons") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("buttons")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.useButtons = !GuiRFManager.this.useButtons;
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("info") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("info")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.useInfo = !GuiRFManager.this.useInfo;
             }
         });
-        this.codes.add(new GuiRFManager.SecretCode("mouse") {
-            protected void trigger() {
+        this.codes.add(new GuiRFManager.SecretCode("mouse")
+        {
+            protected void trigger()
+            {
                 GuiRFManager.this.useMouseOver = !GuiRFManager.this.useMouseOver;
             }
         });
@@ -116,28 +137,36 @@ public class GuiRFManager extends GuiManager
         Keyboard.enableRepeatEvents(true);
     }
 
-    public ResourceLocation getComponentResource() {
+    public ResourceLocation getComponentResource()
+    {
         return COMPONENTS;
     }
 
-    public void drawWorldBackground(int val) {
-        if(this.usePinkScreen) {
+    public void drawWorldBackground(int val)
+    {
+        if (this.usePinkScreen)
+        {
             drawRect(0, 0, this.width, this.height, -1310580);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        } else if(this.useBlueScreen) {
+        } else if (this.useBlueScreen)
+        {
             drawRect(0, 0, this.width, this.height, -16774511);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        } else if(this.useGreenScreen) {
+        } else if (this.useGreenScreen)
+        {
             drawRect(0, 0, this.width, this.height, -16711936);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        } else {
+        } else
+        {
             super.drawWorldBackground(val);
         }
 
     }
 
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        if(!this.useGreenScreen && !this.useBlueScreen && !this.usePinkScreen) {
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
+        if (!this.useGreenScreen && !this.useBlueScreen && !this.usePinkScreen)
+        {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             bindTexture(BACKGROUND_1);
             this.drawTexture(0, 0, 0, 0, 256, 256);
@@ -148,33 +177,41 @@ public class GuiRFManager extends GuiManager
         x -= this.guiLeft;
         y -= this.guiTop;
         bindTexture(COMPONENTS);
-        if(this.hasSpecialRenderer()) {
+        if (this.hasSpecialRenderer())
+        {
             this.getSpecialRenderer().draw(this, x, y);
             this.getSpecialRenderer().drawMouseOver(this, x, y);
-        } else {
-            if(this.useButtons) {
-                for(int ticks = 0; ticks < this.manager.buttons.size(); ++ticks) {
-                    Button button = (Button)this.manager.buttons.get(ticks);
-                    if(button.isVisible()) {
-                        int elapsedSeconds = CollisionHelper.inBounds(button.getX(), button.getY(), 14, 14, x, y)?1:0;
-                        int column = ticks/20;
+        } else
+        {
+            if (this.useButtons)
+            {
+                for (int ticks = 0; ticks < this.manager.buttons.size(); ++ticks)
+                {
+                    Button button = this.manager.buttons.get(ticks);
+                    if (button.isVisible())
+                    {
+                        int elapsedSeconds = CollisionHelper.inBounds(button.getX(), button.getY(), 14, 14, x, y) ? 1 : 0;
+                        int column = ticks / 20;
                         this.drawTexture(button.getX(), button.getY(), 242, 0 + elapsedSeconds * 14, 14, 14);
-                        if (column == 0) this.drawTexture(button.getX() + 1, button.getY() + 1, 230, 0 + ticks * 12, 12, 12);
-                        else this.drawTexture(button.getX() + 1, button.getY() + 1, 218, 0 + (ticks-20) * 12, 12, 12);
+                        if (column == 0)
+                            this.drawTexture(button.getX() + 1, button.getY() + 1, 230, 0 + ticks * 12, 12, 12);
+                        else this.drawTexture(button.getX() + 1, button.getY() + 1, 218, 0 + (ticks - 20) * 12, 12, 12);
                     }
                 }
             }
 
             long var11 = Minecraft.getSystemTime();
-            float var12 = (float)(var11 - this.lastTicks) / 1000.0F;
-            if(this.controller != null) {
+            float var12 = (float) (var11 - this.lastTicks) / 1000.0F;
+            if (this.controller != null)
+            {
                 this.controller.update(var12);
             }
 
             Iterator zLevel = this.manager.getFlowItems().iterator();
 
-            while(zLevel.hasNext()) {
-                FlowComponent openCount = (FlowComponent)zLevel.next();
+            while (zLevel.hasNext())
+            {
+                FlowComponent openCount = (FlowComponent) zLevel.next();
                 openCount.update(var12);
             }
 
@@ -183,40 +220,51 @@ public class GuiRFManager extends GuiManager
             int var14 = 0;
 
             FlowComponent itemBase;
-            for(int i$ = 0; i$ < this.manager.getZLevelRenderingList().size(); ++i$) {
-                itemBase = (FlowComponent)this.manager.getZLevelRenderingList().get(i$);
-                if(itemBase.isVisible()) {
-                    if(itemBase.isOpen() && var14 == Z_LEVEL_OPEN_MAXIMUM) {
+            for (int i$ = 0; i$ < this.manager.getZLevelRenderingList().size(); ++i$)
+            {
+                itemBase = this.manager.getZLevelRenderingList().get(i$);
+                if (itemBase.isVisible())
+                {
+                    if (itemBase.isOpen() && var14 == Z_LEVEL_OPEN_MAXIMUM)
+                    {
                         itemBase.close();
                     }
 
-                    if(itemBase.isOpen()) {
+                    if (itemBase.isOpen())
+                    {
                         var13 -= Z_LEVEL_COMPONENT_OPEN_DIFFERENCE;
                         ++var14;
-                    } else {
+                    } else
+                    {
                         var13 -= Z_LEVEL_COMPONENT_CLOSED_DIFFERENCE;
                     }
 
                     itemBase.draw(this, x, y, var13);
-                    if(itemBase.isBeingMoved() || CollisionHelper.inBounds(itemBase.getX(), itemBase.getY(), itemBase.getComponentWidth(), itemBase.getComponentHeight(), x, y)) {
+                    if (itemBase.isBeingMoved() || CollisionHelper.inBounds(itemBase.getX(), itemBase.getY(), itemBase.getComponentWidth(), itemBase.getComponentHeight(), x, y))
+                    {
                         CollisionHelper.disableInBoundsCheck = true;
                     }
                 }
             }
 
             CollisionHelper.disableInBoundsCheck = false;
-            if(this.useInfo) {
+            if (this.useInfo)
+            {
                 this.drawString(this.getInfo(), 5, this.ySize - 13, 1.0F, 6316128);
             }
 
-            if(this.useMouseOver) {
+            if (this.useMouseOver)
+            {
                 Iterator var15;
-                if(this.useButtons) {
+                if (this.useButtons)
+                {
                     var15 = this.manager.buttons.iterator();
 
-                    while(var15.hasNext()) {
-                        Button var16 = (Button)var15.next();
-                        if(var16.isVisible() && CollisionHelper.inBounds(var16.getX(), var16.getY(), 14, 14, x, y)) {
+                    while (var15.hasNext())
+                    {
+                        Button var16 = (Button) var15.next();
+                        if (var16.isVisible() && CollisionHelper.inBounds(var16.getX(), var16.getY(), 14, 14, x, y))
+                        {
                             this.drawMouseOver(var16.getMouseOver(), x, y);
                         }
                     }
@@ -224,11 +272,14 @@ public class GuiRFManager extends GuiManager
 
                 var15 = this.manager.getZLevelRenderingList().iterator();
 
-                while(var15.hasNext()) {
-                    itemBase = (FlowComponent)var15.next();
-                    if(itemBase.isVisible()) {
+                while (var15.hasNext())
+                {
+                    itemBase = (FlowComponent) var15.next();
+                    if (itemBase.isVisible())
+                    {
                         itemBase.drawMouseOver(this, x, y);
-                        if(itemBase.isBeingMoved() || CollisionHelper.inBounds(itemBase.getX(), itemBase.getY(), itemBase.getComponentWidth(), itemBase.getComponentHeight(), x, y)) {
+                        if (itemBase.isBeingMoved() || CollisionHelper.inBounds(itemBase.getX(), itemBase.getY(), itemBase.getComponentWidth(), itemBase.getComponentHeight(), x, y))
+                        {
                             CollisionHelper.disableInBoundsCheck = true;
                         }
                     }
@@ -236,27 +287,33 @@ public class GuiRFManager extends GuiManager
             }
 
             CollisionHelper.disableInBoundsCheck = false;
-            if(!Keyboard.isKeyDown(54) && this.doubleShiftFlag) {
+            if (!Keyboard.isKeyDown(54) && this.doubleShiftFlag)
+            {
                 this.doubleShiftFlag = false;
             }
 
         }
     }
 
-    public void handleMouseInput() {
+    public void handleMouseInput()
+    {
         super.handleMouseInput();
         int scroll = Mouse.getEventDWheel();
-        if(scroll != 0) {
-            if(this.hasSpecialRenderer()) {
+        if (scroll != 0)
+        {
+            if (this.hasSpecialRenderer())
+            {
                 this.getSpecialRenderer().onScroll(scroll);
                 return;
             }
 
             Iterator i$ = this.manager.getZLevelRenderingList().iterator();
 
-            while(i$.hasNext()) {
-                FlowComponent component = (FlowComponent)i$.next();
-                if(component.isVisible()) {
+            while (i$.hasNext())
+            {
+                FlowComponent component = (FlowComponent) i$.next();
+                if (component.isVisible())
+                {
                     component.doScroll(scroll);
                     return;
                 }
@@ -265,17 +322,21 @@ public class GuiRFManager extends GuiManager
 
     }
 
-    private String getInfo() {
+    private String getInfo()
+    {
         String ret = Localization.COMMANDS.toString() + ": " + this.manager.getFlowItems().size() + "  ";
         String path = "";
         FlowComponent component = this.manager.getSelectedComponent();
-        if(component != null) {
+        if (component != null)
+        {
             ret = ret + "|";
         }
 
-        while(component != null) {
+        while (component != null)
+        {
             String nextPath = "> " + component.getName() + " " + path;
-            if(this.getStringWidth(ret + nextPath) > this.xSize - 15) {
+            if (this.getStringWidth(ret + nextPath) > this.xSize - 15)
+            {
                 path = "... " + path;
                 break;
             }
@@ -288,11 +349,15 @@ public class GuiRFManager extends GuiManager
         return ret;
     }
 
-    protected void keyTyped(char c, int k) {
-        if(this.hasSpecialRenderer()) {
+    protected void keyTyped(char c, int k)
+    {
+        if (this.hasSpecialRenderer())
+        {
             this.getSpecialRenderer().onKeyTyped(this, c, k);
-        } else {
-            if(k == 54 && !this.doubleShiftFlag) {
+        } else
+        {
+            if (k == 54 && !this.doubleShiftFlag)
+            {
                 DataWriter recognized = PacketHandler.getWriterForServerActionPacket();
                 PacketHandler.sendDataToServer(recognized);
                 this.doubleShiftFlag = true;
@@ -300,9 +365,11 @@ public class GuiRFManager extends GuiManager
 
             Iterator recognized1 = this.manager.getZLevelRenderingList().iterator();
 
-            while(recognized1.hasNext()) {
-                FlowComponent i$ = (FlowComponent)recognized1.next();
-                if(i$.isVisible() && i$.onKeyStroke(this, c, k) && k != 1) {
+            while (recognized1.hasNext())
+            {
+                FlowComponent i$ = (FlowComponent) recognized1.next();
+                if (i$.isVisible() && i$.onKeyStroke(this, c, k) && k != 1)
+                {
                     return;
                 }
             }
@@ -310,14 +377,17 @@ public class GuiRFManager extends GuiManager
             boolean recognized2 = false;
             Iterator i$1 = this.codes.iterator();
 
-            while(i$1.hasNext()) {
-                GuiRFManager.SecretCode code = (GuiRFManager.SecretCode)i$1.next();
-                if(code.keyTyped(c)) {
+            while (i$1.hasNext())
+            {
+                GuiRFManager.SecretCode code = (GuiRFManager.SecretCode) i$1.next();
+                if (code.keyTyped(c))
+                {
                     recognized2 = true;
                 }
             }
 
-            if(recognized2) {
+            if (recognized2)
+            {
                 return;
             }
         }
@@ -325,52 +395,65 @@ public class GuiRFManager extends GuiManager
         super.keyTyped(c, k);
     }
 
-    public void onGuiClosed() {
+    public void onGuiClosed()
+    {
         Keyboard.enableRepeatEvents(false);
         Iterator i$ = this.manager.getFlowItems().iterator();
 
-        while(i$.hasNext()) {
-            FlowComponent flowComponent = (FlowComponent)i$.next();
+        while (i$.hasNext())
+        {
+            FlowComponent flowComponent = (FlowComponent) i$.next();
             flowComponent.onGuiClosed();
         }
 
         super.onGuiClosed();
     }
 
-    public TileEntityManager getManager() {
+    public TileEntityManager getManager()
+    {
         return this.manager;
     }
 
-    private boolean hasSpecialRenderer() {
+    private boolean hasSpecialRenderer()
+    {
         return this.getSpecialRenderer() != null;
     }
 
-    private IInterfaceRenderer getSpecialRenderer() {
+    private IInterfaceRenderer getSpecialRenderer()
+    {
         return this.manager.specialRenderer;
     }
 
-    private abstract class SecretCode {
+    private abstract class SecretCode
+    {
         private final String code;
         private int triggerNumber;
 
-        private SecretCode(String code) {
+        private SecretCode(String code)
+        {
             this.code = code;
         }
 
-        public boolean keyTyped(char c) {
-            if(Character.isAlphabetic(c)) {
-                if(this.code.charAt(this.triggerNumber) == c) {
-                    if(this.triggerNumber + 1 > this.code.length() - 1) {
+        public boolean keyTyped(char c)
+        {
+            if (Character.isAlphabetic(c))
+            {
+                if (this.code.charAt(this.triggerNumber) == c)
+                {
+                    if (this.triggerNumber + 1 > this.code.length() - 1)
+                    {
                         this.triggerNumber = 0;
                         this.trigger();
-                    } else {
+                    } else
+                    {
                         ++this.triggerNumber;
                     }
 
                     return true;
                 }
 
-                if(this.triggerNumber != 0) {
+                if (this.triggerNumber != 0)
+                {
                     this.triggerNumber = 0;
                     this.keyTyped(c);
                 }

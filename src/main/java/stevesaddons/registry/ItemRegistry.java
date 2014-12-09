@@ -14,11 +14,11 @@ public class ItemRegistry
 
     public static void registerItems()
     {
-        GameRegistry.registerItem(duplicator=new ItemSFMDrive(), Names.DRIVE);
+        GameRegistry.registerItem(duplicator = new ItemSFMDrive(), Names.DRIVE);
     }
 
     public static void registerRecipes()
     {
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(duplicator)," x ","xyx"," x ",'x',"ingotIron",'y', new ItemStack(ModBlocks.blockManager)));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(duplicator), " x ", "xyx", " x ", 'x', "ingotIron", 'y', new ItemStack(ModBlocks.blockManager)));
     }
 }

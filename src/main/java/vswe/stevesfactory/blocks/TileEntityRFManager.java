@@ -7,7 +7,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import stevesaddons.interfaces.GuiRFManager;
 import vswe.stevesfactory.components.*;
-import vswe.stevesfactory.interfaces.GuiManager;
 
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -25,24 +24,32 @@ public class TileEntityRFManager extends TileEntityManager
     public void updateEntity()
     {
         this.justSentServerComponentRemovalPacket = false;
-        if(!this.worldObj.isRemote) {
-            if(this.superTimer >= 20) {
+        if (!this.worldObj.isRemote)
+        {
+            if (this.superTimer >= 20)
+            {
                 this.superTimer = 0;
                 Iterator i$ = this.getFlowItems().iterator();
 
-                while(i$.hasNext()) {
-                    FlowComponent item = (FlowComponent)i$.next();
-                    if(item.getType() == ComponentType.TRIGGER) {
-                        ComponentMenuInterval componentMenuInterval = (ComponentMenuInterval)item.getMenus().get(2);
+                while (i$.hasNext())
+                {
+                    FlowComponent item = (FlowComponent) i$.next();
+                    if (item.getType() == ComponentType.TRIGGER)
+                    {
+                        ComponentMenuInterval componentMenuInterval = (ComponentMenuInterval) item.getMenus().get(2);
                         int interval = componentMenuInterval.getInterval();
-                        if(interval != 0) {
+                        if (interval != 0)
+                        {
                             item.setCurrentInterval(item.getCurrentInterval() + 1);
-                            if(item.getCurrentInterval() >= interval) {
+                            if (item.getCurrentInterval() >= interval)
+                            {
                                 item.setCurrentInterval(0);
                                 EnumSet valid = EnumSet.of(ConnectionOption.INTERVAL);
-                                if(item.getConnectionSet() == ConnectionSet.REDSTONE) {
+                                if (item.getConnectionSet() == ConnectionSet.REDSTONE)
+                                {
                                     redstoneTrigger.onTrigger(item, valid);
-                                } else if(item.getConnectionSet() == ConnectionSet.BUD) {
+                                } else if (item.getConnectionSet() == ConnectionSet.BUD)
+                                {
                                     budTrigger.onTrigger(item, valid);
                                 }
 
@@ -51,20 +58,24 @@ public class TileEntityRFManager extends TileEntityManager
                         }
                     }
                 }
-            } else {
+            } else
+            {
                 ++this.superTimer;
             }
         }
     }
 
     @Override
-    public void activateTrigger(FlowComponent component, EnumSet<ConnectionOption> validTriggerOutputs) {
+    public void activateTrigger(FlowComponent component, EnumSet<ConnectionOption> validTriggerOutputs)
+    {
         this.updateFirst();
         Iterator i$ = this.inventories.iterator();
 
-        while(i$.hasNext()) {
-            ConnectionBlock inventory = (ConnectionBlock)i$.next();
-            if(inventory.getTileEntity().isInvalid()) {
+        while (i$.hasNext())
+        {
+            ConnectionBlock inventory = (ConnectionBlock) i$.next();
+            if (inventory.getTileEntity().isInvalid())
+            {
                 this.updateInventories();
                 break;
             }
@@ -75,7 +86,8 @@ public class TileEntityRFManager extends TileEntityManager
 
     @SideOnly(Side.CLIENT)
     @Override
-    public GuiScreen getGui(TileEntity te, InventoryPlayer inv) {
-        return new GuiRFManager((TileEntityManager)te, inv);
+    public GuiScreen getGui(TileEntity te, InventoryPlayer inv)
+    {
+        return new GuiRFManager((TileEntityManager) te, inv);
     }
 }

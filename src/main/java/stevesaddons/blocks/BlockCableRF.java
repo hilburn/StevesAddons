@@ -17,7 +17,8 @@ import vswe.stevesfactory.blocks.ModBlocks;
 public class BlockCableRF extends BlockContainer
 {
     @SideOnly(Side.CLIENT)
-    private IIcon[] icons = new IIcon[4];
+    private final IIcon[] icons = new IIcon[4];
+
     public BlockCableRF()
     {
         super(Material.iron);
@@ -34,26 +35,30 @@ public class BlockCableRF extends BlockContainer
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister registry)
     {
-        for (int i=0;i<4;i++)
-            icons[i] = registry.registerIcon(Reference.ID+":"+ Names.CABLE_RF+"_"+i);
+        for (int i = 0; i < 4; i++)
+            icons[i] = registry.registerIcon(Reference.ID + ":" + Names.CABLE_RF + "_" + i);
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int meta)
     {
         return icons[3];
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IIcon getIcon(IBlockAccess iBlockAccess, int x, int y, int z, int side)
     {
-        TileEntity te = iBlockAccess.getTileEntity(x,y,z);
-        if (te instanceof TileEntityRFNode) return getIcon((TileEntityRFNode)te,side);
+        TileEntity te = iBlockAccess.getTileEntity(x, y, z);
+        if (te instanceof TileEntityRFNode) return getIcon((TileEntityRFNode) te, side);
         return icons[3];
     }
 
+    @SideOnly(Side.CLIENT)
     private IIcon getIcon(TileEntityRFNode te, int side)
     {
         boolean in = te.isInput(side);
@@ -62,8 +67,7 @@ public class BlockCableRF extends BlockContainer
         {
             if (out) return icons[3];
             return icons[2];
-        }
-        else
+        } else
         {
             if (out) return icons[1];
             return icons[0];

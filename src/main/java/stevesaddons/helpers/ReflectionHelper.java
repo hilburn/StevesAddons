@@ -1,7 +1,5 @@
 package stevesaddons.helpers;
 
-import net.minecraft.util.ResourceLocation;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 

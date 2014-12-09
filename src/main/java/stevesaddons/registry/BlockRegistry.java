@@ -21,12 +21,12 @@ public class BlockRegistry
         GameRegistry.registerBlock(cableRFNode = new BlockCableRF(), Names.CABLE_RF);
         ClusterRegistry.register(TileEntityRFNode.class, cableRFNode);
 
-        GameRegistry.registerTileEntity(TileEntityRFCluster.class, Names.CABLE_RF+"Cluster");
+        GameRegistry.registerTileEntity(TileEntityRFCluster.class, Names.CABLE_RF + "Cluster");
         GameRegistry.registerTileEntity(TileEntityRFManager.class, "TileEntityFManager");
     }
 
     public static void registerRecipes()
     {
-        GameRegistry.addRecipe(new ItemStack(cableRFNode),"RRR","RCR","RRR",'R', new ItemStack(Items.redstone), 'C', new ItemStack(ModBlocks.blockCable));
+        GameRegistry.addRecipe(new ItemStack(cableRFNode), "RRR", "RCR", "RRR", 'R', new ItemStack(Items.redstone), 'C', new ItemStack(ModBlocks.blockCable));
     }
 }

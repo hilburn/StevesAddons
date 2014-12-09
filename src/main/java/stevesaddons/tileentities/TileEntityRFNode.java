@@ -23,9 +23,9 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     private static final String MANAGERS = "Managers";
     private static final String INPUTS = "Inputs";
     private static final String OUTPUTS = "Outputs";
-    private static final String X="x";
-    private static final String Y="y";
-    private static final String Z="z";
+    private static final String X = "x";
+    private static final String Y = "y";
+    private static final String Z = "z";
     private List<WorldCoordinate> addManagers = new ArrayList<WorldCoordinate>();
     private boolean updated;
 
@@ -40,21 +40,22 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     {
         if (worldObj.isRemote) return false;
         updated = false;
-        for (int i=0;i<6;i++)
+        for (int i = 0; i < 6; i++)
         {
-            if (inputSides[i]!=oldSides[i] || outputSides[i]!=oldSides[i+6]) return true;
+            if (inputSides[i] != oldSides[i] || outputSides[i] != oldSides[i + 6]) return true;
         }
         return false;
     }
 
     private void sendUpdatePacket()
     {
-        if (worldObj!=null && !worldObj.isRemote) {
+        if (worldObj != null && !worldObj.isRemote)
+        {
             MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
-            for (int i=0;i<6;i++)
+            for (int i = 0; i < 6; i++)
             {
-                oldSides[i]=inputSides[i];
-                oldSides[i+6]=outputSides[i];
+                oldSides[i] = inputSides[i];
+                oldSides[i + 6] = outputSides[i];
             }
         }
     }
@@ -63,15 +64,15 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     public void writeContentToNBT(NBTTagCompound tagCompound)
     {
         NBTTagList managers = new NBTTagList();
-        for (TileEntityManager manager:this.managers)
+        for (TileEntityManager manager : this.managers)
         {
             NBTTagCompound thisManager = new NBTTagCompound();
-            thisManager.setInteger(X,manager.xCoord);
-            thisManager.setInteger(Y,manager.yCoord);
-            thisManager.setInteger(Z,manager.zCoord);
+            thisManager.setInteger(X, manager.xCoord);
+            thisManager.setInteger(Y, manager.yCoord);
+            thisManager.setInteger(Z, manager.zCoord);
             managers.appendTag(thisManager);
         }
-        tagCompound.setTag(MANAGERS,managers);
+        tagCompound.setTag(MANAGERS, managers);
         tagCompound.setByte(INPUTS, MessageHelper.booleanToByte(inputSides));
         tagCompound.setByte(OUTPUTS, MessageHelper.booleanToByte(outputSides));
     }
@@ -79,14 +80,14 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     @Override
     public void readContentFromNBT(NBTTagCompound tagCompound)
     {
-        NBTTagList managers = tagCompound.getTagList(MANAGERS,10);
-        for (int i = 0; i<managers.tagCount(); i++)
+        NBTTagList managers = tagCompound.getTagList(MANAGERS, 10);
+        for (int i = 0; i < managers.tagCount(); i++)
         {
             NBTTagCompound manager = managers.getCompoundTagAt(i);
             int x = manager.getInteger(X);
             int y = manager.getInteger(Y);
             int z = manager.getInteger(Z);
-            this.addManagers.add(new WorldCoordinate(x,y,z));
+            this.addManagers.add(new WorldCoordinate(x, y, z));
         }
         inputSides = MessageHelper.byteToBooleanArray(tagCompound.getByte(INPUTS));
         outputSides = MessageHelper.byteToBooleanArray(tagCompound.getByte(OUTPUTS));
@@ -94,24 +95,23 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     }
 
 
-
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
     {
         int toReceive = maxReceive;
-        for (int i=0;i<6;i++)
+        for (int i = 0; i < 6; i++)
         {
             if (outputSides[i])
             {
                 TileEntity te = getTileEntityOnSide(i);
-                if (te!=null && te instanceof IEnergyHandler)
+                if (te != null && te instanceof IEnergyHandler)
                 {
-                    toReceive-=((IEnergyHandler)te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]),toReceive,simulate);
-                    if (toReceive==0)break;
+                    toReceive -= ((IEnergyHandler) te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toReceive, simulate);
+                    if (toReceive == 0) break;
                 }
             }
         }
-        return maxReceive-toReceive;
+        return maxReceive - toReceive;
     }
 
     private TileEntity getTileEntityOnSide(int side)
@@ -120,26 +120,26 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
         int x = xCoord + dir.offsetX;
         int y = yCoord + dir.offsetY;
         int z = zCoord + dir.offsetZ;
-        return worldObj.getTileEntity(x,y,z);
+        return worldObj.getTileEntity(x, y, z);
     }
 
     @Override
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
     {
         int toExtract = maxExtract;
-        for (int i=0;i<6;i++)
+        for (int i = 0; i < 6; i++)
         {
             if (inputSides[i])
             {
                 TileEntity te = getTileEntityOnSide(i);
-                if (te!=null && te instanceof IEnergyHandler)
+                if (te != null && te instanceof IEnergyHandler)
                 {
-                    toExtract-=((IEnergyHandler)te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
-                    if (toExtract==0)break;
+                    toExtract -= ((IEnergyHandler) te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
+                    if (toExtract == 0) break;
                 }
             }
         }
-        return maxExtract-toExtract;
+        return maxExtract - toExtract;
     }
 
     @Override
@@ -191,7 +191,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     public void setInputSides(Integer[] sides)
     {
         if (!updated) resetArrays();
-        for (int side:sides)
+        for (int side : sides)
         {
             inputSides[side] = true;
         }
@@ -207,7 +207,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     public void setOutputSides(Integer[] sides)
     {
         if (!updated) resetArrays();
-        for (int side:sides)
+        for (int side : sides)
         {
             outputSides[side] = true;
         }

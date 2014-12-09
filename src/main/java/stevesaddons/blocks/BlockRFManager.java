@@ -2,8 +2,8 @@ package stevesaddons.blocks;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import vswe.stevesfactory.blocks.TileEntityRFManager;
 import vswe.stevesfactory.blocks.BlockManager;
+import vswe.stevesfactory.blocks.TileEntityRFManager;
 
 public class BlockRFManager extends BlockManager
 {

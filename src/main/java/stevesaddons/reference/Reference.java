@@ -1,6 +1,7 @@
 package stevesaddons.reference;
 
-public class Reference {
+public class Reference
+{
 
     // User friendly version of our mods name.
     public static final String NAME = "Steve\'s Addons";

@@ -5,13 +5,15 @@ import vswe.stevesfactory.components.TextBoxNumber;
 
 public class WideNumberBox extends TextBoxNumber
 {
-    public WideNumberBox(int x, int y, int length) {
-        super(x,y,length,true);
+    public WideNumberBox(int x, int y, int length)
+    {
+        super(x, y, length, true);
     }
 
 
     @Override
-    public boolean isVisible() {
+    public boolean isVisible()
+    {
         return true;
     }
 
@@ -21,7 +23,8 @@ public class WideNumberBox extends TextBoxNumber
         return Integer.MAX_VALUE;
     }
 
-    public int getWidth() {
+    public int getWidth()
+    {
         return 64;
     }
 

@@ -1,22 +1,16 @@
 package stevesaddons.items;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.components.Connection;
-import vswe.stevesfactory.components.FlowComponent;
 
 import java.util.List;
 
@@ -26,7 +20,7 @@ public class ItemSFMDrive extends Item
     {
         this.setCreativeTab(ModBlocks.creativeTab);
         this.setUnlocalizedName(Names.DRIVE);
-        this.setTextureName(Reference.ID.toLowerCase()+":" + Names.DRIVE);
+        this.setTextureName(Reference.ID.toLowerCase() + ":" + Names.DRIVE);
         this.setMaxStackSize(1);
     }
 
@@ -39,13 +33,13 @@ public class ItemSFMDrive extends Item
             int y = stack.getTagCompound().getInteger("y");
             int z = stack.getTagCompound().getInteger("z");
             list.add("Data stored from Manager at:");
-            list.add("x: "+x+" y: "+y+ " z: "+z);
+            list.add("x: " + x + " y: " + y + " z: " + z);
         }
     }
 
     private boolean validateNBT(ItemStack stack)
     {
-        if (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName"))return true;
+        if (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")) return true;
         stack.setTagCompound(null);
         return false;
     }
@@ -60,14 +54,13 @@ public class ItemSFMDrive extends Item
             {
                 if (stack.hasTagCompound() && validateNBT(stack))
                 {
-                    te.readFromNBT(correctNBT((TileEntityManager)te, stack.getTagCompound()));
+                    te.readFromNBT(correctNBT((TileEntityManager) te, stack.getTagCompound()));
                     stack.setTagCompound(null);
-                }
-                else
+                } else
                 {
                     NBTTagCompound tagCompound = new NBTTagCompound();
                     te.writeToNBT(tagCompound);
-                    tagCompound.setTag("ench",new NBTTagList());
+                    tagCompound.setTag("ench", new NBTTagList());
                     stack.setTagCompound(tagCompound);
                 }
                 return true;
@@ -82,16 +75,17 @@ public class ItemSFMDrive extends Item
         tagCompound.setInteger("y", manager.yCoord);
         tagCompound.setInteger("z", manager.zCoord);
         int currentFlow = manager.getFlowItems().size();
-        if (currentFlow>0)
+        if (currentFlow > 0)
         {
             byte version = tagCompound.getByte("ProtocolVersion");
             NBTTagList components = tagCompound.getTagList("Components", 10);
             NBTTagList newComponents = new NBTTagList();
-            for(int variablesTag = 0; variablesTag < components.tagCount(); ++variablesTag) {
+            for (int variablesTag = 0; variablesTag < components.tagCount(); ++variablesTag)
+            {
                 NBTTagCompound flowComponent = components.getCompoundTagAt(variablesTag);
                 NBTTagList connections = flowComponent.getTagList("Connection", 10);
                 NBTTagList newConnections = new NBTTagList();
-                for(int i = 0; i < connections.tagCount(); ++i)
+                for (int i = 0; i < connections.tagCount(); ++i)
                 {
                     NBTTagCompound connection = connections.getCompoundTagAt(i);
                     if (connection.hasKey("ConnectionComponent"))
@@ -106,10 +100,10 @@ public class ItemSFMDrive extends Item
                     }
                     newConnections.appendTag(connection);
                 }
-                flowComponent.setTag("Connection",newConnections);
+                flowComponent.setTag("Connection", newConnections);
                 newComponents.appendTag(flowComponent);
             }
-            tagCompound.setTag("Components",newComponents);
+            tagCompound.setTag("Components", newComponents);
         }
         return tagCompound;
     }

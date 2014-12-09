@@ -11,7 +11,7 @@ import stevesaddons.tileentities.TileEntityRFNode;
 
 public class RFNodeUpdateMessage implements IMessage, IMessageHandler<RFNodeUpdateMessage, IMessage>
 {
-    public int posX,posY,posZ;
+    public int posX, posY, posZ;
     public byte input, output;
 
     public RFNodeUpdateMessage()
@@ -57,7 +57,7 @@ public class RFNodeUpdateMessage implements IMessage, IMessageHandler<RFNodeUpda
         {
             ((TileEntityRFNode) tileEntity).setInputSides(MessageHelper.byteToBooleanArray(message.input));
             ((TileEntityRFNode) tileEntity).setOutputSides(MessageHelper.byteToBooleanArray(message.output));
-            FMLClientHandler.instance().getClient().theWorld.markBlockRangeForRenderUpdate(message.posX, message.posY, message.posZ,message.posX, message.posY, message.posZ);
+            FMLClientHandler.instance().getClient().theWorld.markBlockRangeForRenderUpdate(message.posX, message.posY, message.posZ, message.posX, message.posY, message.posZ);
         }
         return null;
 
