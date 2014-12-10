@@ -39,7 +39,7 @@ public class ItemSFMDrive extends Item
 
     private boolean validateNBT(ItemStack stack)
     {
-        if (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")) return true;
+        if (stack.getTagCompound().getString("id").equals("TileEntityRFManager")) return true;
         stack.setTagCompound(null);
         return false;
     }
@@ -52,7 +52,7 @@ public class ItemSFMDrive extends Item
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof TileEntityManager)
             {
-                if (stack.hasTagCompound() && validateNBT(stack))
+                if (validateNBT(stack) && stack.hasTagCompound())
                 {
                     te.readFromNBT(correctNBT((TileEntityManager) te, stack.getTagCompound()));
                     stack.setTagCompound(null);

@@ -22,7 +22,7 @@ public class BlockRegistry
         ClusterRegistry.register(TileEntityRFNode.class, cableRFNode);
 
         GameRegistry.registerTileEntity(TileEntityRFCluster.class, Names.CABLE_RF + "Cluster");
-        GameRegistry.registerTileEntity(TileEntityRFManager.class, "TileEntityFManager");
+        GameRegistry.registerTileEntity(TileEntityRFManager.class, "TileEntityRFManager");
     }
 
     public static void registerRecipes()
