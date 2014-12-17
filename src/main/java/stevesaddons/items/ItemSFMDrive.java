@@ -52,7 +52,7 @@ public class ItemSFMDrive extends Item
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof TileEntityManager)
             {
-                if (validateNBT(stack) && stack.hasTagCompound())
+                if (stack.hasTagCompound() && validateNBT(stack))
                 {
                     te.readFromNBT(correctNBT((TileEntityManager) te, stack.getTagCompound()));
                     stack.setTagCompound(null);
