@@ -28,10 +28,6 @@ import java.util.*;
 public class CommandExecutorRF extends CommandExecutor
 {
     private TileEntityManager manager;
-    List<ItemBufferElement> itemBuffer;
-    List<CraftingBufferElement> craftingBufferHigh;
-    List<CraftingBufferElement> craftingBufferLow;
-    List<LiquidBufferElement> liquidBuffer;
     List<RFBufferElement> rfBuffer;
     private List<Integer> usedCommands;
     public static final int MAX_FLUID_TRANSFER = 10000000;
@@ -228,7 +224,6 @@ public class CommandExecutorRF extends CommandExecutor
                         {
                             this.executeChildCommands(command.getChildrenInputNodes().get(connectionId), EnumSet.allOf(ConnectionOption.class));
                         }
-
                         return;
                     case 14:
                         FlowComponent parent = command.getParent();
@@ -248,7 +243,6 @@ public class CommandExecutorRF extends CommandExecutor
                                 }
                             }
                         }
-
                         return;
                     case 15:
                         List camouflage = this.getCamouflage(command.getMenus().get(0));
