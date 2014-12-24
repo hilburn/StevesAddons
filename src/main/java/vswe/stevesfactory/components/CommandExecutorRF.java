@@ -131,6 +131,12 @@ public class CommandExecutorRF extends CommandExecutor
 
                         return;
                     case 4:
+                        if (ComponentMenuSplit.isSplitConnection(command) && this.splitFlow(command.getMenus().get(0)))
+                        {
+                            return;
+                        }
+                        break;
+                    case 5:
                         List inputTank = this.getTanks(command.getMenus().get(0));
                         if (inputTank != null)
                         {
@@ -138,7 +144,7 @@ public class CommandExecutorRF extends CommandExecutor
                             this.getLiquids(command.getMenus().get(2), inputTank);
                         }
                         break;
-                    case 5:
+                    case 6:
                         List outputTank = this.getTanks(command.getMenus().get(0));
                         if (outputTank != null)
                         {
@@ -146,7 +152,7 @@ public class CommandExecutorRF extends CommandExecutor
                             this.insertLiquids(command.getMenus().get(2), outputTank);
                         }
                         break;
-                    case 6:
+                    case 7:
                         List conditionTank = this.getTanks(command.getMenus().get(0));
                         if (conditionTank != null)
                         {
@@ -163,12 +169,6 @@ public class CommandExecutorRF extends CommandExecutor
                         }
 
                         return;
-                    case 7:
-                        if (ComponentMenuSplit.isSplitConnection(command) && this.splitFlow(command.getMenus().get(0)))
-                        {
-                            return;
-                        }
-                        break;
                     case 8:
                         List emitters = this.getEmitters(command.getMenus().get(0));
                         if (emitters != null)
