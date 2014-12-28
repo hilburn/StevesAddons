@@ -617,7 +617,7 @@ public class CommandExecutorRF extends CommandExecutor
                 ((TileEntityRFNode) cell).setOutputSides(validSides.toArray(new Integer[validSides.size()]));
             for (int side : validSides)
             {
-                int maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[side]), Integer.MAX_VALUE, true);
+                int maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(side), Integer.MAX_VALUE, true);
                 if (maxReceive > 0)
                 {
                     validOutputs.add(cell);
@@ -636,7 +636,7 @@ public class CommandExecutorRF extends CommandExecutor
             int maxReceive = 0;
             for (int side : directions)
             {
-                maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[side]), Integer.MAX_VALUE, true);
+                maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(side), Integer.MAX_VALUE, true);
                 if (maxReceive > 0)
                 {
                     break;
@@ -651,7 +651,7 @@ public class CommandExecutorRF extends CommandExecutor
             int maxReceive = ((int) bufferSize) / (inserted);
             for (int side : directions)
             {
-                int insert = cell.receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[side]), maxReceive, false);
+                int insert = cell.receiveEnergy(ForgeDirection.getOrientation(side), maxReceive, false);
                 if (insert > 0)
                 {
                     if (insert < maxReceive) itr.remove();
