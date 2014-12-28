@@ -34,6 +34,7 @@ public class ItemSFMDrive extends Item
             int z = stack.getTagCompound().getInteger("z");
             list.add("Data stored from Manager at:");
             list.add("x: " + x + " y: " + y + " z: " + z);
+
         }
     }
 

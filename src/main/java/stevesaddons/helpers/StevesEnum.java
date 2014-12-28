@@ -46,6 +46,6 @@ public class StevesEnum
     public static void replaceBlocks()
     {
         BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockCableCluster, BlockCableRFCluster.class, ItemCluster.class);
-        BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockManager, BlockRFManager.class, ItemBlock.class);
+        //BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockManager, BlockRFManager.class, ItemBlock.class);
     }
 }
