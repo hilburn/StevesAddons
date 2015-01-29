@@ -6,11 +6,11 @@ import vswe.stevesfactory.components.FlowComponent;
 
 import java.util.List;
 
-public class ComponentMenuRF extends ComponentMenuContainer
+public class ComponentMenuRFInput extends ComponentMenuContainer
 {
-    public ComponentMenuRF(FlowComponent parent)
+    public ComponentMenuRFInput(FlowComponent parent)
     {
-        super(parent, StevesEnum.RF_HANDLER);
+        super(parent, StevesEnum.RF_PROVIDER);
     }
 
     public String getName()

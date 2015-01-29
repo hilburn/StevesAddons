@@ -1,6 +1,8 @@
 package vswe.stevesfactory.components;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -287,14 +289,14 @@ public class CommandExecutorRF extends CommandExecutor
                         }
                         break;
                     case 17:
-                        List inputStorage = this.getRFStorage(command.getMenus().get(0));
+                        List inputStorage = this.getRFInput(command.getMenus().get(0));
                         if (inputStorage != null)
                         {
                             this.getInputRF(command.getMenus().get(1), inputStorage);
                         }
                         break;
                     case 18:
-                        List outputStorage = this.getRFStorage(command.getMenus().get(0));
+                        List outputStorage = this.getRFOutput(command.getMenus().get(0));
                         if (outputStorage != null)
                         {
                             this.insertRF(command.getMenus().get(1), outputStorage);
@@ -339,9 +341,19 @@ public class CommandExecutorRF extends CommandExecutor
         return getContainers(this.manager, componentMenu, ConnectionBlockType.TANK);
     }
 
+    private List<SlotInventoryHolder> getRFInput(ComponentMenu componentMenu)
+    {
+        return getContainers(this.manager, componentMenu, StevesEnum.RF_PROVIDER);
+    }
+
+    private List<SlotInventoryHolder> getRFOutput(ComponentMenu componentMenu)
+    {
+        return getContainers(this.manager, componentMenu, StevesEnum.RF_RECEIVER);
+    }
+
     private List<SlotInventoryHolder> getRFStorage(ComponentMenu componentMenu)
     {
-        return getContainers(this.manager, componentMenu, StevesEnum.RF_HANDLER);
+        return getContainers(this.manager, componentMenu, StevesEnum.RF_CONNECTION);
     }
 
     private List<SlotInventoryHolder> getNodes(ComponentMenu componentMenu)
@@ -435,7 +447,6 @@ public class CommandExecutorRF extends CommandExecutor
                 ret.add(new SlotInventoryHolder(selected, connection.getTileEntity(), menuContainer.getOption()));
             }
         }
-
     }
 
     private static boolean containsTe(List<SlotInventoryHolder> lst, TileEntity te)
@@ -529,16 +540,19 @@ public class CommandExecutorRF extends CommandExecutor
         List<SlotInventoryHolder> result = new ArrayList<SlotInventoryHolder>();
         for (int i = 0; i < cells.size(); ++i)
         {
-            IEnergyHandler cell = (IEnergyHandler) cells.get(i).getTile();
+            IEnergyConnection cell = (IEnergyConnection) cells.get(i).getTile();
             if (cell == null || cells.get(i).getTile() instanceof TileEntityRFNode) continue;
-            for (int side = 0; side < ComponentMenuTarget.directions.length; ++side)
+            if (cell instanceof IEnergyReceiver || cell instanceof IEnergyProvider)
             {
-                if (menuTarget.isActive(side))
+                for (int side = 0; side < ComponentMenuTarget.directions.length; ++side)
                 {
-                    if (cell.canConnectEnergy(ForgeDirection.getOrientation(side)))
+                    if (menuTarget.isActive(side))
                     {
-                        result.add(cells.get(i));
-                        break;
+                        if (cell.canConnectEnergy(ForgeDirection.getOrientation(side)))
+                        {
+                            result.add(cells.get(i));
+                            break;
+                        }
                     }
                 }
             }
@@ -551,14 +565,19 @@ public class CommandExecutorRF extends CommandExecutor
         int total = 0;
         for (int i = 0; i < cells.size(); ++i)
         {
-            IEnergyHandler cell = (IEnergyHandler) cells.get(i).getTile();
-            for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
+            IEnergyConnection cell = (IEnergyConnection) cells.get(i).getTile();
+            if (cell instanceof IEnergyReceiver || cell instanceof IEnergyProvider)
             {
-                int stored = cell.getEnergyStored(dir);
-                if (stored > 0)
+                for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
                 {
-                    total += stored;
-                    break;
+                    int stored;
+                    if (cell instanceof IEnergyReceiver) stored = ((IEnergyReceiver)cell).getEnergyStored(dir);
+                    else stored = ((IEnergyProvider)cell).getEnergyStored(dir);
+                    if (stored > 0)
+                    {
+                        total += stored;
+                        break;
+                    }
                 }
             }
         }
@@ -571,7 +590,7 @@ public class CommandExecutorRF extends CommandExecutor
         List<Integer> validSides = getValidSides(menuTarget);
         for (int i = 0; i < inputStorage.size(); ++i)
         {
-            IEnergyHandler cell = (IEnergyHandler) (inputStorage.get(i)).getTile();
+            IEnergyProvider cell = (IEnergyProvider) (inputStorage.get(i)).getTile();
             if (cell == null) continue;
             if (cell instanceof TileEntityRFNode)
                 ((TileEntityRFNode) cell).setInputSides(validSides.toArray(new Integer[validSides.size()]));
@@ -608,10 +627,10 @@ public class CommandExecutorRF extends CommandExecutor
         for (RFBufferElement rfElement : rfBuffer)
             bufferSize += rfElement.getMaxExtract();
         List<Integer> validSides = getValidSides(menuTarget);
-        List<IEnergyHandler> validOutputs = new ArrayList<IEnergyHandler>();
+        List<IEnergyReceiver> validOutputs = new ArrayList<IEnergyReceiver>();
         for (SlotInventoryHolder holder : outputStorage)
         {
-            IEnergyHandler cell = (IEnergyHandler) holder.getTile();
+            IEnergyReceiver cell = (IEnergyReceiver) holder.getTile();
             if (cell == null) continue;
             if (cell instanceof TileEntityRFNode)
                 ((TileEntityRFNode) cell).setOutputSides(validSides.toArray(new Integer[validSides.size()]));
@@ -628,11 +647,11 @@ public class CommandExecutorRF extends CommandExecutor
         insertRF(validSides.toArray(new Integer[validSides.size()]), validOutputs, bufferSize);
     }
 
-    private void insertRF(Integer[] directions, List<IEnergyHandler> validOutputs, long bufferSize)
+    private void insertRF(Integer[] directions, List<IEnergyReceiver> validOutputs, long bufferSize)
     {
-        for (Iterator<IEnergyHandler> itr = validOutputs.iterator(); itr.hasNext(); )
+        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext(); )
         {
-            IEnergyHandler cell = itr.next();
+            IEnergyReceiver cell = itr.next();
             int maxReceive = 0;
             for (int side : directions)
             {
@@ -645,9 +664,9 @@ public class CommandExecutorRF extends CommandExecutor
             if (maxReceive == 0) itr.remove();
         }
         int inserted = validOutputs.size();
-        for (Iterator<IEnergyHandler> itr = validOutputs.iterator(); itr.hasNext(); inserted--)
+        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext(); inserted--)
         {
-            IEnergyHandler cell = itr.next();
+            IEnergyReceiver cell = itr.next();
             int maxReceive = ((int) bufferSize) / (inserted);
             for (int side : directions)
             {

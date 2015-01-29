@@ -1,20 +1,21 @@
 package stevesaddons.components;
 
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class EnergyFacingHolder
 {
-    private IEnergyHandler energyHandler;
+    private IEnergyProvider energyHandler;
     private ForgeDirection accessibleFace;
 
-    public EnergyFacingHolder(IEnergyHandler energyHandler, ForgeDirection direction)
+    public EnergyFacingHolder(IEnergyProvider energyHandler, ForgeDirection direction)
     {
         this.energyHandler = energyHandler;
         this.accessibleFace = direction;
     }
 
-    public IEnergyHandler getEnergyHandler()
+    public IEnergyProvider getEnergyProvider()
     {
         return energyHandler;
     }

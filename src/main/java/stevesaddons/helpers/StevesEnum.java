@@ -1,12 +1,15 @@
 package stevesaddons.helpers;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.util.EnumHelper;
 import stevesaddons.blocks.BlockCableRFCluster;
 import stevesaddons.blocks.BlockRFManager;
-import stevesaddons.components.ComponentMenuRF;
+import stevesaddons.components.ComponentMenuRFInput;
 import stevesaddons.components.ComponentMenuRFCondition;
+import stevesaddons.components.ComponentMenuRFOutput;
 import stevesaddons.components.ComponentMenuTargetRF;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
@@ -35,10 +38,12 @@ public class StevesEnum
     public static final Localization RF_CONDITION_ERROR = EnumHelper.addEnum(localizationClasses, Localization.class, "RF_CONDITION_ERROR");
     public static final Localization NO_RF_ERROR = EnumHelper.addEnum(localizationClasses, Localization.class, "NO_RF_ERROR");
     public static final Localization BELOW = EnumHelper.addEnum(localizationClasses, Localization.class, "BELOW");
-    public static final ConnectionBlockType RF_HANDLER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_HANDLER", TYPE_RF, IEnergyHandler.class, false);
-    public static final ComponentType RF_INPUT = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_INPUT", 17, RF_INPUT_SHORT, RF_INPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, new Class[]{ComponentMenuRF.class, ComponentMenuTargetRF.class, ComponentMenuResult.class});
-    public static final ComponentType RF_OUTPUT = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_OUTPUT", 18, RF_OUTPUT_SHORT, RF_OUTPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, new Class[]{ComponentMenuRF.class, ComponentMenuTargetRF.class, ComponentMenuResult.class});
-    public static final ComponentType RF_CONDITION = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_CONDITION", 19, RF_CONDITION_SHORT, RF_CONDITION_LONG, new ConnectionSet[]{ConnectionSet.STANDARD_CONDITION}, new Class[]{ComponentMenuRF.class, ComponentMenuTargetRF.class, ComponentMenuRFCondition.class, ComponentMenuResult.class});
+    public static final ConnectionBlockType RF_PROVIDER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_PROVIDER", TYPE_RF, IEnergyProvider.class, false);
+    public static final ConnectionBlockType RF_RECEIVER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_RECEIVER", TYPE_RF, IEnergyReceiver.class, false);
+    public static final ConnectionBlockType RF_CONNECTION = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_CONNECTION", TYPE_RF, IEnergyConnection.class, false);
+    public static final ComponentType RF_INPUT = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_INPUT", 17, RF_INPUT_SHORT, RF_INPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, new Class[]{ComponentMenuRFInput.class, ComponentMenuTargetRF.class, ComponentMenuResult.class});
+    public static final ComponentType RF_OUTPUT = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_OUTPUT", 18, RF_OUTPUT_SHORT, RF_OUTPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, new Class[]{ComponentMenuRFOutput.class, ComponentMenuTargetRF.class, ComponentMenuResult.class});
+    public static final ComponentType RF_CONDITION = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_CONDITION", 19, RF_CONDITION_SHORT, RF_CONDITION_LONG, new ConnectionSet[]{ConnectionSet.STANDARD_CONDITION}, new Class[]{ComponentMenuRFInput.class, ComponentMenuTargetRF.class, ComponentMenuRFCondition.class, ComponentMenuResult.class});
     public static final ClusterMethodRegistration CONNECT_ENERGY = EnumHelper.addEnum(clusterMethodClasses, ClusterMethodRegistration.class, "CONNECT_ENERGY");
     public static final ClusterMethodRegistration EXTRACT_ENERGY = EnumHelper.addEnum(clusterMethodClasses, ClusterMethodRegistration.class, "EXTRACT_ENERGY");
     public static final ClusterMethodRegistration RECEIVE_ENERGY = EnumHelper.addEnum(clusterMethodClasses, ClusterMethodRegistration.class, "RECEIVE_ENERGY");
