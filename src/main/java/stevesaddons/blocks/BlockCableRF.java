@@ -16,6 +16,7 @@ import vswe.stevesfactory.blocks.ModBlocks;
 
 public class BlockCableRF extends BlockContainer
 {
+    @SideOnly(Side.CLIENT)
     private final IIcon[] icons = new IIcon[4];
 
     public BlockCableRF()
