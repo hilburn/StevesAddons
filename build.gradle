@@ -76,7 +76,7 @@ allprojects {
 
     jar {
         manifest {
-            attributes 'FMLCorePlugin': 'dimensionguard.asm.LoadingPlugin'
+            attributes 'FMLCorePlugin': 'stevesaddons.asm.LoadingPlugin'
             attributes 'FMLCorePluginContainsFMLMod': 'true'
         }
         dependsOn ":copyBuildXml"

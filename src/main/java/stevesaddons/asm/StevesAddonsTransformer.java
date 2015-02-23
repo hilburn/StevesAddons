@@ -88,7 +88,7 @@ public class StevesAddonsTransformer implements IClassTransformer
                     bytes = replace(MethodName.GET_GUI,bytes,"vswe/stevesfactory/interfaces/GuiManager","stevesaddons/interfaces/GuiRFManager");
                     break;
             }
-            //classMap.remove(className);
+            classMap.remove(className);
         }
 
         return bytes;
