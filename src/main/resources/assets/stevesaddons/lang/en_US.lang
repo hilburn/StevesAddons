@@ -22,3 +22,9 @@ gui.sfm.RfConditionError=Invalid trigger level
 gui.sfm.Below=Trigger low
 
 tile.cable_rf.name=RF Node
+
+stevesaddons.command.notFound=Command not found
+stevesaddons.command.loadFailed=Loading failed
+stevesaddons.command.nothingToSave=Duplicator is empty
+stevesaddons.command.saveFailed=Save failed
+stevesaddons.command.noDuplicator=Command can only be applied to a Manager Duplicator
