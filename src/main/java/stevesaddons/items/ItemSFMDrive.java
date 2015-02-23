@@ -48,7 +48,7 @@ public class ItemSFMDrive extends Item
 
     public static boolean validateNBT(ItemStack stack)
     {
-        if (stack.hasTagCompound() && stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")) return true;
+        if (stack.hasTagCompound() && (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName") || stack.getTagCompound().getString("id").equals("TileEntityRFManager"))) return true;
         stack.setTagCompound(null);
         return false;
     }
