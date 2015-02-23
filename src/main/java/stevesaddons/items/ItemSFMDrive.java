@@ -29,18 +29,26 @@ public class ItemSFMDrive extends Item
     {
         if (stack.hasTagCompound() && validateNBT(stack))
         {
-            int x = stack.getTagCompound().getInteger("x");
-            int y = stack.getTagCompound().getInteger("y");
-            int z = stack.getTagCompound().getInteger("z");
-            list.add("Data stored from Manager at:");
-            list.add("x: " + x + " y: " + y + " z: " + z);
+            if (stack.getTagCompound().hasKey("Author"))
+            {
+                list.add("Manager setup authored by:");
+                list.add(stack.getTagCompound().getString("Author"));
+            }
+            else
+            {
+                int x = stack.getTagCompound().getInteger("x");
+                int y = stack.getTagCompound().getInteger("y");
+                int z = stack.getTagCompound().getInteger("z");
+                list.add("Data stored from Manager at:");
+                list.add("x: " + x + " y: " + y + " z: " + z);
+            }
 
         }
     }
 
-    private boolean validateNBT(ItemStack stack)
+    public static boolean validateNBT(ItemStack stack)
     {
-        if (stack.getTagCompound().getString("id").equals("TileEntityRFManager")) return true;
+        if (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")) return true;
         stack.setTagCompound(null);
         return false;
     }
@@ -67,7 +75,7 @@ public class ItemSFMDrive extends Item
                 return true;
             }
         }
-        return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
+        return false;
     }
 
     private static NBTTagCompound correctNBT(TileEntityManager manager, NBTTagCompound tagCompound)

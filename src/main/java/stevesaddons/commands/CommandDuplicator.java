@@ -1,0 +1,73 @@
+package stevesaddons.commands;
+
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import stevesaddons.registry.ItemRegistry;
+import vswe.stevesfactory.blocks.TileEntityManager;
+
+public abstract class CommandDuplicator implements ISubCommand
+{
+    public static NBTTagCompound defaultTagCompound = new NBTTagCompound();
+    public static String[] keys = {"id", "Variables", "Components", "Timer", "ProtocolVersion", "ench"};
+
+    static
+    {
+        new TileEntityManager().writeToNBT(defaultTagCompound);
+        defaultTagCompound.setTag("ench", new NBTTagList());
+    }
+
+    public static ItemStack getDuplicator(ICommandSender sender)
+    {
+        if (sender instanceof EntityPlayer)
+        {
+            EntityPlayer player = (EntityPlayer)sender;
+            ItemStack stack = player.inventory.getCurrentItem();
+            if (stack != null && stack.getItem() == ItemRegistry.duplicator) return stack;
+        }
+        return null;
+    }
+
+    @Override
+    public void handleCommand(ICommandSender sender, String[] arguments)
+    {
+        ItemStack duplicator = getDuplicator(sender);
+        if (duplicator != null)
+        {
+            doCommand(duplicator, sender, arguments);
+        } else
+        {
+            throw new CommandException("stevesaddons.command.noDuplicator");
+        }
+    }
+
+    public static NBTTagCompound stripBaseNBT(NBTTagCompound tagCompound)
+    {
+        for (String key : keys)
+        {
+            if (tagCompound.hasKey(key) && tagCompound.getTag(key).equals(defaultTagCompound.getTag(key)))
+                tagCompound.removeTag(key);
+        }
+        return tagCompound;
+    }
+
+    public static NBTTagCompound unstripBaseNBT(NBTTagCompound tagCompound)
+    {
+        for (String key : keys)
+        {
+            if (!tagCompound.hasKey(key)) tagCompound.setTag(key, defaultTagCompound.getTag(key));
+        }
+        return tagCompound;
+    }
+
+    public abstract void doCommand(ItemStack duplicator, ICommandSender sender, String[] arguments);
+
+    @Override
+    public int getPermissionLevel()
+    {
+        return 2;
+    }
+}
