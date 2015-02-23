@@ -16,7 +16,7 @@ import vswe.stevesfactory.blocks.ModBlocks;
 
 public class BlockCableRF extends BlockContainer
 {
-    private final IIcon[] icons = new IIcon[4];
+    private IIcon[] icons;
 
     public BlockCableRF()
     {
@@ -37,6 +37,7 @@ public class BlockCableRF extends BlockContainer
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister registry)
     {
+        icons = new IIcon[4];
         for (int i = 0; i < 4; i++)
             icons[i] = registry.registerIcon(Reference.ID + ":" + Names.CABLE_RF + "_" + i);
     }
