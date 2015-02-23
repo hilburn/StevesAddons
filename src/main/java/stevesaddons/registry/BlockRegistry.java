@@ -9,6 +9,7 @@ import stevesaddons.tileentities.TileEntityRFNode;
 import vswe.stevesfactory.blocks.ClusterRegistry;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.blocks.TileEntityRFCluster;
+import vswe.stevesfactory.blocks.TileEntityRFManager;
 
 public class BlockRegistry
 {
@@ -21,6 +22,7 @@ public class BlockRegistry
         ClusterRegistry.register(TileEntityRFNode.class, cableRFNode);
 
         GameRegistry.registerTileEntity(TileEntityRFCluster.class, Names.CABLE_RF + "Cluster");
+        GameRegistry.registerTileEntity(TileEntityRFManager.class, "TileEntityRFManager");
     }
 
     public static void registerRecipes()
