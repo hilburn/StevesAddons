@@ -8,7 +8,11 @@ gui.sfm.RfOutputLong=RF Output
 gui.sfm.RfOutputShort=RF Output
 
 gui.sfm.TypeRf=RF Storage
+gui.sfm.TypeRfInput=RF Provider
+gui.sfm.TypeRfOutput=RF Receiver
 gui.sfm.NoRfError=No RF Storage Selected
+
+gui.sfm.CopyCommand=Copy [Drop Command Here]
 
 gui.sfm.RfConditionShort=RF Condition
 gui.sfm.RfConditionLong=RF Condition

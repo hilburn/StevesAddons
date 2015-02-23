@@ -15,7 +15,7 @@ public class ComponentMenuRFInput extends ComponentMenuContainer
 
     public String getName()
     {
-        return StevesEnum.TYPE_RF.toString();
+        return StevesEnum.TYPE_RF_INPUT.toString();
     }
 
     @Override

@@ -17,7 +17,7 @@ import stevesaddons.recipes.ClusterUncraftingRecipe;
 import stevesaddons.reference.Reference;
 import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.ItemRegistry;
-import vswe.stevesfactory.blocks.TileEntityRFManager;
+import vswe.stevesfactory.blocks.TileEntityManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -69,9 +69,9 @@ public class StevesAddons
                 ArrayList<Class>  extensions = (ArrayList<Class>) classExtensions.get(null);
                 ArrayList<String> extensionsNames = (ArrayList<String>) classExtensionsNames.get(null);
                 HashMap<String, Class> map = (HashMap<String, Class>) classMap.get(null);
-                extensions.add(TileEntityRFManager.class);
-                extensionsNames.add(TileEntityRFManager.class.getSimpleName());
-                map.put(TileEntityRFManager.class.getSimpleName(),TileEntityRFManager.class);
+                extensions.add(TileEntityManager.class);
+                extensionsNames.add(TileEntityManager.class.getSimpleName());
+                map.put(TileEntityManager.class.getSimpleName(),TileEntityManager.class);
             } catch (Exception e1){}
         }
     }

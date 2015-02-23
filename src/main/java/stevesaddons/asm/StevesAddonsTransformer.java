@@ -15,18 +15,35 @@ public class StevesAddonsTransformer implements IClassTransformer
 {
     private enum MethodName
     {
-        ACTIVATE_TRIGGER("activateTrigger","(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V"),
-        GET_GUI("getGui","(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;"),
-        CE_INIT("<init>","(Lvswe/stevesfactory/blocks/TileEntityManager;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V");
+        ACTIVATE_TRIGGER("activateTrigger","(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V", "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF"),
+        GET_GUI("getGui","(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;","vswe/stevesfactory/interfaces/GuiManager","stevesaddons/interfaces/GuiRFManager"),
+        CREATE_TE("func_149915_a","(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;","vswe/stevesfactory/blocks/TileEntityCluster","vswe/stevesfactory/blocks/TileEntityRFCluster"),
+        MANAGER_INIT("<init>","()");
 
         private String deObf;
         private String obf;
         private String args;
+        public final String toReplace;
+        public final String replace;
+        public InsnList instructions = new InsnList();
 
         MethodName(String name, String args)
         {
+            this(name, args, "", "");
+        }
+
+        MethodName(String name, String args, String toReplace, String replace)
+        {
             deObf = name;
             this.args = args;
+            this.replace = replace;
+            this.toReplace = toReplace;
+        }
+
+        static
+        {
+            MANAGER_INIT.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            MANAGER_INIT.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
         }
 
         public String getName()
@@ -44,7 +61,8 @@ public class StevesAddonsTransformer implements IClassTransformer
     private enum ClassName
     {
 
-        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager",MethodName.ACTIVATE_TRIGGER);
+        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager",MethodName.ACTIVATE_TRIGGER,MethodName.GET_GUI,MethodName.MANAGER_INIT),
+        RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster",MethodName.CREATE_TE);
         private String deObf;
         private String obf;
         private MethodName[] methods;
@@ -81,12 +99,9 @@ public class StevesAddonsTransformer implements IClassTransformer
         ClassName clazz = classMap.get(className);
         if (clazz!=null)
         {
-            switch (clazz)
+            for (MethodName method: clazz.getMethods())
             {
-                case TE_MANAGER:
-                    bytes = replace(MethodName.ACTIVATE_TRIGGER, bytes, "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF");
-                    bytes = replace(MethodName.GET_GUI,bytes,"vswe/stevesfactory/interfaces/GuiManager","stevesaddons/interfaces/GuiRFManager");
-                    break;
+                bytes = method.instructions.size()>0?inject(method,bytes):replace(method, bytes);
             }
             classMap.remove(className);
         }
@@ -94,7 +109,22 @@ public class StevesAddonsTransformer implements IClassTransformer
         return bytes;
     }
 
-    private byte[] replace(MethodName methodName, byte[] data, String toReplace, String newVal)
+    private byte[] inject(MethodName methodName, byte[] data)
+    {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(data);
+        classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
+
+        MethodNode methodNode = getMethodByName(classNode, methodName);
+        AbstractInsnNode node = methodNode.instructions.getLast();
+        while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85)) node = node.getPrevious();
+        methodNode.instructions.insertBefore(node,methodName.instructions);
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
+
+    private byte[] replace(MethodName methodName, byte[] data)
     {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(data);
@@ -102,16 +132,18 @@ public class StevesAddonsTransformer implements IClassTransformer
 
         MethodNode methodNode = getMethodByName(classNode, methodName);
         AbstractInsnNode node = methodNode.instructions.getFirst();
+
+
         do
         {
-            if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(toReplace))
+            if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(methodName.toReplace))
             {
-                TypeInsnNode newNode = new TypeInsnNode(Opcodes.NEW,newVal);
+                TypeInsnNode newNode = new TypeInsnNode(Opcodes.NEW,methodName.replace);
                 methodNode.instructions.set(node, newNode);
                 node = newNode;
-            } else if (node instanceof MethodInsnNode && ((MethodInsnNode)node).owner.contains(toReplace))
+            } else if (node instanceof MethodInsnNode && ((MethodInsnNode)node).owner.contains(methodName.toReplace))
             {
-                MethodInsnNode newNode = new MethodInsnNode(node.getOpcode(), newVal, ((MethodInsnNode)node).name,((MethodInsnNode)node).desc,false);
+                MethodInsnNode newNode = new MethodInsnNode(node.getOpcode(), methodName.replace, ((MethodInsnNode)node).name,((MethodInsnNode)node).desc,false);
                 methodNode.instructions.set(node, newNode);
                 node = newNode;
             }

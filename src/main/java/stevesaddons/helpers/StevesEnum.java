@@ -3,10 +3,7 @@ package stevesaddons.helpers;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.util.EnumHelper;
-import stevesaddons.blocks.BlockCableRFCluster;
-import stevesaddons.blocks.BlockRFManager;
 import stevesaddons.components.ComponentMenuRFInput;
 import stevesaddons.components.ComponentMenuRFCondition;
 import stevesaddons.components.ComponentMenuRFOutput;
@@ -14,8 +11,6 @@ import stevesaddons.components.ComponentMenuTargetRF;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.ItemCluster;
-import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.components.ComponentMenuResult;
 import vswe.stevesfactory.components.ComponentType;
 import vswe.stevesfactory.components.ConnectionSet;
@@ -27,6 +22,8 @@ public class StevesEnum
     private static final Class[][] connectionTypeClasses = new Class[][]{{ConnectionBlockType.class, Localization.class, Class.class, boolean.class}};
     private static final Class[][] componentTypeClasses = new Class[][]{{ComponentType.class, int.class, Localization.class, Localization.class, ConnectionSet[].class, Class[].class}};
     public static final Localization TYPE_RF = EnumHelper.addEnum(localizationClasses, Localization.class, "TYPE_RF");
+    public static final Localization TYPE_RF_INPUT = EnumHelper.addEnum(localizationClasses, Localization.class, "TYPE_RF_INPUT");
+    public static final Localization TYPE_RF_OUTPUT = EnumHelper.addEnum(localizationClasses, Localization.class, "TYPE_RF_OUTPUT");
     public static final Localization RF_INPUT_SHORT = EnumHelper.addEnum(localizationClasses, Localization.class, "RF_INPUT_SHORT");
     public static final Localization RF_INPUT_LONG = EnumHelper.addEnum(localizationClasses, Localization.class, "RF_INPUT_LONG");
     public static final Localization RF_OUTPUT_SHORT = EnumHelper.addEnum(localizationClasses, Localization.class, "RF_OUTPUT_SHORT");
@@ -37,9 +34,10 @@ public class StevesEnum
     public static final Localization RF_CONDITION_INFO = EnumHelper.addEnum(localizationClasses, Localization.class, "RF_CONDITION_INFO");
     public static final Localization RF_CONDITION_ERROR = EnumHelper.addEnum(localizationClasses, Localization.class, "RF_CONDITION_ERROR");
     public static final Localization NO_RF_ERROR = EnumHelper.addEnum(localizationClasses, Localization.class, "NO_RF_ERROR");
+    public static final Localization COPY_COMMAND = EnumHelper.addEnum(localizationClasses, Localization.class, "COPY_COMMAND");
     public static final Localization BELOW = EnumHelper.addEnum(localizationClasses, Localization.class, "BELOW");
-    public static final ConnectionBlockType RF_PROVIDER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_PROVIDER", TYPE_RF, IEnergyProvider.class, false);
-    public static final ConnectionBlockType RF_RECEIVER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_RECEIVER", TYPE_RF, IEnergyReceiver.class, false);
+    public static final ConnectionBlockType RF_PROVIDER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_PROVIDER", TYPE_RF_INPUT, IEnergyProvider.class, false);
+    public static final ConnectionBlockType RF_RECEIVER = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_RECEIVER", TYPE_RF_OUTPUT, IEnergyReceiver.class, false);
     public static final ConnectionBlockType RF_CONNECTION = EnumHelper.addEnum(connectionTypeClasses, ConnectionBlockType.class, "RF_CONNECTION", TYPE_RF, IEnergyConnection.class, false);
     public static final ComponentType RF_INPUT = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_INPUT", 17, RF_INPUT_SHORT, RF_INPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, new Class[]{ComponentMenuRFInput.class, ComponentMenuTargetRF.class, ComponentMenuResult.class});
     public static final ComponentType RF_OUTPUT = EnumHelper.addEnum(componentTypeClasses, ComponentType.class, "RF_OUTPUT", 18, RF_OUTPUT_SHORT, RF_OUTPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, new Class[]{ComponentMenuRFOutput.class, ComponentMenuTargetRF.class, ComponentMenuResult.class});
@@ -50,7 +48,7 @@ public class StevesEnum
 
     public static void replaceBlocks()
     {
-        BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockCableCluster, BlockCableRFCluster.class, ItemCluster.class);
+        //BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockCableCluster, BlockCableRFCluster.class, ItemCluster.class);
         //BlockReplaceHelper.replaceBlock(ModBlocks.class, ModBlocks.blockManager, BlockRFManager.class, ItemBlock.class);
     }
 }
