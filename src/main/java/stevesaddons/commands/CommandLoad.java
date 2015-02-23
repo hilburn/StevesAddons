@@ -1,10 +1,12 @@
 package stevesaddons.commands;
 
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.DimensionManager;
 
 import java.io.File;
@@ -28,6 +30,7 @@ public class CommandLoad extends CommandDuplicator
             }
             NBTTagCompound tagCompound = CompressedStreamTools.read(file);
             duplicator.setTagCompound(unstripBaseNBT(tagCompound));
+            CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager loaded from: "+ name +".nbt"));
         } catch (IOException e)
         {
             throw new CommandException("stevesaddons.command.loadFailed");

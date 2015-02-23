@@ -24,7 +24,7 @@ public class CommandClear extends CommandDuplicator
     @Override
     public String getCommandName()
     {
-        return "unload";
+        return "clear";
     }
 
     @Override
