@@ -5,14 +5,9 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
-import stevesaddons.commands.CommandClear;
-import stevesaddons.commands.CommandLoad;
-import stevesaddons.commands.CommandSave;
-import stevesaddons.commands.ISubCommand;
+import stevesaddons.commands.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommandRegistry extends CommandBase
 {
@@ -23,6 +18,7 @@ public class CommandRegistry extends CommandBase
         register(CommandSave.instance);
         register(CommandLoad.instance);
         register(CommandClear.instance);
+        register(CommandPastebin.instance);
     }
 
     public static void register(ISubCommand command)
@@ -33,7 +29,7 @@ public class CommandRegistry extends CommandBase
     @Override
     public String getCommandName()
     {
-        return "stevesaddons ";
+        return "stevesaddons";
     }
 
     @Override

@@ -50,6 +50,10 @@ public class CommandSave extends CommandDuplicator
                 tagCompound.setString("Author", sender.getCommandSenderName());
                 CompressedStreamTools.write(stripBaseNBT(tagCompound), file);
             }
+            else
+            {
+                throw new CommandException("stevesaddons.command.nothingToSave");
+            }
         } catch (Exception e)
         {
             throw new CommandException("stevesaddons.command.saveFailed");

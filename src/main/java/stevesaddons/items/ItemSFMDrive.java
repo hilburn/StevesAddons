@@ -48,7 +48,7 @@ public class ItemSFMDrive extends Item
 
     public static boolean validateNBT(ItemStack stack)
     {
-        if (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")) return true;
+        if (stack.hasTagCompound() && stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")) return true;
         stack.setTagCompound(null);
         return false;
     }
@@ -75,6 +75,7 @@ public class ItemSFMDrive extends Item
                 return true;
             }
         }
+        validateNBT(stack);
         return false;
     }
 

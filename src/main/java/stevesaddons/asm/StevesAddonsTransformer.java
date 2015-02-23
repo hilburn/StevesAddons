@@ -18,7 +18,15 @@ public class StevesAddonsTransformer implements IClassTransformer
         ACTIVATE_TRIGGER("activateTrigger","(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V", "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF"),
         GET_GUI("getGui","(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;","vswe/stevesfactory/interfaces/GuiManager","stevesaddons/interfaces/GuiRFManager"),
         CREATE_TE("func_149915_a","(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;","vswe/stevesfactory/blocks/TileEntityCluster","vswe/stevesfactory/blocks/TileEntityRFCluster"),
-        MANAGER_INIT("<init>","()");
+        MANAGER_INIT("<init>","()"){
+            @Override
+            public AbstractInsnNode getInjectionPoint(InsnList list)
+            {
+                AbstractInsnNode node = list.getLast();
+                while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst()) node = node.getPrevious();
+                return node;
+            }
+        };
 
         private String deObf;
         private String obf;
@@ -44,6 +52,11 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             MANAGER_INIT.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
             MANAGER_INIT.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
+        }
+
+        public AbstractInsnNode getInjectionPoint(InsnList list)
+        {
+            return null;
         }
 
         public String getName()
@@ -116,8 +129,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
         MethodNode methodNode = getMethodByName(classNode, methodName);
-        AbstractInsnNode node = methodNode.instructions.getLast();
-        while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85)) node = node.getPrevious();
+        AbstractInsnNode node = methodName.getInjectionPoint(methodNode.instructions);
         methodNode.instructions.insertBefore(node,methodName.instructions);
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
