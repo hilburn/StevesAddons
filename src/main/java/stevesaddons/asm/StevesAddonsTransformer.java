@@ -26,6 +26,15 @@ public class StevesAddonsTransformer implements IClassTransformer
                 while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst()) node = node.getPrevious();
                 return node;
             }
+        },
+        ITEM_SETTING_LOAD("load","(Lnet/minecraft/nbt/NBTTagCompound;)V"){
+            @Override
+            public AbstractInsnNode getInjectionPoint(InsnList list)
+            {
+                AbstractInsnNode node = list.getLast();
+                while (node.getOpcode()!=Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
+                return node;
+            }
         };
 
         private String deObf;
@@ -52,6 +61,12 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             MANAGER_INIT.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
             MANAGER_INIT.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
+
+            ITEM_SETTING_LOAD.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            ITEM_SETTING_LOAD.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.GETFIELD,"vswe/stevesfactory/components/ItemSetting","item","Lnet/minecraft/item/ItemStack;"));
+            ITEM_SETTING_LOAD.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixLoadingStack", "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", false));
+            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD,"vswe/stevesfactory/components/ItemSetting","item","Lnet/minecraft/item/ItemStack;"));
         }
 
         public AbstractInsnNode getInjectionPoint(InsnList list)
@@ -75,7 +90,8 @@ public class StevesAddonsTransformer implements IClassTransformer
     {
 
         TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager",MethodName.ACTIVATE_TRIGGER,MethodName.GET_GUI,MethodName.MANAGER_INIT),
-        RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster",MethodName.CREATE_TE);
+        RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster",MethodName.CREATE_TE),
+        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting",MethodName.ITEM_SETTING_LOAD);
         private String deObf;
         private String obf;
         private MethodName[] methods;

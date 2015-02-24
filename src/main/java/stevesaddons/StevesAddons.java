@@ -1,16 +1,14 @@
 package stevesaddons;
 
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.recipes.ClusterUncraftingRecipe;
+import stevesaddons.reference.Metadata;
 import stevesaddons.reference.Reference;
 import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.CommandRegistry;
@@ -28,12 +26,16 @@ public class StevesAddons
     @Mod.Instance(value = Reference.ID)
     public static StevesAddons INSTANCE = new StevesAddons();
 
+    @Mod.Metadata(Reference.ID)
+    public static ModMetadata metadata;
+
     @SidedProxy(clientSide = "stevesaddons.proxy.ClientProxy", serverSide = "stevesaddons.proxy.CommonProxy")
     public static CommonProxy PROXY;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        metadata = Metadata.init(metadata);
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();
         MessageHandler.init();

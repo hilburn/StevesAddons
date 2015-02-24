@@ -1,5 +1,6 @@
 package stevesaddons.asm;
 
+import net.minecraft.item.ItemStack;
 import stevesaddons.helpers.StevesEnum;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.TileEntityManager;
@@ -65,6 +66,12 @@ public class StevesHooks
             }
         });
         return;
+    }
+
+    public static ItemStack fixLoadingStack(ItemStack stack)
+    {
+        if (stack != null && stack.getItem() == null) return null;
+        return stack;
     }
 
     private static int getAfterDelete(List<TileEntityManager.Button> buttons)
