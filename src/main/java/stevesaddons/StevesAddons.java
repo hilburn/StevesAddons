@@ -4,6 +4,7 @@ package stevesaddons;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
+import stevesaddons.helpers.Config;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
@@ -39,6 +40,7 @@ public class StevesAddons
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();
         MessageHandler.init();
+        Config.init(event.getSuggestedConfigurationFile());
     }
 
     @Mod.EventHandler
@@ -78,6 +80,6 @@ public class StevesAddons
     @Mod.EventHandler
     public void serverStart(FMLServerStartingEvent event)
     {
-        event.registerServerCommand(new CommandRegistry());
+        event.registerServerCommand(CommandRegistry.instance);
     }
 }

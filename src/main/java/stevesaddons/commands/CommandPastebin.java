@@ -1,14 +1,15 @@
 package stevesaddons.commands;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ChatComponentText;
 import stevesaddons.helpers.HttpPost;
 import stevesaddons.helpers.LocalizationHelper;
@@ -20,6 +21,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,13 +45,9 @@ public class CommandPastebin extends CommandDuplicator
     @Override
     public void doCommand(ItemStack duplicator, EntityPlayerMP sender, String[] arguments)
     {
-        if (!usernameWhitelist.contains(sender.getCommandSenderName()))
-        {
-            throw new CommandException("stevesaddons.command.noPermission");
-        }
         if (arguments.length<2)
         {
-            throw new CommandException("commands.generic.syntax");
+            throw new WrongUsageException("stevesaddons.command." + getCommandName() + ".syntax");
         }
         try
         {
@@ -71,11 +69,11 @@ public class CommandPastebin extends CommandDuplicator
                     httpPost.put("api_paste_code", tagCompound.toString());
                     String inputLine = httpPost.getContents();
                     sender.addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", inputLine)));
-                    if (sender.mcServer instanceof IntegratedServer)
+                    if (!sender.mcServer.isDedicatedServer())
                     {
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(new StringSelection(inputLine), clippy);
-                        CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translate("stevesaddons.command.copiedToClip")));
+                        sender.addChatComponentMessage(new ChatComponentText(LocalizationHelper.translate("stevesaddons.command.copiedToClip")));
                     }
                 }
                 else
@@ -86,7 +84,7 @@ public class CommandPastebin extends CommandDuplicator
             {
                 if (arguments.length < 3)
                 {
-                    throw new CommandException("commands.generic.syntax");
+                    throw new WrongUsageException("stevesaddons.command." + getCommandName() + ".syntax");
                 }
                 String name = arguments[2];
                 name = name.replaceAll("http:\\/\\/pastebin.com\\/(.*)","$1");
@@ -98,12 +96,12 @@ public class CommandPastebin extends CommandDuplicator
                     NBTTagCompound tagCompound = (NBTTagCompound) nbtBase;
                     tagCompound = unstripBaseNBT(tagCompound);
                     duplicator.setTagCompound(tagCompound);
-                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.loadSuccess", "http://pastebin.com/" + name)));
+                    sender.addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.loadSuccess", "http://pastebin.com/" + name)));
                 }
             }
             else
             {
-                throw new CommandException("commands.generic.syntax");
+                throw new WrongUsageException("stevesaddons.command." + getCommandName() + ".syntax");
             }
         }
         catch(Exception e)
@@ -121,6 +119,12 @@ public class CommandPastebin extends CommandDuplicator
     @Override
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args)
     {
-        return null;
+        return isVisible(sender)? Arrays.asList("put", "get"):null;
+    }
+
+    @Override
+    public boolean isVisible(ICommandSender sender)
+    {
+        return usernameWhitelist.contains(sender.getCommandSenderName()) || Minecraft.getMinecraft().isIntegratedServerRunning();
     }
 }

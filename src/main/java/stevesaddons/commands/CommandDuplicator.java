@@ -35,6 +35,10 @@ public abstract class CommandDuplicator implements ISubCommand
     @Override
     public void handleCommand(ICommandSender sender, String[] arguments)
     {
+        if (!isVisible(sender))
+        {
+            throw new CommandException("stevesaddons.command.noPermission");
+        }
         ItemStack duplicator = getDuplicator(sender);
         if (duplicator != null)
         {
@@ -70,5 +74,11 @@ public abstract class CommandDuplicator implements ISubCommand
     public int getPermissionLevel()
     {
         return 2;
+    }
+
+    @Override
+    public boolean isVisible(ICommandSender sender)
+    {
+        return sender.canCommandSenderUseCommand(getPermissionLevel(), getCommandName());
     }
 }

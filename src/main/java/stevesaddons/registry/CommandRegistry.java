@@ -11,10 +11,12 @@ import java.util.*;
 
 public class CommandRegistry extends CommandBase
 {
-    private static Map<String, ISubCommand> commands = new HashMap<String, ISubCommand>();
+    public static Map<String, ISubCommand> commands = new LinkedHashMap<String, ISubCommand>();
+    public static CommandRegistry instance = new CommandRegistry();
 
     static
     {
+        register(CommandHelp.instance);
         register(CommandSave.instance);
         register(CommandLoad.instance);
         register(CommandClear.instance);
@@ -62,12 +64,25 @@ public class CommandRegistry extends CommandBase
         throw new CommandNotFoundException("stevesaddons.command.notFound");
     }
 
+    public static boolean commandExists(String name)
+    {
+        return commands.containsKey(name);
+    }
+
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
 
-        if (args.length == 1) {
-            return getListOfStringsFromIterableMatchingLastWord(args, commands.keySet());
-        } else if (commands.containsKey(args[0])) {
+        if (args.length == 1)
+        {
+            String subCommand = args[0];
+            List result = new ArrayList();
+            for (ISubCommand command:commands.values())
+            {
+                if (command.isVisible(sender) && command.getCommandName().startsWith(subCommand)) result.add(command.getCommandName());
+            }
+            return result;
+        } else if (commands.containsKey(args[0]) && commands.get(args[0]).isVisible(sender))
+        {
             return commands.get(args[0]).addTabCompletionOptions(sender, args);
         }
         return null;

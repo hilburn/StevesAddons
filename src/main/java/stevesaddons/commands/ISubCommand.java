@@ -15,4 +15,5 @@ public interface ISubCommand
 
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args);
 
+    public boolean isVisible(ICommandSender sender);
 }
