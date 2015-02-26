@@ -5,8 +5,11 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+import stevesaddons.helpers.HttpPost;
 import stevesaddons.items.ItemSFMDrive;
 
 import java.awt.*;
@@ -15,8 +18,6 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -46,33 +47,22 @@ public class CommandPastebin extends CommandDuplicator
             {
                 if (ItemSFMDrive.validateNBT(duplicator) && duplicator.hasTagCompound())
                 {
-                    URL page = new URL("http://pastebin.com/api/api_post.php");
-                    URLConnection conn = page.openConnection();
-                    conn.setDoOutput(true);
-                    OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-                    String val = "api_option=paste&api_paste_private=1&api_dev_key=" + apiKey;
-                    if (arguments.length > 2) val += "&api_paste_name=" + URLEncoder.encode(arguments[2], "UTF-8");
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    HttpPost httpPost = new HttpPost("http://pastebin.com/api/api_post.php");
+                    httpPost.put("api_option", "paste");
+                    httpPost.put("api_paste_private","1");
+                    httpPost.put("api_dev_key", apiKey);
+                    if (arguments.length > 2) httpPost.put("api_paste_name" , arguments[2]);
                     NBTTagCompound tagCompound = (NBTTagCompound)duplicator.getTagCompound().copy();
                     tagCompound.removeTag("x");
                     tagCompound.removeTag("y");
                     tagCompound.removeTag("z");
                     tagCompound.setString("Author", sender.getCommandSenderName());
-                    CompressedStreamTools.write(stripBaseNBT(tagCompound), new DataOutputStream(baos));
-                    val += "&api_paste_code=" + URLEncoder.encode(baos.toString("UTF-8"), "UTF-8");
-                    writer.write(val);
-                    writer.flush();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    String inputLine;
-                    while ((inputLine = reader.readLine()) != null)
-                    {
-                        CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager saved to: "+ inputLine));
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(new StringSelection(inputLine), clippy);
-                        CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Pastebin link loaded onto clipboard"));
-                        break;
-                    }
-                    reader.close();
+                    httpPost.put("api_paste_code", tagCompound.toString());
+                    String inputLine = httpPost.getContents();
+                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager saved to: "+ inputLine));
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(new StringSelection(inputLine), clippy);
+                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Pastebin link loaded onto clipboard"));
                 }
                 else
                 {
@@ -87,26 +77,20 @@ public class CommandPastebin extends CommandDuplicator
                 String name = arguments[2];
                 name = name.replaceAll("http:\\/\\/pastebin.com\\/(.*)","$1");
                 name = name.replaceAll("pastebin.com\\/(.*)","$1");
-                String url = "http://pastebin.com/raw.php";
-                URL page = new URL(url);
-                URLConnection conn = page.openConnection();
-                conn.setDoOutput(true);
-                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-                writer.write("i="+name);
-                writer.flush();
-                NBTTagCompound tagCompound = CompressedStreamTools.read(new DataInputStream(conn.getInputStream())); //TODO: why doesn't this work...
-                tagCompound = unstripBaseNBT(tagCompound);
-                duplicator.setTagCompound(tagCompound);
-                CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager loaded from: http://pastebin.com/"+name));
+                HttpPost httpPost = new HttpPost("http://pastebin.com/raw.php?i="+ URLEncoder.encode(name, "UTF-8"));
+                NBTBase nbtBase = JsonToNBT.func_150315_a(httpPost.getContents());
+                if (nbtBase instanceof NBTTagCompound)
+                {
+                    NBTTagCompound tagCompound = (NBTTagCompound) nbtBase;
+                    tagCompound = unstripBaseNBT(tagCompound);
+                    duplicator.setTagCompound(tagCompound);
+                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager loaded from: http://pastebin.com/" + name));
+                }
             }
             else
             {
                 throw new CommandException("commands.generic.syntax");
             }
-        }
-        catch(IOException e)
-        {
-            throw new CommandException("commands.generic.syntax");
         }
         catch(Exception e)
         {

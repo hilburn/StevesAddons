@@ -18,7 +18,7 @@ public class CommandRegistry extends CommandBase
         register(CommandSave.instance);
         register(CommandLoad.instance);
         register(CommandClear.instance);
-        //register(CommandPastebin.instance);
+        register(CommandPastebin.instance);
     }
 
     public static void register(ISubCommand command)
