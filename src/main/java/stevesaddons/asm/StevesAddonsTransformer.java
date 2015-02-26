@@ -37,8 +37,7 @@ public class StevesAddonsTransformer implements IClassTransformer
             }
         };
 
-        private String deObf;
-        private String obf;
+        private String name;
         private String args;
         public final String toReplace;
         public final String replace;
@@ -51,7 +50,7 @@ public class StevesAddonsTransformer implements IClassTransformer
 
         MethodName(String name, String args, String toReplace, String replace)
         {
-            deObf = name;
+            this.name = name;
             this.args = args;
             this.replace = replace;
             this.toReplace = toReplace;
@@ -76,8 +75,7 @@ public class StevesAddonsTransformer implements IClassTransformer
 
         public String getName()
         {
-            if (obf==null || !LoadingPlugin.runtimeDeobfEnabled) return deObf;
-            return obf;
+            return name;
         }
 
         public String getArgs()
@@ -92,21 +90,19 @@ public class StevesAddonsTransformer implements IClassTransformer
         TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager",MethodName.ACTIVATE_TRIGGER,MethodName.GET_GUI,MethodName.MANAGER_INIT),
         RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster",MethodName.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting",MethodName.ITEM_SETTING_LOAD);
-        private String deObf;
-        private String obf;
+        private String name;
         private MethodName[] methods;
 
 
         ClassName(String name, MethodName... methods)
         {
-            deObf = name;
+            this.name = name;
             this.methods = methods;
         }
 
         public String getName()
         {
-            if (obf==null || !LoadingPlugin.runtimeDeobfEnabled) return deObf;
-            return obf;
+            return name;
         }
 
         public MethodName[] getMethods()
@@ -181,19 +177,6 @@ public class StevesAddonsTransformer implements IClassTransformer
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         return writer.toByteArray();
-    }
-
-    private static AbstractInsnNode findMethodNode(MethodName name, MethodNode methodNode)
-    {
-        for (Iterator<AbstractInsnNode> itr = methodNode.instructions.iterator(); itr.hasNext();)
-        {
-            AbstractInsnNode node = itr.next();
-            if (node instanceof MethodInsnNode)
-            {
-                if (((MethodInsnNode)node).name.equals(name.getName())) return node;
-            }
-        }
-        return methodNode.instructions.getLast();
     }
 
     public static MethodNode getMethodByName(ClassNode classNode, MethodName obfName) {
