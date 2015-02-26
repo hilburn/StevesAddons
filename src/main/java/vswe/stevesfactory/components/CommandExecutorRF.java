@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.components.ComponentMenuRFCondition;
 import stevesaddons.components.ComponentMenuTargetRF;
 import stevesaddons.components.EnergyFacingHolder;
@@ -1309,14 +1310,12 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void calculateConditionDataItem(ComponentMenu componentMenu, SlotInventoryHolder inventoryHolder, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
     {
-        Iterator i$ = inventoryHolder.getValidSlots().values().iterator();
-
-        while (i$.hasNext())
+        for (SlotSideTarget slot : inventoryHolder.getValidSlots().values())
         {
-            SlotSideTarget slot = (SlotSideTarget) i$.next();
-            ItemStack itemStack = inventoryHolder.getInventory().getStackInSlot(slot.getSlot());
+            ItemStack itemStack =  inventoryHolder.getInventory().getStackInSlot(slot.getSlot());
             if (this.isSlotValid(inventoryHolder.getInventory(), itemStack, slot, true))
             {
+                if (inventoryHolder.getInventory() instanceof IDeepStorageUnit) itemStack = ((IDeepStorageUnit)inventoryHolder.getInventory()).getStoredItemType();
                 Setting setting = this.isItemValid(componentMenu, itemStack);
                 if (setting != null)
                 {
