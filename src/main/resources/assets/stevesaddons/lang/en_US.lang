@@ -24,7 +24,11 @@ gui.sfm.Below=Trigger low
 tile.cable_rf.name=RF Node
 
 stevesaddons.command.notFound=Command not found
+stevesaddons.command.noPermission=You not have permission to use this command
 stevesaddons.command.loadFailed=Loading failed
+stevesaddons.command.loadSuccess=Manager loaded from: %s
 stevesaddons.command.nothingToSave=Duplicator is empty
 stevesaddons.command.saveFailed=Save failed
 stevesaddons.command.noDuplicator=Command can only be applied to a Manager Duplicator
+stevesaddons.command.savedTo=Manager saved to: %s
+stevesaddons.command.copiedToClip=Pastebin link loaded onto clipboard

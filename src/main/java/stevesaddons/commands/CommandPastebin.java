@@ -3,13 +3,15 @@ package stevesaddons.commands;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ChatComponentText;
 import stevesaddons.helpers.HttpPost;
+import stevesaddons.helpers.LocalizationHelper;
 import stevesaddons.items.ItemSFMDrive;
 
 import java.awt.*;
@@ -17,13 +19,17 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.*;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CommandPastebin extends CommandDuplicator
 {
     private static String apiKey = "367773fafa3565615286cf270e73f3de";
+
+    public static final Set<String> usernameWhitelist = new HashSet<String>();
+
     private static ClipboardOwner clippy = new ClipboardOwner()
     {
         @Override
@@ -33,9 +39,14 @@ public class CommandPastebin extends CommandDuplicator
         }
     };
     public static CommandPastebin instance = new CommandPastebin();
+
     @Override
-    public void doCommand(ItemStack duplicator, ICommandSender sender, String[] arguments)
+    public void doCommand(ItemStack duplicator, EntityPlayerMP sender, String[] arguments)
     {
+        if (!usernameWhitelist.contains(sender.getCommandSenderName()))
+        {
+            throw new CommandException("stevesaddons.command.noPermission");
+        }
         if (arguments.length<2)
         {
             throw new CommandException("commands.generic.syntax");
@@ -49,7 +60,7 @@ public class CommandPastebin extends CommandDuplicator
                 {
                     HttpPost httpPost = new HttpPost("http://pastebin.com/api/api_post.php");
                     httpPost.put("api_option", "paste");
-                    httpPost.put("api_paste_private","1");
+                    httpPost.put("api_paste_private", "1");
                     httpPost.put("api_dev_key", apiKey);
                     if (arguments.length > 2) httpPost.put("api_paste_name" , arguments[2]);
                     NBTTagCompound tagCompound = (NBTTagCompound)duplicator.getTagCompound().copy();
@@ -59,10 +70,13 @@ public class CommandPastebin extends CommandDuplicator
                     tagCompound.setString("Author", sender.getCommandSenderName());
                     httpPost.put("api_paste_code", tagCompound.toString());
                     String inputLine = httpPost.getContents();
-                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager saved to: "+ inputLine));
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(new StringSelection(inputLine), clippy);
-                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Pastebin link loaded onto clipboard"));
+                    sender.addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", inputLine)));
+                    if (sender.mcServer instanceof IntegratedServer)
+                    {
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(new StringSelection(inputLine), clippy);
+                        CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translate("stevesaddons.command.copiedToClip")));
+                    }
                 }
                 else
                 {
@@ -84,7 +98,7 @@ public class CommandPastebin extends CommandDuplicator
                     NBTTagCompound tagCompound = (NBTTagCompound) nbtBase;
                     tagCompound = unstripBaseNBT(tagCompound);
                     duplicator.setTagCompound(tagCompound);
-                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager loaded from: http://pastebin.com/" + name));
+                    CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.loadSuccess", "http://pastebin.com/" + name)));
                 }
             }
             else

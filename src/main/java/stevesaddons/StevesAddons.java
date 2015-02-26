@@ -39,7 +39,6 @@ public class StevesAddons
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();
         MessageHandler.init();
-        StevesEnum.replaceBlocks();
     }
 
     @Mod.EventHandler
@@ -74,12 +73,6 @@ public class StevesAddons
                 map.put(TileEntityManager.class.getSimpleName(),TileEntityManager.class);
             } catch (Exception e1){}
         }
-    }
-
-    @Mod.EventHandler
-    public void loadComplete(FMLLoadCompleteEvent event)
-    {
-
     }
 
     @Mod.EventHandler

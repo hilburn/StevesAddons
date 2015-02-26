@@ -3,11 +3,13 @@ package stevesaddons.commands;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.DimensionManager;
+import stevesaddons.helpers.LocalizationHelper;
 import stevesaddons.items.ItemSFMDrive;
 
 import java.io.File;
@@ -31,7 +33,7 @@ public class CommandSave extends CommandDuplicator
     }
 
     @Override
-    public void doCommand(ItemStack duplicator, ICommandSender sender, String[] arguments)
+    public void doCommand(ItemStack duplicator, EntityPlayerMP sender, String[] arguments)
     {
         try
         {
@@ -51,7 +53,7 @@ public class CommandSave extends CommandDuplicator
                 tagCompound.removeTag("z");
                 tagCompound.setString("Author", sender.getCommandSenderName());
                 CompressedStreamTools.write(stripBaseNBT(tagCompound), file);
-                CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText("Manager saved to: "+ name +".nbt"));
+                CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", name +".nbt")));
             }
             else
             {

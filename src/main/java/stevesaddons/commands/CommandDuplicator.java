@@ -1,8 +1,9 @@
 package stevesaddons.commands;
 
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,9 +23,9 @@ public abstract class CommandDuplicator implements ISubCommand
 
     public static ItemStack getDuplicator(ICommandSender sender)
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayerMP)
         {
-            EntityPlayer player = (EntityPlayer)sender;
+            EntityPlayerMP player = CommandBase.getCommandSenderAsPlayer(sender);
             ItemStack stack = player.inventory.getCurrentItem();
             if (stack != null && stack.getItem() == ItemRegistry.duplicator) return stack;
         }
@@ -37,7 +38,7 @@ public abstract class CommandDuplicator implements ISubCommand
         ItemStack duplicator = getDuplicator(sender);
         if (duplicator != null)
         {
-            doCommand(duplicator, sender, arguments);
+            doCommand(duplicator, CommandBase.getCommandSenderAsPlayer(sender), arguments);
         } else
         {
             throw new CommandException("stevesaddons.command.noDuplicator");
@@ -63,7 +64,7 @@ public abstract class CommandDuplicator implements ISubCommand
         return tagCompound;
     }
 
-    public abstract void doCommand(ItemStack duplicator, ICommandSender sender, String[] arguments);
+    public abstract void doCommand(ItemStack duplicator, EntityPlayerMP sender, String[] arguments);
 
     @Override
     public int getPermissionLevel()
