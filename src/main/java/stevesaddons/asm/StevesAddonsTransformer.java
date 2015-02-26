@@ -7,7 +7,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,27 +14,30 @@ public class StevesAddonsTransformer implements IClassTransformer
 {
     private enum MethodName
     {
-        ACTIVATE_TRIGGER("activateTrigger","(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V", "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF"),
-        GET_GUI("getGui","(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;","vswe/stevesfactory/interfaces/GuiManager","stevesaddons/interfaces/GuiRFManager"),
-        CREATE_TE("func_149915_a","(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;","vswe/stevesfactory/blocks/TileEntityCluster","vswe/stevesfactory/blocks/TileEntityRFCluster"),
-        MANAGER_INIT("<init>","()"){
-            @Override
-            public AbstractInsnNode getInjectionPoint(InsnList list)
-            {
-                AbstractInsnNode node = list.getLast();
-                while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst()) node = node.getPrevious();
-                return node;
-            }
-        },
-        ITEM_SETTING_LOAD("load","(Lnet/minecraft/nbt/NBTTagCompound;)V"){
-            @Override
-            public AbstractInsnNode getInjectionPoint(InsnList list)
-            {
-                AbstractInsnNode node = list.getLast();
-                while (node.getOpcode()!=Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
-                return node;
-            }
-        };
+        ACTIVATE_TRIGGER("activateTrigger", "(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V", "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF"),
+        GET_GUI("getGui", "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;", "vswe/stevesfactory/interfaces/GuiManager", "stevesaddons/interfaces/GuiRFManager"),
+        CREATE_TE("func_149915_a", "(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;", "vswe/stevesfactory/blocks/TileEntityCluster", "vswe/stevesfactory/blocks/TileEntityRFCluster"),
+        MANAGER_INIT("<init>", "()")
+                {
+                    @Override
+                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getLast();
+                        while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst())
+                            node = node.getPrevious();
+                        return node;
+                    }
+                },
+        ITEM_SETTING_LOAD("load", "(Lnet/minecraft/nbt/NBTTagCompound;)V")
+                {
+                    @Override
+                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getLast();
+                        while (node.getOpcode() != Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
+                        return node;
+                    }
+                };
 
         private String name;
         private String args;
@@ -63,9 +65,9 @@ public class StevesAddonsTransformer implements IClassTransformer
 
             ITEM_SETTING_LOAD.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
             ITEM_SETTING_LOAD.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.GETFIELD,"vswe/stevesfactory/components/ItemSetting","item","Lnet/minecraft/item/ItemStack;"));
+            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
             ITEM_SETTING_LOAD.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixLoadingStack", "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", false));
-            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD,"vswe/stevesfactory/components/ItemSetting","item","Lnet/minecraft/item/ItemStack;"));
+            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
         }
 
         public AbstractInsnNode getInjectionPoint(InsnList list)
@@ -87,9 +89,9 @@ public class StevesAddonsTransformer implements IClassTransformer
     private enum ClassName
     {
 
-        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager",MethodName.ACTIVATE_TRIGGER,MethodName.GET_GUI,MethodName.MANAGER_INIT),
-        RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster",MethodName.CREATE_TE),
-        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting",MethodName.ITEM_SETTING_LOAD);
+        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", MethodName.ACTIVATE_TRIGGER, MethodName.GET_GUI, MethodName.MANAGER_INIT),
+        RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster", MethodName.CREATE_TE),
+        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD);
         private String name;
         private MethodName[] methods;
 
@@ -111,22 +113,22 @@ public class StevesAddonsTransformer implements IClassTransformer
         }
     }
 
-    private static Map<String,ClassName> classMap = new HashMap<String, ClassName>();
+    private static Map<String, ClassName> classMap = new HashMap<String, ClassName>();
 
     static
     {
-        for (ClassName className: ClassName.values()) classMap.put(className.getName(),className);
+        for (ClassName className : ClassName.values()) classMap.put(className.getName(), className);
     }
 
     @Override
     public byte[] transform(String className, String className2, byte[] bytes)
     {
         ClassName clazz = classMap.get(className);
-        if (clazz!=null)
+        if (clazz != null)
         {
-            for (MethodName method: clazz.getMethods())
+            for (MethodName method : clazz.getMethods())
             {
-                bytes = method.instructions.size()>0?inject(method,bytes):replace(method, bytes);
+                bytes = method.instructions.size() > 0 ? inject(method, bytes) : replace(method, bytes);
             }
             classMap.remove(className);
         }
@@ -142,7 +144,7 @@ public class StevesAddonsTransformer implements IClassTransformer
 
         MethodNode methodNode = getMethodByName(classNode, methodName);
         AbstractInsnNode node = methodName.getInjectionPoint(methodNode.instructions);
-        methodNode.instructions.insertBefore(node,methodName.instructions);
+        methodNode.instructions.insertBefore(node, methodName.instructions);
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         return writer.toByteArray();
@@ -162,28 +164,31 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(methodName.toReplace))
             {
-                TypeInsnNode newNode = new TypeInsnNode(Opcodes.NEW,methodName.replace);
+                TypeInsnNode newNode = new TypeInsnNode(Opcodes.NEW, methodName.replace);
                 methodNode.instructions.set(node, newNode);
                 node = newNode;
             } else if (node instanceof MethodInsnNode && ((MethodInsnNode)node).owner.contains(methodName.toReplace))
             {
-                MethodInsnNode newNode = new MethodInsnNode(node.getOpcode(), methodName.replace, ((MethodInsnNode)node).name,((MethodInsnNode)node).desc,false);
+                MethodInsnNode newNode = new MethodInsnNode(node.getOpcode(), methodName.replace, ((MethodInsnNode)node).name, ((MethodInsnNode)node).desc, false);
                 methodNode.instructions.set(node, newNode);
                 node = newNode;
             }
             node = node.getNext();
-        }while (node.getNext()!=null);
+        } while (node.getNext() != null);
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         return writer.toByteArray();
     }
 
-    public static MethodNode getMethodByName(ClassNode classNode, MethodName obfName) {
+    public static MethodNode getMethodByName(ClassNode classNode, MethodName obfName)
+    {
         List<MethodNode> methods = classNode.methods;
-        for (int k = 0; k < methods.size(); k++) {
+        for (int k = 0; k < methods.size(); k++)
+        {
             MethodNode method = methods.get(k);
-            if (method.name.equals(obfName.getName()) && method.desc.equals(obfName.getArgs())) {
+            if (method.name.equals(obfName.getName()) && method.desc.equals(obfName.getArgs()))
+            {
                 return method;
             }
         }

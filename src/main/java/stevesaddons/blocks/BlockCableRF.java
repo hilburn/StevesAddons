@@ -54,7 +54,7 @@ public class BlockCableRF extends BlockContainer
     public IIcon getIcon(IBlockAccess iBlockAccess, int x, int y, int z, int side)
     {
         TileEntity te = iBlockAccess.getTileEntity(x, y, z);
-        if (te instanceof TileEntityRFNode) return getIcon((TileEntityRFNode) te, side);
+        if (te instanceof TileEntityRFNode) return getIcon((TileEntityRFNode)te, side);
         return icons[3];
     }
 

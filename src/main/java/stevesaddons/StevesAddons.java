@@ -2,10 +2,12 @@ package stevesaddons;
 
 
 import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import stevesaddons.helpers.Config;
-import stevesaddons.helpers.StevesEnum;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.recipes.ClusterUncraftingRecipe;
@@ -67,13 +69,15 @@ public class StevesAddons
                 classExtensions.setAccessible(true);
                 classExtensionsNames.setAccessible(true);
                 classMap.setAccessible(true);
-                ArrayList<Class>  extensions = (ArrayList<Class>) classExtensions.get(null);
-                ArrayList<String> extensionsNames = (ArrayList<String>) classExtensionsNames.get(null);
-                HashMap<String, Class> map = (HashMap<String, Class>) classMap.get(null);
+                ArrayList<Class> extensions = (ArrayList<Class>)classExtensions.get(null);
+                ArrayList<String> extensionsNames = (ArrayList<String>)classExtensionsNames.get(null);
+                HashMap<String, Class> map = (HashMap<String, Class>)classMap.get(null);
                 extensions.add(TileEntityManager.class);
                 extensionsNames.add(TileEntityManager.class.getSimpleName());
-                map.put(TileEntityManager.class.getSimpleName(),TileEntityManager.class);
-            } catch (Exception e1){}
+                map.put(TileEntityManager.class.getSimpleName(), TileEntityManager.class);
+            } catch (Exception e1)
+            {
+            }
         }
     }
 

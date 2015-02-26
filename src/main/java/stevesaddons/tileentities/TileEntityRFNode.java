@@ -106,7 +106,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
                 TileEntity te = getTileEntityOnSide(i);
                 if (te != null && te instanceof IEnergyHandler)
                 {
-                    toReceive -= ((IEnergyHandler) te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toReceive, simulate);
+                    toReceive -= ((IEnergyHandler)te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toReceive, simulate);
                     if (toReceive == 0) break;
                 }
             }
@@ -134,7 +134,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
                 TileEntity te = getTileEntityOnSide(i);
                 if (te != null && te instanceof IEnergyHandler)
                 {
-                    toExtract -= ((IEnergyHandler) te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
+                    toExtract -= ((IEnergyHandler)te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
                     if (toExtract == 0) break;
                 }
             }

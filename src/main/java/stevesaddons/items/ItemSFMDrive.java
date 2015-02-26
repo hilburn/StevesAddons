@@ -33,8 +33,7 @@ public class ItemSFMDrive extends Item
             {
                 list.add("Manager setup authored by:");
                 list.add(stack.getTagCompound().getString("Author"));
-            }
-            else
+            } else
             {
                 int x = stack.getTagCompound().getInteger("x");
                 int y = stack.getTagCompound().getInteger("y");
@@ -48,7 +47,8 @@ public class ItemSFMDrive extends Item
 
     public static boolean validateNBT(ItemStack stack)
     {
-        if (stack.hasTagCompound() && (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName") || stack.getTagCompound().getString("id").equals("TileEntityRFManager"))) return true;
+        if (stack.hasTagCompound() && (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName") || stack.getTagCompound().getString("id").equals("TileEntityRFManager")))
+            return true;
         stack.setTagCompound(null);
         return false;
     }
@@ -63,7 +63,7 @@ public class ItemSFMDrive extends Item
             {
                 if (stack.hasTagCompound() && validateNBT(stack))
                 {
-                    te.readFromNBT(correctNBT((TileEntityManager) te, stack.getTagCompound()));
+                    te.readFromNBT(correctNBT((TileEntityManager)te, stack.getTagCompound()));
                     stack.setTagCompound(null);
                 } else
                 {
@@ -102,10 +102,10 @@ public class ItemSFMDrive extends Item
                     {
                         if (version < 9)
                         {
-                            connection.setByte("ConnectionComponent", (byte) (connection.getByte("ConnectionComponent") + currentFlow));
+                            connection.setByte("ConnectionComponent", (byte)(connection.getByte("ConnectionComponent") + currentFlow));
                         } else
                         {
-                            connection.setShort("ConnectionComponent", (short) (connection.getShort("ConnectionComponent") + currentFlow));
+                            connection.setShort("ConnectionComponent", (short)(connection.getShort("ConnectionComponent") + currentFlow));
                         }
                     }
                     newConnections.appendTag(connection);

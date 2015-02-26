@@ -1,6 +1,5 @@
 package stevesaddons.components;
 
-import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import net.minecraftforge.common.util.ForgeDirection;
 

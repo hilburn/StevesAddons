@@ -55,8 +55,8 @@ public class RFNodeUpdateMessage implements IMessage, IMessageHandler<RFNodeUpda
         TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.posX, message.posY, message.posZ);
         if (tileEntity instanceof TileEntityRFNode)
         {
-            ((TileEntityRFNode) tileEntity).setInputSides(MessageHelper.byteToBooleanArray(message.input));
-            ((TileEntityRFNode) tileEntity).setOutputSides(MessageHelper.byteToBooleanArray(message.output));
+            ((TileEntityRFNode)tileEntity).setInputSides(MessageHelper.byteToBooleanArray(message.input));
+            ((TileEntityRFNode)tileEntity).setOutputSides(MessageHelper.byteToBooleanArray(message.output));
             FMLClientHandler.instance().getClient().theWorld.markBlockRangeForRenderUpdate(message.posX, message.posY, message.posZ, message.posX, message.posY, message.posZ);
         }
         return null;

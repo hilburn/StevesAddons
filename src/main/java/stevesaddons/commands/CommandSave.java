@@ -53,9 +53,8 @@ public class CommandSave extends CommandDuplicator
                 tagCompound.removeTag("z");
                 tagCompound.setString("Author", sender.getCommandSenderName());
                 CompressedStreamTools.write(stripBaseNBT(tagCompound), file);
-                CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", name +".nbt")));
-            }
-            else
+                CommandBase.getCommandSenderAsPlayer(sender).addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", name + ".nbt")));
+            } else
             {
                 throw new CommandException("stevesaddons.command.nothingToSave");
             }

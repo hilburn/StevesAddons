@@ -21,7 +21,7 @@ public class WideNumberBoxList
 
         while (i$.hasNext())
         {
-            WideNumberBox textBox = (WideNumberBox) i$.next();
+            WideNumberBox textBox = (WideNumberBox)i$.next();
             if (textBox.isVisible())
             {
                 int srcTextBoxY = textBox.equals(this.selectedTextBox) ? 177 : 165;
@@ -38,7 +38,7 @@ public class WideNumberBoxList
 
         while (i$.hasNext())
         {
-            WideNumberBox textBox = (WideNumberBox) i$.next();
+            WideNumberBox textBox = (WideNumberBox)i$.next();
             if (textBox.isVisible() && CollisionHelper.inBounds(textBox.getX(), textBox.getY(), textBox.getWidth(), 12, mX, mY))
             {
                 if (textBox.equals(this.selectedTextBox))
@@ -70,7 +70,7 @@ public class WideNumberBoxList
             if (Character.isDigit(c))
             {
                 i = Integer.parseInt(String.valueOf(c));
-                if ((double) Math.abs(this.selectedTextBox.getNumber()) < Math.pow(10.0D, (double) (this.selectedTextBox.getLength() - 1)))
+                if ((double)Math.abs(this.selectedTextBox.getNumber()) < Math.pow(10.0D, (double)(this.selectedTextBox.getLength() - 1)))
                 {
                     this.selectedTextBox.setNumber(Math.min(this.selectedTextBox.getNumber() * 10 + i, this.selectedTextBox.getMaxNumber()));
                     this.selectedTextBox.onNumberChanged();

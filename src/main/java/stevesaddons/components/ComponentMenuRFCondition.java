@@ -107,14 +107,14 @@ public class ComponentMenuRFCondition extends ComponentMenu
 
     public void copyFrom(ComponentMenu menu)
     {
-        ComponentMenuRFCondition menuStrength = (ComponentMenuRFCondition) menu;
+        ComponentMenuRFCondition menuStrength = (ComponentMenuRFCondition)menu;
         this.textBox.setNumber(menuStrength.textBox.getNumber());
         this.triggerBelow = menuStrength.triggerBelow;
     }
 
     public void refreshData(ContainerManager container, ComponentMenu newData)
     {
-        ComponentMenuRFCondition newDataStrength = (ComponentMenuRFCondition) newData;
+        ComponentMenuRFCondition newDataStrength = (ComponentMenuRFCondition)newData;
         if (this.textBox.getNumber() != newDataStrength.textBox.getNumber())
         {
             this.textBox.setNumber(newDataStrength.textBox.getNumber());

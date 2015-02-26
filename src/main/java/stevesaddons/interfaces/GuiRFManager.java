@@ -201,7 +201,7 @@ public class GuiRFManager extends GuiManager
             }
 
             long var11 = Minecraft.getSystemTime();
-            float var12 = (float) (var11 - this.lastTicks) / 1000.0F;
+            float var12 = (float)(var11 - this.lastTicks) / 1000.0F;
             if (this.controller != null)
             {
                 this.controller.update(var12);
@@ -211,7 +211,7 @@ public class GuiRFManager extends GuiManager
 
             while (zLevel.hasNext())
             {
-                FlowComponent openCount = (FlowComponent) zLevel.next();
+                FlowComponent openCount = (FlowComponent)zLevel.next();
                 openCount.update(var12);
             }
 
@@ -262,7 +262,7 @@ public class GuiRFManager extends GuiManager
 
                     while (var15.hasNext())
                     {
-                        Button var16 = (Button) var15.next();
+                        Button var16 = (Button)var15.next();
                         if (var16.isVisible() && CollisionHelper.inBounds(var16.getX(), var16.getY(), 14, 14, x, y))
                         {
                             this.drawMouseOver(var16.getMouseOver(), x, y);
@@ -274,7 +274,7 @@ public class GuiRFManager extends GuiManager
 
                 while (var15.hasNext())
                 {
-                    itemBase = (FlowComponent) var15.next();
+                    itemBase = (FlowComponent)var15.next();
                     if (itemBase.isVisible())
                     {
                         itemBase.drawMouseOver(this, x, y);
@@ -311,7 +311,7 @@ public class GuiRFManager extends GuiManager
 
             while (i$.hasNext())
             {
-                FlowComponent component = (FlowComponent) i$.next();
+                FlowComponent component = (FlowComponent)i$.next();
                 if (component.isVisible())
                 {
                     component.doScroll(scroll);
@@ -367,7 +367,7 @@ public class GuiRFManager extends GuiManager
 
             while (recognized1.hasNext())
             {
-                FlowComponent i$ = (FlowComponent) recognized1.next();
+                FlowComponent i$ = (FlowComponent)recognized1.next();
                 if (i$.isVisible() && i$.onKeyStroke(this, c, k) && k != 1)
                 {
                     return;
@@ -379,7 +379,7 @@ public class GuiRFManager extends GuiManager
 
             while (i$1.hasNext())
             {
-                GuiRFManager.SecretCode code = (GuiRFManager.SecretCode) i$1.next();
+                GuiRFManager.SecretCode code = (GuiRFManager.SecretCode)i$1.next();
                 if (code.keyTyped(c))
                 {
                     recognized2 = true;
@@ -402,7 +402,7 @@ public class GuiRFManager extends GuiManager
 
         while (i$.hasNext())
         {
-            FlowComponent flowComponent = (FlowComponent) i$.next();
+            FlowComponent flowComponent = (FlowComponent)i$.next();
             flowComponent.onGuiClosed();
         }
 

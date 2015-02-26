@@ -7,7 +7,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import stevesaddons.commands.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CommandRegistry extends CommandBase
 {
@@ -49,13 +52,16 @@ public class CommandRegistry extends CommandBase
     @Override
     public void processCommand(ICommandSender sender, String[] args)
     {
-        if (args.length < 1) {
+        if (args.length < 1)
+        {
             args = new String[]{"help"};
         }
         ISubCommand command = commands.get(args[0]);
-        if (command != null) {
+        if (command != null)
+        {
             if (sender.canCommandSenderUseCommand(command.getPermissionLevel(), "stevesaddons " + command.getCommandName()) ||
-                    (sender instanceof EntityPlayerMP && command.getPermissionLevel() <= 0)) {
+                    (sender instanceof EntityPlayerMP && command.getPermissionLevel() <= 0))
+            {
                 command.handleCommand(sender, args);
                 return;
             }
@@ -70,15 +76,17 @@ public class CommandRegistry extends CommandBase
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+    public List addTabCompletionOptions(ICommandSender sender, String[] args)
+    {
 
         if (args.length == 1)
         {
             String subCommand = args[0];
             List result = new ArrayList();
-            for (ISubCommand command:commands.values())
+            for (ISubCommand command : commands.values())
             {
-                if (command.isVisible(sender) && command.getCommandName().startsWith(subCommand)) result.add(command.getCommandName());
+                if (command.isVisible(sender) && command.getCommandName().startsWith(subCommand))
+                    result.add(command.getCommandName());
             }
             return result;
         } else if (commands.containsKey(args[0]) && commands.get(args[0]).isVisible(sender))
