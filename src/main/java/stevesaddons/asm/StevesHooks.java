@@ -6,7 +6,6 @@ import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.TileEntityManager;
 import vswe.stevesfactory.components.ComponentType;
 import vswe.stevesfactory.components.Connection;
-import vswe.stevesfactory.components.ConnectionSet;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -34,7 +33,7 @@ public class StevesHooks
                         if (!itr.hasNext()) return;
                         item = itr.next();
                     } while (item.getId() != id);
-                    Collection<FlowComponent> added = copyConnectionsWithChildren(manager.getFlowItems(),item);
+                    Collection<FlowComponent> added = copyConnectionsWithChildren(manager.getFlowItems(), item, Settings.isLimitless(manager));
                     manager.getFlowItems().addAll(added);
                 }
 
@@ -68,17 +67,17 @@ public class StevesHooks
         });
     }
 
-    private static Collection<FlowComponent> copyConnectionsWithChildren(List<FlowComponent> existing, FlowComponent toCopy)
+    private static Collection<FlowComponent> copyConnectionsWithChildren(List<FlowComponent> existing, FlowComponent toCopy, boolean limitless)
     {
         Map<FlowComponent, FlowComponent> added = new LinkedHashMap<FlowComponent, FlowComponent>();
         copyConnectionsWithChildren(added, existing, toCopy, toCopy.getParent(), true);
-        if (added.size() + existing.size() > 511)
+        if (added.size() + existing.size() >= 511 && !limitless)
         {
             Iterator<Map.Entry<FlowComponent, FlowComponent>> itr = added.entrySet().iterator();
             for (int index = 0; itr.hasNext(); index++)
             {
                 itr.next();
-                if (index > 511 - existing.size()) itr.remove();
+                if (index >= 511 - existing.size()) itr.remove();
             }
         }
         reconnect(added);
@@ -96,7 +95,7 @@ public class StevesHooks
             newComponent.setX(50);
             newComponent.setY(50);
         }
-        newComponent.setId(existing.size()+added.size());
+        newComponent.setId(existing.size() + added.size());
         added.put(toCopy, newComponent);
         for (FlowComponent component : existing)
         {
@@ -112,7 +111,7 @@ public class StevesHooks
         Map<Integer, FlowComponent> oldComponents = new HashMap<Integer, FlowComponent>();
         for (FlowComponent component : added.keySet())
         {
-            oldComponents.put(component.getId(),component);
+            oldComponents.put(component.getId(), component);
         }
 
         for (FlowComponent component : added.keySet())
@@ -122,8 +121,8 @@ public class StevesHooks
                 FlowComponent connectTo = added.get(oldComponents.get(entry.getValue().getComponentId()));
                 if (connectTo != null)
                 {
-                    Connection newConnection = new Connection(connectTo.getId(),entry.getValue().getConnectionId());
-                    added.get(component).setConnection(entry.getKey(),newConnection);
+                    Connection newConnection = new Connection(connectTo.getId(), entry.getValue().getConnectionId());
+                    added.get(component).setConnection(entry.getKey(), newConnection);
                 }
             }
         }

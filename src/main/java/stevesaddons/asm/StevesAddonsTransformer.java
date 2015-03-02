@@ -37,6 +37,34 @@ public class StevesAddonsTransformer implements IClassTransformer
                         while (node.getOpcode() != Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
                         return node;
                     }
+                },
+        STRING_NULL_CHECK("updateSearch","(Ljava/lang/String;Z)Ljava/util/List;")
+                {
+                    @Override
+                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getLast();
+                        LabelNode labelNode = null;
+                        while (node != list.getFirst())
+                        {
+                            if (node instanceof JumpInsnNode)
+                                labelNode = ((JumpInsnNode)node).label;
+                            else if (node instanceof VarInsnNode && node.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)node).var == 10)
+                            {
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 10));
+                                list.insertBefore(node, new JumpInsnNode(Opcodes.IFNULL, labelNode));
+                                break;
+                            }
+                            node = node.getPrevious();
+                        }
+                        return node;
+                    }
+
+                    @Override
+                    public boolean inject()
+                    {
+                        return true;
+                    }
                 };
 
         private String name;
@@ -84,6 +112,8 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             return args;
         }
+
+        public boolean inject() { return instructions.size()>0; }
     }
 
     private enum ClassName
@@ -91,7 +121,8 @@ public class StevesAddonsTransformer implements IClassTransformer
 
         TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", MethodName.ACTIVATE_TRIGGER, MethodName.GET_GUI, MethodName.MANAGER_INIT),
         RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster", MethodName.CREATE_TE),
-        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD);
+        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD),
+        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.STRING_NULL_CHECK);
         private String name;
         private MethodName[] methods;
 
@@ -128,7 +159,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             for (MethodName method : clazz.getMethods())
             {
-                bytes = method.instructions.size() > 0 ? inject(method, bytes) : replace(method, bytes);
+                bytes = method.inject() ? inject(method, bytes) : replace(method, bytes);
             }
             classMap.remove(className);
         }
@@ -183,10 +214,8 @@ public class StevesAddonsTransformer implements IClassTransformer
 
     public static MethodNode getMethodByName(ClassNode classNode, MethodName obfName)
     {
-        List<MethodNode> methods = classNode.methods;
-        for (int k = 0; k < methods.size(); k++)
+        for (MethodNode method : classNode.methods)
         {
-            MethodNode method = methods.get(k);
             if (method.name.equals(obfName.getName()) && method.desc.equals(obfName.getArgs()))
             {
                 return method;
