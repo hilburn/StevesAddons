@@ -36,6 +36,9 @@ public class StevesHooks
                     FlowComponent newComponent = item.copy();
                     newComponent.clearConnections();
                     newComponent.resetPosition();
+                    newComponent.setX(50);
+                    newComponent.setY(50);
+                    newComponent.setId(manager.getFlowItems().size());
                     manager.getFlowItems().add(newComponent);
                 }
 

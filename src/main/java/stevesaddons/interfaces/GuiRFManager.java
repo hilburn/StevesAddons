@@ -193,7 +193,7 @@ public class GuiRFManager extends GuiManager
                         int elapsedSeconds = CollisionHelper.inBounds(button.getX(), button.getY(), 14, 14, x, y) ? 1 : 0;
                         int column = ticks / 20;
                         this.drawTexture(button.getX(), button.getY(), 242, elapsedSeconds * 14, 14, 14);
-                        this.drawTexture(button.getX() + 1, button.getY() + 1, 218, (ticks - 20 * column) * 12, 12, 12);
+                        this.drawTexture(button.getX() + 1, button.getY() + 1, 230 - column * 12, (ticks % 20) * 12, 12, 12);
                     }
                 }
             }
