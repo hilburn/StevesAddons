@@ -1,5 +1,6 @@
 #Item Localization
 item.duplicator.name=Manager Duplicator
+item.labeler.name=Factory Labeler
 
 gui.sfm.RfInputLong=RF Input
 gui.sfm.RfInputShort=RF Input

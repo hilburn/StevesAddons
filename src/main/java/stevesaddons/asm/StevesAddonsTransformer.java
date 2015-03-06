@@ -65,6 +65,34 @@ public class StevesAddonsTransformer implements IClassTransformer
                     {
                         return true;
                     }
+                },
+        GET_ITEMSTACK_FROM_BLOCK("getItemStackFromBlock","(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)Lnet/minecraft/item/ItemStack;")
+                {
+                    @Override
+                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        while (node != null)
+                        {
+                            if (node.getOpcode() == Opcodes.ARETURN)
+                            {
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 1));
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ILOAD, 2));
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ILOAD, 3));
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ILOAD, 4));
+                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "getCustomName", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;III)Lnet/minecraft/item/ItemStack;", false));
+                                break;
+                            }
+                            node = node.getNext();
+                        }
+                        return list.getLast();
+                    }
+
+                    @Override
+                    public boolean inject()
+                    {
+                        return true;
+                    }
                 };
 
         private String name;
@@ -122,7 +150,8 @@ public class StevesAddonsTransformer implements IClassTransformer
         TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", MethodName.ACTIVATE_TRIGGER, MethodName.GET_GUI, MethodName.MANAGER_INIT),
         RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster", MethodName.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD),
-        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.STRING_NULL_CHECK);
+        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.STRING_NULL_CHECK),
+        GUI_BASE("vswe.stevesfactory.interfaces.GuiBase",MethodName.GET_ITEMSTACK_FROM_BLOCK);
         private String name;
         private MethodName[] methods;
 

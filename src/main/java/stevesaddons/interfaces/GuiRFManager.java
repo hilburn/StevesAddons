@@ -42,7 +42,7 @@ public class GuiRFManager extends GuiManager
     private boolean useButtons = true;
     private boolean useInfo = true;
     private boolean useMouseOver = true;
-    private List<GuiRFManager.SecretCode> codes = new ArrayList();
+    private List<GuiRFManager.SecretCode> codes = new ArrayList<SecretCode>();
     private TileEntityManager manager;
 
     public GuiRFManager(TileEntityManager manager, InventoryPlayer player)
@@ -205,11 +205,8 @@ public class GuiRFManager extends GuiManager
                 this.controller.update(var12);
             }
 
-            Iterator zLevel = this.manager.getFlowItems().iterator();
-
-            while (zLevel.hasNext())
+            for (FlowComponent openCount : this.manager.getFlowItems())
             {
-                FlowComponent openCount = (FlowComponent)zLevel.next();
                 openCount.update(var12);
             }
 
@@ -305,11 +302,8 @@ public class GuiRFManager extends GuiManager
                 return;
             }
 
-            Iterator i$ = this.manager.getZLevelRenderingList().iterator();
-
-            while (i$.hasNext())
+            for (FlowComponent component : this.manager.getZLevelRenderingList())
             {
-                FlowComponent component = (FlowComponent)i$.next();
                 if (component.isVisible())
                 {
                     component.doScroll(scroll);
@@ -361,11 +355,8 @@ public class GuiRFManager extends GuiManager
                 this.doubleShiftFlag = true;
             }
 
-            Iterator recognized1 = this.manager.getZLevelRenderingList().iterator();
-
-            while (recognized1.hasNext())
+            for (FlowComponent i$ : this.manager.getZLevelRenderingList())
             {
-                FlowComponent i$ = (FlowComponent)recognized1.next();
                 if (i$.isVisible() && i$.onKeyStroke(this, c, k) && k != 1)
                 {
                     return;
@@ -373,11 +364,9 @@ public class GuiRFManager extends GuiManager
             }
 
             boolean recognized2 = false;
-            Iterator i$1 = this.codes.iterator();
 
-            while (i$1.hasNext())
+            for (GuiRFManager.SecretCode code : this.codes)
             {
-                GuiRFManager.SecretCode code = (GuiRFManager.SecretCode)i$1.next();
                 if (code.keyTyped(c))
                 {
                     recognized2 = true;
@@ -396,11 +385,9 @@ public class GuiRFManager extends GuiManager
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
-        Iterator i$ = this.manager.getFlowItems().iterator();
 
-        while (i$.hasNext())
+        for (FlowComponent flowComponent : this.manager.getFlowItems())
         {
-            FlowComponent flowComponent = (FlowComponent)i$.next();
             flowComponent.onGuiClosed();
         }
 

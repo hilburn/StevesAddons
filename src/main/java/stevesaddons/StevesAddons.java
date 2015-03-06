@@ -6,8 +6,15 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import stevesaddons.helpers.Config;
+import stevesaddons.interfaces.GuiHandler;
+import stevesaddons.naming.EventHandler;
+import stevesaddons.naming.NameData;
+import stevesaddons.naming.NameRegistry;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.recipes.ClusterUncraftingRecipe;
@@ -27,13 +34,15 @@ import java.util.HashMap;
 public class StevesAddons
 {
     @Mod.Instance(value = Reference.ID)
-    public static StevesAddons INSTANCE = new StevesAddons();
+    public static StevesAddons INSTANCE;
 
     @Mod.Metadata(Reference.ID)
     public static ModMetadata metadata;
 
     @SidedProxy(clientSide = "stevesaddons.proxy.ClientProxy", serverSide = "stevesaddons.proxy.CommonProxy")
     public static CommonProxy PROXY;
+
+    public static GuiHandler guiHandler = new GuiHandler();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -43,6 +52,7 @@ public class StevesAddons
         BlockRegistry.registerBlocks();
         MessageHandler.init();
         Config.init(event.getSuggestedConfigurationFile());
+        NetworkRegistry.INSTANCE.registerGuiHandler(StevesAddons.INSTANCE, guiHandler);
     }
 
     @Mod.EventHandler
@@ -53,6 +63,9 @@ public class StevesAddons
         ClusterUncraftingRecipe uncrafting = new ClusterUncraftingRecipe();
         GameRegistry.addRecipe(uncrafting);
         FMLCommonHandler.instance().bus().register(uncrafting);
+        EventHandler handler = new EventHandler();
+        FMLCommonHandler.instance().bus().register(handler);
+        MinecraftForge.EVENT_BUS.register(handler);
     }
 
     @Mod.EventHandler
@@ -79,6 +92,12 @@ public class StevesAddons
             {
             }
         }
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+        NameRegistry.setNameData(new HashMap<Integer, NameData>());
     }
 
     @Mod.EventHandler

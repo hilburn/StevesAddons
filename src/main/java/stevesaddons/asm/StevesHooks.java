@@ -1,7 +1,9 @@
 package stevesaddons.asm;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import stevesaddons.helpers.StevesEnum;
+import stevesaddons.naming.NameRegistry;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.TileEntityManager;
 import vswe.stevesfactory.components.ComponentType;
@@ -137,5 +139,12 @@ public class StevesHooks
     private static int getAfterDelete(List<TileEntityManager.Button> buttons)
     {
         return ComponentType.values().length + 1;
+    }
+
+    public static ItemStack getCustomName(ItemStack stack, World world, int x, int y, int z)
+    {
+        String name = NameRegistry.getSavedName(world, x, y, z);
+        if (name!=null) stack.setStackDisplayName(name);
+        return stack;
     }
 }

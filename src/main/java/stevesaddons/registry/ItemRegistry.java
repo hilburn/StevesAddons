@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import stevesaddons.items.ItemLabeler;
 import stevesaddons.items.ItemSFMDrive;
 import stevesaddons.reference.Names;
 import vswe.stevesfactory.blocks.ModBlocks;
@@ -11,10 +12,12 @@ import vswe.stevesfactory.blocks.ModBlocks;
 public class ItemRegistry
 {
     public static Item duplicator;
+    public static Item labeler;
 
     public static void registerItems()
     {
         GameRegistry.registerItem(duplicator = new ItemSFMDrive(), Names.DRIVE);
+        GameRegistry.registerItem(labeler = new ItemLabeler(), Names.LABELER);
     }
 
     public static void registerRecipes()
