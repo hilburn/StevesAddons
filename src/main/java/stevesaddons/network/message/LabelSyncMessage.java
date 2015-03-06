@@ -1,17 +1,22 @@
 package stevesaddons.network.message;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
 
 public class LabelSyncMessage  implements IMessage, IMessageHandler<LabelSyncMessage, IMessage>
 {
     ItemStack stack;
-    EntityPlayer player;
+    int id;
     public LabelSyncMessage()
     {
     }
@@ -19,28 +24,39 @@ public class LabelSyncMessage  implements IMessage, IMessageHandler<LabelSyncMes
     public LabelSyncMessage(ItemStack stack, EntityPlayer player)
     {
         this.stack = stack;
-        this.player = player;
+        this.id = player.getEntityId();
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         this.stack = ByteBufUtils.readItemStack(buf);
-
+        id = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
         ByteBufUtils.writeItemStack(buf, stack);
+        buf.writeInt(id);
     }
 
     @Override
     public IMessage onMessage(LabelSyncMessage message, MessageContext ctx)
     {
-        if (message.player!=null)
+        EntityPlayer player = null;
+        for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worldServers)
         {
-            message.player.inventory.setInventorySlotContents(message.player.inventory.currentItem, message.stack);
+            Entity entity = world.getEntityByID(message.id);
+            if (entity instanceof EntityPlayer)
+            {
+                player = (EntityPlayer)entity;
+                break;
+            }
+        }
+        if (player!=null)
+        {
+            player.inventory.setInventorySlotContents(player.inventory.currentItem, message.stack);
         }
         return null;
     }

@@ -39,9 +39,16 @@ public class ItemLabeler extends Item
             if (player.isSneaking())
             {
                 player.openGui(StevesAddons.INSTANCE, 0, world, x, y, z);
-            } else if (stack.hasDisplayName() && isValidTile(world, x, y, z))
+            } else if (isValidTile(world, x, y, z))
             {
-                NameRegistry.saveName(world, x, y, z, stack.getDisplayName());
+                String label = getLabel(stack);
+                if (label.isEmpty())
+                {
+                    NameRegistry.removeName(world, x, y, z);
+                }else
+                {
+                    NameRegistry.saveName(world, x, y, z, getLabel(stack));
+                }
                 return true;
             }
         }
@@ -68,6 +75,11 @@ public class ItemLabeler extends Item
         return result;
     }
 
+    public static void setLabel(ItemStack stack, String string)
+    {
+        stack.getTagCompound().setString("Label",string);
+    }
+
     public static void saveStrings(ItemStack stack, List<String> strings)
     {
         if (!stack.hasTagCompound())
@@ -80,4 +92,21 @@ public class ItemLabeler extends Item
             tagList.appendTag(new NBTTagString(string));
         tagCompound.setTag("saved", tagList);
     }
+
+    public static String getLabel(ItemStack stack)
+    {
+        return stack.hasTagCompound()?stack.getTagCompound().getString("Label"):"";
+    }
+
+    @Override
+    @SuppressWarnings(value="unchecked")
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extra)
+    {
+        super.addInformation(stack, player, list, extra);
+        String label = getLabel(stack);
+        if (label.isEmpty()) list.add("Clear Label");
+        list.add("Label: "+label);
+    }
+
+
 }

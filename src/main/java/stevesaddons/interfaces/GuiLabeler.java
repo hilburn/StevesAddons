@@ -2,11 +2,14 @@ package stevesaddons.interfaces;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import stevesaddons.items.ItemLabeler;
+import stevesaddons.network.MessageHandler;
+import stevesaddons.network.message.LabelSyncMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,15 +35,16 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     private static final int ENTRY_HEIGHT=16;
 
     private List<String> strings;
-    private List<GuiTextEntry> displayStrings = new ArrayList<GuiTextEntry>();
+    private List<GuiTextEntry> displayStrings;
     private GuiTextEntry selected = null;
     private ItemStack stack;
     private GuiTextField searchBar;
     private GuiVerticalScrollBar scrollBar;
+    private EntityPlayer player;
     public int mouseX = 0;
     public int mouseY = 0;
 
-    public GuiLabeler(ItemStack stack)
+    public GuiLabeler(ItemStack stack, EntityPlayer player)
     {
         super(new GuiEmptyContainer());
         this.stack = stack;
@@ -49,6 +53,10 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
         this.ySize = GUI_HEIGHT;
         scrollBar = new GuiVerticalScrollBar(this, 112, SCROLL_Y, SCROLL_Y_MAX-SCROLL_Y);
         searchBar = new GuiTextField(100, 12, 10, 28);
+        searchBar.setText(ItemLabeler.getLabel(stack));
+        searchBar.fixCursorPos();
+        displayStrings = getSearchedStrings();
+        this.player = player;
     }
 
     @Override
@@ -95,11 +103,17 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
         }
         else if (keyCode == 28 && !searchBar.getText().isEmpty())
         {
-            strings.add(searchBar.getText());
-            Collections.sort(strings, ALPHABETICAL_ORDER);
+            if (!strings.contains(searchBar.getText()))
+            {
+                strings.add(searchBar.getText());
+                Collections.sort(strings, ALPHABETICAL_ORDER);
+            }
+            searchBar.setText("");
+            searchBar.fixCursorPos();
         }
         searchBar.keyTyped(character, keyCode);
         displayStrings = getSearchedStrings();
+
         scrollBar.setYPos(0);
     }
 
@@ -123,7 +137,8 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     public void onGuiClosed()
     {
         ItemLabeler.saveStrings(stack, strings);
-        return;
+        ItemLabeler.setLabel(stack, searchBar.getText());
+        MessageHandler.INSTANCE.sendToServer(new LabelSyncMessage(stack,player));
     }
 
     @Override
@@ -146,6 +161,7 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
                 if (entry.isSelected)
                 {
                     searchBar.setText(entry.getText());
+                    searchBar.fixCursorPos();
                 }
             }
         }

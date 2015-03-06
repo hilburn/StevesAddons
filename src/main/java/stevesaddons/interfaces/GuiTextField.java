@@ -28,6 +28,11 @@ public class GuiTextField extends Gui
         this.text = text;
     }
 
+    protected void fixCursorPos()
+    {
+        cursorPos = text.length();
+    }
+
     public String getText()
     {
         return this.text;
