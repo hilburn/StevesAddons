@@ -105,7 +105,7 @@ public class ItemLabeler extends Item
         super.addInformation(stack, player, list, extra);
         String label = getLabel(stack);
         if (label.isEmpty()) list.add("Clear Label");
-        list.add("Label: "+label);
+        else list.add("Label: "+label);
     }
 
 

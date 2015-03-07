@@ -19,10 +19,12 @@ import java.util.regex.Pattern;
 
 public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
 {
-    private static Comparator<String> ALPHABETICAL_ORDER = new Comparator<String>() {
-        public int compare(String str1, String str2) {
-            int res = String.CASE_INSENSITIVE_ORDER.compare(str1, str2);
-            return res == 0? str1.compareTo(str2): res;
+    private static Comparator<GuiTextEntry> ALPHABETICAL_ORDER = new Comparator<GuiTextEntry>() {
+        @Override
+        public int compare(GuiTextEntry o1, GuiTextEntry o2)
+        {
+            int res = String.CASE_INSENSITIVE_ORDER.compare(o1.getText(), o2.getText());
+            return res == 0? o1.getText().compareTo(o2.getText()): res;
         }
     };
     public static final ResourceLocation TEXTURE = new ResourceLocation("stevesaddons", "textures/gui/GuiLabeler.png");
@@ -34,7 +36,7 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     private static final int SCROLL_X_MAX = 109;
     private static final int ENTRY_HEIGHT=16;
 
-    private List<String> strings;
+    private List<GuiTextEntry> strings = new ArrayList<GuiTextEntry>();
     private List<GuiTextEntry> displayStrings;
     private GuiTextEntry selected = null;
     private ItemStack stack;
@@ -48,7 +50,10 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     {
         super(new GuiEmptyContainer());
         this.stack = stack;
-        this.strings = ItemLabeler.getSavedStrings(stack);
+        for (String string : ItemLabeler.getSavedStrings(stack))
+        {
+            strings.add(new GuiTextEntry(string, ENTRY_HEIGHT, 98));
+        }
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
         scrollBar = new GuiVerticalScrollBar(this, 112, SCROLL_Y, SCROLL_Y_MAX-SCROLL_Y);
@@ -97,24 +102,50 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     @Override
     protected void keyTyped(char character, int keyCode)
     {
+        boolean reset = false;
         if (keyCode == 1)
         {
             this.mc.thePlayer.closeScreen();
         }
         else if (keyCode == 28 && !searchBar.getText().isEmpty())
         {
-            if (!strings.contains(searchBar.getText()))
+            if (!isEditing() && isNewEntry(searchBar.getText()))
             {
-                strings.add(searchBar.getText());
+                strings.add(new GuiTextEntry(searchBar.getText(), ENTRY_HEIGHT, 98));
                 Collections.sort(strings, ALPHABETICAL_ORDER);
             }
-            searchBar.setText("");
-            searchBar.fixCursorPos();
+            reset = true;
         }
         searchBar.keyTyped(character, keyCode);
+        if (isEditing()) this.selected.setText(searchBar.getText());
+        if (reset)
+        {
+            searchBar.setText("");
+            searchBar.fixCursorPos();
+            if (this.selected!=null)
+            {
+                this.selected.isEditing = false;
+                this.selected.isSelected = false;
+                this.selected = null;
+            }
+        }
         displayStrings = getSearchedStrings();
 
         scrollBar.setYPos(0);
+    }
+
+    private boolean isEditing()
+    {
+        return this.selected != null && this.selected.isEditing;
+    }
+
+    private boolean isNewEntry(String string)
+    {
+        for (GuiTextEntry entry : displayStrings)
+        {
+            if (string.equals(entry.getText())) return false;
+        }
+        return true;
     }
 
     public static void bindTexture(ResourceLocation resource) {
@@ -125,10 +156,9 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     {
         List<GuiTextEntry> result = new ArrayList<GuiTextEntry>();
         Pattern pattern = Pattern.compile(Pattern.quote(searchBar.getText()), Pattern.CASE_INSENSITIVE);
-        for (int index = 0; index < strings.size(); index++)
+        for (GuiTextEntry entry : strings)
         {
-            String string = strings.get(index);
-            if (pattern.matcher(string).find()) result.add(new GuiTextEntry(string, index, 16, 98));
+            if (pattern.matcher(entry.getText()).find()) result.add(entry);
         }
         return result;
     }
@@ -136,7 +166,9 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     @Override
     public void onGuiClosed()
     {
-        ItemLabeler.saveStrings(stack, strings);
+        List<String> save = new ArrayList<String>();
+        for (GuiTextEntry entry: strings) save.add(entry.getText());
+        ItemLabeler.saveStrings(stack, save);
         ItemLabeler.setLabel(stack, searchBar.getText());
         MessageHandler.INSTANCE.sendToServer(new LabelSyncMessage(stack,player));
     }
@@ -160,6 +192,7 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
                 entry.handleMouseInput(mouseX, mouseY);
                 if (entry.isSelected)
                 {
+                    selected = entry;
                     searchBar.setText(entry.getText());
                     searchBar.fixCursorPos();
                 }

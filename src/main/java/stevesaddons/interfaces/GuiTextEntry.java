@@ -8,17 +8,16 @@ import org.lwjgl.input.Mouse;
 public class GuiTextEntry extends Gui
 {
     public String string;
-    public final int index;
     public int height, width;
     private FontRenderer fontRenderer;
     public int x, y;
     boolean isSelected;
+    public boolean isEditing;
     public boolean isVisible;
 
-    public GuiTextEntry(String string, int index, int height, int width)
+    public GuiTextEntry(String string, int height, int width)
     {
         this.string = string;
-        this.index = index;
         this.height = height;
         this.width = width;
         this.x = 11;
@@ -57,7 +56,9 @@ public class GuiTextEntry extends Gui
 
     private void onMouseClick(int mouseX, int mouseY)
     {
+        boolean oldSelected = this.isSelected;
         this.isSelected = pointIntersects(mouseX, mouseY);
+        this.isEditing = oldSelected && isSelected;
     }
 
     public boolean pointIntersects(int x, int y)
@@ -79,5 +80,10 @@ public class GuiTextEntry extends Gui
     public void drawText()
     {
         fontRenderer.drawString(getText(), this.x + 2, this.y + height / 2 - 4, 0x000000);
+    }
+
+    public void setText(String text)
+    {
+        this.string = text;
     }
 }
