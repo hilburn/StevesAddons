@@ -145,18 +145,6 @@ public class GuiTextField extends Gui
         drawRect(this.x, this.y, this.x + xSize, this.y + ySize, 0xff000000);
     }
 
-    private String getDrawText()
-    {
-        String s = getText();
-        if (!s.equals(""))
-        {
-            String before = s.substring(0, cursorPos);
-            String after = s.substring(cursorPos);
-            return before + "|" + after;
-        }
-        return "|";
-    }
-
     public String getPreCursor()
     {
         return getText().substring(0, cursorPos);
@@ -167,12 +155,6 @@ public class GuiTextField extends Gui
         return getText().substring(cursorPos);
     }
 
-    public void drawCursor()
-    {
-        int x = this.x + 2 + fontRenderer.getStringWidth(getPreCursor());
-        drawRect(x, this.y + ySize / 2 - 4, x + 1, this.y + ySize / 2 + 4, 0xffe0e0e0);
-    }
-
     public void drawText()
     {
         String preCursor = getPreCursor();
@@ -181,5 +163,10 @@ public class GuiTextField extends Gui
         if (toggleCursor)
             drawRect(x, this.y + ySize / 2 - 4, x + 1, this.y + ySize / 2 + 4, 0xffe0e0e0);
         fontRenderer.drawString(getPostCursor(), x + 2, this.y + ySize / 2 - 4, 0xe0e0e0);
+    }
+
+    public void close()
+    {
+        this.timer.cancel();
     }
 }

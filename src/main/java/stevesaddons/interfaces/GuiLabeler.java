@@ -5,6 +5,7 @@ import codechicken.nei.api.INEIGuiHandler;
 import codechicken.nei.api.TaggedInventoryArea;
 import cpw.mods.fml.common.Optional;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Optional.Interface(iface = "codechicken.nei.api.INEIGuiHandler", modid = "NotEnoughItems")
-public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer, INEIGuiHandler
+public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, INEIGuiHandler
 {
     private static Comparator<GuiTextEntry> ALPHABETICAL_ORDER = new Comparator<GuiTextEntry>() {
         @Override
@@ -51,10 +52,10 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     private EntityPlayer player;
     public int mouseX = 0;
     public int mouseY = 0;
+    private int xSize, ySize, guiLeft, guiTop;
 
     public GuiLabeler(ItemStack stack, EntityPlayer player)
     {
-        super(new GuiEmptyContainer());
         this.stack = stack;
         for (String string : ItemLabeler.getSavedStrings(stack))
         {
@@ -76,11 +77,25 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     }
 
     @Override
+    public void initGui()
+    {
+        super.initGui();
+        this.guiLeft = (this.width - this.xSize) / 2;
+        this.guiTop = (this.height - this.ySize) / 2;
+    }
+
+    @Override
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    {
+        this.drawDefaultBackground();
+        this.drawGuiContainerBackgroundLayer(p_73863_3_, p_73863_1_, p_73863_2_);
+    }
+
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_)
     {
         GL11.glPushMatrix();
-        int x = (width - GUI_WIDTH) / 2;
-        int y = (height - GUI_HEIGHT) / 2;
+        int x = this.guiLeft;
+        int y = this.guiTop;
         GL11.glTranslatef(x, y, 0);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         bindTexture(TEXTURE);
@@ -190,6 +205,7 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
     {
         List<String> save = new ArrayList<String>();
         for (GuiTextEntry entry: strings) if (!save.contains(entry.getText())) save.add(entry.getText());
+        searchBar.close();
         ItemLabeler.saveStrings(stack, save);
         ItemLabeler.setLabel(stack, searchBar.getText());
         MessageHandler.INSTANCE.sendToServer(new LabelSyncMessage(stack,player));
@@ -289,7 +305,7 @@ public class GuiLabeler extends GuiContainer implements IVerticalScrollContainer
 
     @Override
     @Optional.Method(modid = "NotEnoughItems")
-    public boolean handleDragNDrop(GuiContainer gui, int mousex, int mousey, ItemStack draggedStack, int button)
+    public boolean handleDragNDrop(GuiContainer gui, int mouseX, int mouseY, ItemStack draggedStack, int button)
     {
         return false;
     }
