@@ -20,7 +20,7 @@ public class GuiTextEntry extends Gui
         this.string = string;
         this.height = height;
         this.width = width;
-        this.x = 11;
+        this.x = GuiLabeler.SCROLL_X;
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
     }
 
@@ -79,7 +79,7 @@ public class GuiTextEntry extends Gui
 
     public void drawText()
     {
-        fontRenderer.drawString(getText(), this.x + 2, this.y + height / 2 - 4, 0x000000);
+        fontRenderer.drawString(getText(), this.x + 2, this.y + height / 2 - 4, isEditing?0x207020:0x000000);
     }
 
     public void setText(String text)

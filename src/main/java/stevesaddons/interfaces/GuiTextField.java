@@ -5,13 +5,27 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import org.lwjgl.input.Keyboard;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class GuiTextField extends Gui
 {
+    private class ToggleCursor extends TimerTask
+    {
+        @Override
+        public void run()
+        {
+            toggleCursor = !toggleCursor;
+        }
+    }
+
     private int xSize, ySize;
     private int x, y;
     private String text;
     private FontRenderer fontRenderer;
     private int cursorPos = 0;
+    private boolean toggleCursor;
+    private Timer timer = new Timer();
 
     public GuiTextField(int width, int height, int x, int y)
     {
@@ -21,6 +35,7 @@ public class GuiTextField extends Gui
         this.ySize = height;
         this.text = "";
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        this.timer.scheduleAtFixedRate(new ToggleCursor(), 0, 300);
     }
 
     protected void setText(String text)
@@ -142,8 +157,29 @@ public class GuiTextField extends Gui
         return "|";
     }
 
+    public String getPreCursor()
+    {
+        return getText().substring(0, cursorPos);
+    }
+
+    public String getPostCursor()
+    {
+        return getText().substring(cursorPos);
+    }
+
+    public void drawCursor()
+    {
+        int x = this.x + 2 + fontRenderer.getStringWidth(getPreCursor());
+        drawRect(x, this.y + ySize / 2 - 4, x + 1, this.y + ySize / 2 + 4, 0xffe0e0e0);
+    }
+
     public void drawText()
     {
-        drawString(fontRenderer, getDrawText(), this.x + 2, this.y + ySize / 2 - 4, 0xe0e0e0);
+        String preCursor = getPreCursor();
+        fontRenderer.drawString(preCursor, this.x + 2, this.y + ySize / 2 - 4, 0xe0e0e0);
+        int x = this.x + 2 + fontRenderer.getStringWidth(preCursor);
+        if (toggleCursor)
+            drawRect(x, this.y + ySize / 2 - 4, x + 1, this.y + ySize / 2 + 4, 0xffe0e0e0);
+        fontRenderer.drawString(getPostCursor(), x + 2, this.y + ySize / 2 - 4, 0xe0e0e0);
     }
 }
