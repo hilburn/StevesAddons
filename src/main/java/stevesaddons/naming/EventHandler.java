@@ -3,9 +3,14 @@ package stevesaddons.naming;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import stevesaddons.items.ItemLabeler;
+import stevesaddons.registry.ItemRegistry;
 
 
 public class EventHandler
@@ -45,5 +50,29 @@ public class EventHandler
         NameData nameData = NameRegistry.getWorldData(event.world.provider.dimensionId, false);
         if (nameData != null)
             event.world.perWorldStorage.setData(NameData.KEY, nameData);
+    }
+
+    @SubscribeEvent
+    public void playerInteract(PlayerInteractEvent event)
+    {
+        ItemStack stack = event.entityPlayer.getCurrentEquippedItem();
+        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && stack != null && stack.getItem() == ItemRegistry.labeler)
+        {
+            World world = event.world;
+            int x = event.x;
+            int y = event.y;
+            int z = event.z;
+            if (ItemLabeler.isValidTile(world, x, y, z))
+            {
+                String label = ItemLabeler.getLabel(stack);
+                if (label.isEmpty())
+                {
+                    NameRegistry.removeName(world, x, y, z);
+                }else
+                {
+                    NameRegistry.saveName(world, x, y, z, label);
+                }
+            }
+        }
     }
 }

@@ -32,27 +32,19 @@ public class ItemLabeler extends Item
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
     {
         if (world.isRemote)
         {
-            if (player.isSneaking())
-            {
-                player.openGui(StevesAddons.INSTANCE, 0, world, x, y, z);
-            } else if (isValidTile(world, x, y, z))
-            {
-                String label = getLabel(stack);
-                if (label.isEmpty())
-                {
-                    NameRegistry.removeName(world, x, y, z);
-                }else
-                {
-                    NameRegistry.saveName(world, x, y, z, getLabel(stack));
-                }
-                return true;
-            }
+            player.openGui(StevesAddons.INSTANCE, 0, world, player.chunkCoordX, player.chunkCoordY, player.chunkCoordZ);
         }
-        return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
+        return super.onItemRightClick(stack, world, player);
+    }
+
+    @Override
+    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
+    {
+        super.onUsingTick(stack, player, count);
     }
 
     public static boolean isValidTile(World world, int x, int y, int z)

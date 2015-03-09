@@ -56,7 +56,7 @@ public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameData
     {
         if (message.remove) NameRegistry.removeName(message);
         else NameRegistry.saveName(message);
-        if (ctx.side == Side.SERVER) MessageHandler.INSTANCE.sendToAll(message);
+        //if (ctx.side == Side.SERVER) MessageHandler.INSTANCE.sendToAll(message);
         return null;
     }
 }
