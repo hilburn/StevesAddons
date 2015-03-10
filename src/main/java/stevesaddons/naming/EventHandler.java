@@ -73,6 +73,7 @@ public class EventHandler
                     NameRegistry.saveName(world, x, y, z, label);
                 }
             }
+            event.setCanceled(true);
         }
     }
 }

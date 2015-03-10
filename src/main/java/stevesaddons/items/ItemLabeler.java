@@ -41,12 +41,6 @@ public class ItemLabeler extends Item
         return super.onItemRightClick(stack, world, player);
     }
 
-    @Override
-    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
-    {
-        super.onUsingTick(stack, player, count);
-    }
-
     public static boolean isValidTile(World world, int x, int y, int z)
     {
         TileEntity te = world.getTileEntity(x, y, z);

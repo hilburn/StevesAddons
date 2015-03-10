@@ -61,6 +61,6 @@ public class BlockCoord
     @Override
     public String toString()
     {
-        return "[x: " + x + ", y: " + y + ", z: " + z + "]:" + (name != null ? name : "");
+        return "[x: " + x + ", y: " + y + ", z: " + z + "]" + (name != null ? name : "");
     }
 }
