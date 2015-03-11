@@ -40,7 +40,7 @@ public class CommandSave extends CommandDuplicator
             if (ItemSFMDrive.validateNBT(duplicator) && duplicator.hasTagCompound())
             {
                 String name = arguments.length == 2 ? arguments[1] : sender.getCommandSenderName();
-                File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + "\\managers\\" + name + ".nbt");
+                File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + File.separator + "managers" + File.separator + name + ".nbt");
                 File parent = file.getParentFile();
                 if (!parent.exists() && !parent.mkdirs())
                 {

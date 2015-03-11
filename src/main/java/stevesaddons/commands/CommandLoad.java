@@ -25,7 +25,7 @@ public class CommandLoad extends CommandDuplicator
         try
         {
             String name = arguments.length == 2 ? arguments[1] : sender.getCommandSenderName();
-            File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + "\\managers\\" + name + ".nbt");
+            File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + File.separator + "managers" + File.separator + name + ".nbt");
             if (!file.exists())
             {
                 throw new CommandException("Couldn't access file: " + name + ".nbt");
