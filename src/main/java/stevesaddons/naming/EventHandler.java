@@ -2,16 +2,18 @@ package stevesaddons.naming;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import stevesaddons.items.ItemLabeler;
 import stevesaddons.registry.ItemRegistry;
-
 
 public class EventHandler
 {
@@ -56,7 +58,7 @@ public class EventHandler
     public void playerInteract(PlayerInteractEvent event)
     {
         ItemStack stack = event.entityPlayer.getCurrentEquippedItem();
-        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && stack != null && stack.getItem() == ItemRegistry.labeler)
+        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && isLabeler(stack))
         {
             World world = event.world;
             int x = event.x;
@@ -74,6 +76,41 @@ public class EventHandler
                 }
             }
             event.setCanceled(true);
+        }
+    }
+
+    private static boolean isLabeler(ItemStack stack)
+    {
+        return stack!=null && stack.getItem() == ItemRegistry.labeler;
+    }
+
+    @SubscribeEvent
+    public void renderEvent(RenderWorldLastEvent event)
+    {
+        try
+        {
+            doEvent();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void doEvent()
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (!isLabeler(mc.thePlayer.getCurrentEquippedItem()) || mc.renderEngine == null || RenderManager.instance == null || RenderManager.instance.getFontRenderer() == null || mc.gameSettings.thirdPersonView != 0 || mc.objectMouseOver == null) return;
+        switch (mc.objectMouseOver.typeOfHit)
+        {
+            case BLOCK:
+                BlockCoord coord = new BlockCoord(mc.objectMouseOver.blockX,mc.objectMouseOver.blockY,mc.objectMouseOver.blockZ);
+                String name = NameRegistry.getSavedName(mc.theWorld.provider.dimensionId, coord);
+                if (name != null)
+                {
+                    //TODO: Fancy render shizz
+                }
+                break;
         }
     }
 }

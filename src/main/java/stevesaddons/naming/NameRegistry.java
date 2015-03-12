@@ -24,6 +24,13 @@ public class NameRegistry
         return data.get(new BlockCoord(x,y,z));
     }
 
+    public static String getSavedName(int dimensionId, BlockCoord coord)
+    {
+        NameData data = instance.nameMapping.get(dimensionId);
+        if (data == null) return null;
+        return data.get(coord);
+    }
+
     public static void saveName(World world, int x, int y, int z, String name)
     {
         BlockCoord coord = new BlockCoord(x, y, z, name);
