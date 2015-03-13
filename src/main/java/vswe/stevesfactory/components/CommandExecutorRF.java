@@ -693,7 +693,7 @@ public class CommandExecutorRF extends CommandExecutor
             if (removed < remove) itr.remove();
             amount -= removed;
         }
-        if (amount > 0 && rfBuffer.size() > 0) removeRF(amount);
+        if (amount > 0 && remove > 0 && rfBuffer.size() > 0) removeRF(amount);
     }
 
     private boolean isSlotValid(IInventory inventory, ItemStack item, SlotSideTarget slot, boolean isInput)
