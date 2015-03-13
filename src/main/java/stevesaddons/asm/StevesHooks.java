@@ -3,6 +3,9 @@ package stevesaddons.asm;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.naming.BlockCoord;
@@ -159,6 +162,16 @@ public class StevesHooks
                 else
                     contains += StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());
                 string += contains;
+            } else if (tileEntity instanceof IFluidHandler)
+            {
+                String tankInfo = "";
+                int i = 1;
+                FluidTankInfo[] fluidTankInfo = ((IFluidHandler)tileEntity).getTankInfo(ForgeDirection.UNKNOWN);
+                for (FluidTankInfo info : fluidTankInfo)
+                {
+                    tankInfo += info.fluid != null ? info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "") : "";
+                }
+                string += "\n" + StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", tankInfo);
             }
         }
         return string;
