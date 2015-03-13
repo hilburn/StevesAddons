@@ -48,12 +48,12 @@ public class NameRegistry
         data.put(message.blockCoord);
     }
 
-    public static void removeName(World world, int x, int y, int z)
+    public static boolean removeName(World world, int x, int y, int z)
     {
         BlockCoord coord = new BlockCoord(x, y, z);
-        if (!instance.nameMapping.containsKey(world.provider.dimensionId)) return;
+        if (!instance.nameMapping.containsKey(world.provider.dimensionId)) return false;
         NameData data = instance.nameMapping.get(world.provider.dimensionId);
-        if (!data.names.containsKey(coord)) return;
+        if (!data.names.containsKey(coord)) return false;
         if (world.isRemote) MessageHandler.INSTANCE.sendToServer(new NameDataUpdateMessage(world.provider.dimensionId, coord, true));
         else
         {
@@ -61,6 +61,7 @@ public class NameRegistry
             data.markDirty();
             MessageHandler.INSTANCE.sendToAll(new NameDataUpdateMessage(world.provider.dimensionId, coord, true));
         }
+        return true;
     }
 
     public static void removeName(NameDataUpdateMessage message)

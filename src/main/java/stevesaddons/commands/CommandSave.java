@@ -41,11 +41,6 @@ public class CommandSave extends CommandDuplicator
             {
                 String name = arguments.length == 2 ? arguments[1] : sender.getCommandSenderName();
                 File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + File.separator + "managers" + File.separator + name + ".nbt");
-                File parent = file.getParentFile();
-                if (!parent.exists() && !parent.mkdirs())
-                {
-                    throw new CommandException("Couldn't create dir: " + parent);
-                }
                 if (!file.exists()) file.createNewFile();
                 NBTTagCompound tagCompound = (NBTTagCompound)duplicator.getTagCompound().copy();
                 tagCompound.removeTag("x");

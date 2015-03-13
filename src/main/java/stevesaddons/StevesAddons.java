@@ -8,6 +8,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.command.CommandException;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import stevesaddons.helpers.Config;
@@ -26,6 +28,7 @@ import stevesaddons.registry.CommandRegistry;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,14 +104,11 @@ public class StevesAddons
     }
 
     @Mod.EventHandler
-    public void serverStarting(FMLServerStartingEvent event)
-    {
-        NameRegistry.setNameData(new HashMap<Integer, NameData>());
-    }
-
-    @Mod.EventHandler
     public void serverStart(FMLServerStartingEvent event)
     {
+        NameRegistry.setNameData(new HashMap<Integer, NameData>());
         event.registerServerCommand(CommandRegistry.instance);
+        File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + File.separator + "managers");
+        if (!file.exists()) file.mkdirs();
     }
 }

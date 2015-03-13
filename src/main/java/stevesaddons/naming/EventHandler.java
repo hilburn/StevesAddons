@@ -2,13 +2,12 @@ package stevesaddons.naming;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -69,13 +68,17 @@ public class EventHandler
                 String label = ItemLabeler.getLabel(stack);
                 if (label.isEmpty())
                 {
-                    NameRegistry.removeName(world, x, y, z);
+                    if (NameRegistry.removeName(world, x, y, z))
+                    {
+                        event.entityPlayer.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
+                    }
                 }else
                 {
                     NameRegistry.saveName(world, x, y, z, label);
+                    event.entityPlayer.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
                 }
+                event.setCanceled(true);
             }
-            event.setCanceled(true);
         }
     }
 
