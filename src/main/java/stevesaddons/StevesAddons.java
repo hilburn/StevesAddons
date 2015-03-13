@@ -15,6 +15,7 @@ import stevesaddons.interfaces.GuiHandler;
 import stevesaddons.naming.EventHandler;
 import stevesaddons.naming.NameData;
 import stevesaddons.naming.NameRegistry;
+import stevesaddons.naming.WailaLabelProvider;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.recipes.ClusterUncraftingRecipe;
@@ -71,6 +72,10 @@ public class StevesAddons
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e)
     {
+        if (Loader.isModLoaded("Waila"))
+        {
+            WailaLabelProvider.register();
+        }
         if (Loader.isModLoaded("JABBA"))
         {
             try

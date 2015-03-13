@@ -83,34 +83,4 @@ public class EventHandler
     {
         return stack!=null && stack.getItem() == ItemRegistry.labeler;
     }
-
-    @SubscribeEvent
-    public void renderEvent(RenderWorldLastEvent event)
-    {
-        try
-        {
-            doEvent();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void doEvent()
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (!isLabeler(mc.thePlayer.getCurrentEquippedItem()) || mc.renderEngine == null || RenderManager.instance == null || RenderManager.instance.getFontRenderer() == null || mc.gameSettings.thirdPersonView != 0 || mc.objectMouseOver == null) return;
-        switch (mc.objectMouseOver.typeOfHit)
-        {
-            case BLOCK:
-                BlockCoord coord = new BlockCoord(mc.objectMouseOver.blockX,mc.objectMouseOver.blockY,mc.objectMouseOver.blockZ);
-                String name = NameRegistry.getSavedName(mc.theWorld.provider.dimensionId, coord);
-                if (name != null)
-                {
-                    //TODO: Fancy render shizz
-                }
-                break;
-        }
-    }
 }
