@@ -24,6 +24,8 @@ gui.sfm.Below=Trigger low
 
 tile.cable_rf.name=RF Node
 
+stevesaddons.waila.labelled=Label: %s
+
 stevesaddons.command.notFound=Command not found
 stevesaddons.command.noPermission=You not have permission to use this command
 stevesaddons.command.loadFailed=Loading failed

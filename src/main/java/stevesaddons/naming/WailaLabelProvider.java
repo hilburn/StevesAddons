@@ -9,10 +9,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WailaLabelProvider implements IWailaDataProvider
@@ -47,7 +47,7 @@ public class WailaLabelProvider implements IWailaDataProvider
             String label = NameRegistry.getSavedName(iWailaDataAccessor.getWorld().provider.dimensionId, coord);
             if (label!=null)
             {
-                list.add("Label: "+label);
+                list.add(StatCollector.translateToLocalFormatted("stevesaddons.waila.labelled",label));
             }
         }
         return list;

@@ -70,9 +70,10 @@ public class StevesAddons
     }
 
     @Mod.EventHandler
+    @SuppressWarnings(value="unchecked")
     public void postInit(FMLPostInitializationEvent e)
     {
-        if (Loader.isModLoaded("Waila"))
+        if (Config.wailaIntegration && Loader.isModLoaded("Waila"))
         {
             WailaLabelProvider.register();
         }
@@ -93,7 +94,7 @@ public class StevesAddons
                 extensions.add(TileEntityManager.class);
                 extensionsNames.add(TileEntityManager.class.getSimpleName());
                 map.put(TileEntityManager.class.getSimpleName(), TileEntityManager.class);
-            } catch (Exception e1)
+            } catch (Exception ignore)
             {
             }
         }
