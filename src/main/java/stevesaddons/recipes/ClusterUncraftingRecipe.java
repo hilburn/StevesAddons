@@ -7,6 +7,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.RecipeSorter;
 import vswe.stevesfactory.blocks.ClusterRegistry;
 import vswe.stevesfactory.blocks.ItemCluster;
 import vswe.stevesfactory.blocks.ModBlocks;
@@ -16,12 +17,11 @@ public class ClusterUncraftingRecipe implements IRecipe
     private static ItemStack cluster = new ItemStack(ModBlocks.blockCableCluster);
     private static ItemStack advcluster = new ItemStack(ModBlocks.blockCableCluster, 1, 8);
 
-    /**
-     * Used to check if a recipe matches current crafting inventory
-     *
-     * @param crafting
-     * @param world
-     */
+    static
+    {
+        RecipeSorter.register("clusterUncrafting", ClusterUncraftingRecipe.class, RecipeSorter.Category.SHAPELESS,"after:minecraft:shapeless");
+    }
+
     @Override
     public boolean matches(InventoryCrafting crafting, World world)
     {
@@ -35,7 +35,7 @@ public class ClusterUncraftingRecipe implements IRecipe
         {
             ItemStack stack = crafting.getStackInSlot(i);
             if (stack == null) continue;
-            if (!cluster && (stack.isItemEqual(this.cluster) || stack.isItemEqual(this.advcluster)))
+            if (!cluster && (stack.isItemEqual(ClusterUncraftingRecipe.cluster) || stack.isItemEqual(this.advcluster)))
             {
                 cluster = true;
                 continue;
@@ -56,11 +56,6 @@ public class ClusterUncraftingRecipe implements IRecipe
         return null;
     }
 
-    /**
-     * Returns an Item that is the result of this recipe
-     *
-     * @param crafting
-     */
     @Override
     public ItemStack getCraftingResult(InventoryCrafting crafting)
     {
@@ -69,10 +64,6 @@ public class ClusterUncraftingRecipe implements IRecipe
         return result;
     }
 
-
-    /**
-     * Returns the size of the recipe area
-     */
     @Override
     public int getRecipeSize()
     {

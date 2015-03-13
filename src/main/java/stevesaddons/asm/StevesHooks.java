@@ -1,8 +1,11 @@
 package stevesaddons.asm;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.StatCollector;
+import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.helpers.StevesEnum;
+import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.TileEntityManager;
@@ -67,6 +70,11 @@ public class StevesHooks
                 return !Settings.isLimitless(manager) && manager.getFlowItems().size() == 511 ? Localization.MAXIMUM_COMPONENT_ERROR.toString() : super.getMouseOver();
             }
         });
+    }
+
+    private static int getAfterDelete(List<TileEntityManager.Button> buttons)
+    {
+        return ComponentType.values().length + 1;
     }
 
     private static Collection<FlowComponent> copyConnectionsWithChildren(List<FlowComponent> existing, FlowComponent toCopy, boolean limitless)
@@ -136,15 +144,23 @@ public class StevesHooks
         return stack;
     }
 
-    private static int getAfterDelete(List<TileEntityManager.Button> buttons)
+    public static String fixToolTip(String string, TileEntity tileEntity)
     {
-        return ComponentType.values().length + 1;
-    }
-
-    public static ItemStack getCustomName(ItemStack stack, World world, int x, int y, int z)
-    {
-        String name = NameRegistry.getSavedName(world, x, y, z);
-        if (name!=null) stack.setStackDisplayName(name);
-        return stack;
+        if (tileEntity != null && tileEntity.hasWorldObj())
+        {
+            BlockCoord coord = new BlockCoord(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+            String label = NameRegistry.getSavedName(tileEntity.getWorldObj().provider.dimensionId, coord);
+            if (label != null) string = "§3" + label;
+            if (tileEntity instanceof IDeepStorageUnit)
+            {
+                ItemStack stack = ((IDeepStorageUnit)tileEntity).getStoredItemType();
+                String contains = "\n";
+                if (stack == null) contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
+                else
+                    contains += StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());
+                string += contains;
+            }
+        }
+        return string;
     }
 }

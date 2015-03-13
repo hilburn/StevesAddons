@@ -25,6 +25,8 @@ gui.sfm.Below=Trigger low
 tile.cable_rf.name=RF Node
 
 stevesaddons.waila.labelled=Label: %s
+stevesaddons.idsucompat.isEmpty=Empty
+stevesaddons.idsucompat.contains=Contains: %s
 
 stevesaddons.chat.cleared=Label cleared
 stevesaddons.chat.saved=Label set as "%s"

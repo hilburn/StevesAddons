@@ -66,7 +66,7 @@ public class StevesAddonsTransformer implements IClassTransformer
                         return true;
                     }
                 },
-        GET_ITEMSTACK_FROM_BLOCK("getItemStackFromBlock","(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)Lnet/minecraft/item/ItemStack;")
+        GET_DESCRIPTION("getDescription","(Lvswe/stevesfactory/interfaces/GuiManager;)Ljava/lang/String;")
                 {
                     @Override
                     public AbstractInsnNode getInjectionPoint(InsnList list)
@@ -74,13 +74,11 @@ public class StevesAddonsTransformer implements IClassTransformer
                         AbstractInsnNode node = list.getFirst();
                         while (node != null)
                         {
-                            if (node.getOpcode() == Opcodes.ARETURN)
+                            if (node.getOpcode() == Opcodes.ASTORE)
                             {
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 1));
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ILOAD, 2));
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ILOAD, 3));
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ILOAD, 4));
-                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "getCustomName", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;III)Lnet/minecraft/item/ItemStack;", false));
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD,0));
+                                list.insertBefore(node, new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/blocks/ConnectionBlock", "tileEntity", "Lnet/minecraft/tileentity/TileEntity;"));
+                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixToolTip", "(Ljava/lang/String;Lnet/minecraft/tileentity/TileEntity;)Ljava/lang/String;",false));
                                 break;
                             }
                             node = node.getNext();
@@ -151,7 +149,8 @@ public class StevesAddonsTransformer implements IClassTransformer
         RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster", MethodName.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD),
         COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.STRING_NULL_CHECK),
-        GUI_BASE("vswe.stevesfactory.interfaces.GuiBase",MethodName.GET_ITEMSTACK_FROM_BLOCK);
+//        GUI_BASE("vswe.stevesfactory.interfaces.GuiBase",MethodName.GET_ITEMSTACK_FROM_BLOCK);
+        CONNECTION_BLOCK("vswe.stevesfactory.blocks.ConnectionBlock",MethodName.GET_DESCRIPTION);
         private String name;
         private MethodName[] methods;
 
