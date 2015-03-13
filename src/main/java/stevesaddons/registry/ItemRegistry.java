@@ -11,10 +11,14 @@ import stevesaddons.items.ItemSFMDrive;
 import stevesaddons.reference.Names;
 import vswe.stevesfactory.blocks.ModBlocks;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ItemRegistry
 {
     public static Item duplicator;
     public static Item labeler;
+    public static ItemStack defaultLabeler;
 
     public static void registerItems()
     {
@@ -25,6 +29,8 @@ public class ItemRegistry
     public static void registerRecipes()
     {
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(duplicator), " x ", "xyx", " x ", 'x', "ingotIron", 'y', new ItemStack(ModBlocks.blockManager)));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(labeler), "ppp", " i ", "rxr", 'p', new ItemStack(Items.paper), 'i', "dyeBlack", 'r', "dustRedstone", 'x', new ItemStack(Blocks.piston)));
+        defaultLabeler = new ItemStack(labeler);
+        ItemLabeler.saveStrings(defaultLabeler, new ArrayList<String>(Arrays.asList("Energy Receiver", "Energy Provider", "Input Inventory", "Input Tank", "Output Inventory", "Output Tank")));
+        GameRegistry.addRecipe(new ShapedOreRecipe(defaultLabeler, "ppp", " i ", "rxr", 'p', new ItemStack(Items.paper), 'i', "dyeBlack", 'r', "dustRedstone", 'x', new ItemStack(Blocks.piston)));
     }
 }

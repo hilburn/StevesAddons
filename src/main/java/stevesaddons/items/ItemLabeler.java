@@ -2,6 +2,9 @@ package stevesaddons.items;
 
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -16,6 +19,7 @@ import stevesaddons.StevesAddons;
 import stevesaddons.naming.NameRegistry;
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
+import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.*;
 
 import java.util.ArrayList;
@@ -61,6 +65,13 @@ public class ItemLabeler extends Item
         return result;
     }
 
+    @SideOnly(Side.CLIENT)
+    @SuppressWarnings(value="unchecked")
+    public void getSubItems(Item item, CreativeTabs tab, List list)
+    {
+        list.add(ItemRegistry.defaultLabeler);
+    }
+
     public static void setLabel(ItemStack stack, String string)
     {
         stack.getTagCompound().setString("Label",string);
@@ -93,6 +104,4 @@ public class ItemLabeler extends Item
         if (label.isEmpty()) list.add("Clear Label");
         else list.add("Label: "+label);
     }
-
-
 }
