@@ -1,5 +1,6 @@
 package stevesaddons.asm;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
@@ -10,19 +11,21 @@ import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
+import stevesaddons.threading.SearchItems;
 import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.components.ComponentType;
-import vswe.stevesfactory.components.Connection;
-import vswe.stevesfactory.components.FlowComponent;
+import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.settings.Settings;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class StevesHooks
 {
+    public static ItemStack JABBA_EMPTY_STACK = new ItemStack(Blocks.end_portal);
     public static void addCopyButton(final TileEntityManager manager)
     {
         int index = getAfterDelete(manager.buttons);
@@ -151,29 +154,58 @@ public class StevesHooks
     {
         if (tileEntity != null && tileEntity.hasWorldObj())
         {
-            BlockCoord coord = new BlockCoord(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-            String label = NameRegistry.getSavedName(tileEntity.getWorldObj().provider.dimensionId, coord);
+            String label = getLabel(tileEntity);
             if (label != null) string = "§3" + label;
-            if (tileEntity instanceof IDeepStorageUnit)
-            {
-                ItemStack stack = ((IDeepStorageUnit)tileEntity).getStoredItemType();
-                String contains = "\n";
-                if (stack == null) contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
-                else
-                    contains += StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());
-                string += contains;
-            } else if (tileEntity instanceof IFluidHandler)
-            {
-                String tankInfo = "";
-                int i = 1;
-                FluidTankInfo[] fluidTankInfo = ((IFluidHandler)tileEntity).getTankInfo(ForgeDirection.UNKNOWN);
-                for (FluidTankInfo info : fluidTankInfo)
-                {
-                    tankInfo += info.fluid != null ? info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "") : "";
-                }
-                string += "\n" + StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", tankInfo);
-            }
+            string += getContentString(tileEntity);
         }
         return string;
+    }
+
+    public static String getContentString(TileEntity tileEntity)
+    {
+        String result = "";
+        if (tileEntity instanceof IDeepStorageUnit)
+        {
+            ItemStack stack = ((IDeepStorageUnit)tileEntity).getStoredItemType();
+            String contains = "\n";
+            if (stack == null || stack.isItemEqual(JABBA_EMPTY_STACK)) contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
+            else
+                contains += StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());
+            result += contains;
+        } else if (tileEntity instanceof IFluidHandler)
+        {
+            String tankInfo = "";
+            int i = 1;
+            FluidTankInfo[] fluidTankInfo = ((IFluidHandler)tileEntity).getTankInfo(ForgeDirection.UNKNOWN);
+            for (FluidTankInfo info : fluidTankInfo)
+            {
+                tankInfo += info.fluid != null ? info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "") : "";
+            }
+            if (tankInfo.isEmpty()) result+="\n"+StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
+            else result += "\n" + StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", tankInfo);
+        }
+        return result;
+    }
+
+    private static String getLabel(TileEntity tileEntity)
+    {
+        BlockCoord coord = new BlockCoord(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+        return NameRegistry.getSavedName(tileEntity.getWorldObj().provider.dimensionId, coord);
+    }
+
+    public static List updateItemSearch(ComponentMenuItem menu, String search, boolean showAll)
+    {
+        ScrollController searchController = ComponentHelper.getController(menu);
+        Thread thread = new Thread(new SearchItems(search, searchController, showAll));
+        thread.start();
+        return searchController.getResult();
+    }
+
+    public static boolean containerAdvancedSearch(ConnectionBlock block, String search)
+    {
+        TileEntity tileEntity = block.getTileEntity();
+        String toSearch = getLabel(tileEntity);
+        Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
+        return (toSearch != null && pattern.matcher(toSearch).find()) || pattern.matcher(getContentString(tileEntity)).find();
     }
 }

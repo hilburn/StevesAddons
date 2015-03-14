@@ -20,6 +20,7 @@ public class MessageHandler implements IMessageHandler
         INSTANCE.registerMessage(FullDataSyncMessage.class, FullDataSyncMessage.class, 3, Side.CLIENT);
         INSTANCE.registerMessage(WorldDataSyncMessage.class, WorldDataSyncMessage.class, 4, Side.CLIENT);
         INSTANCE.registerMessage(LabelSyncMessage.class, LabelSyncMessage.class, 5, Side.SERVER);
+        INSTANCE.registerMessage(SearchRegistryGenerateMessage.class, SearchRegistryGenerateMessage.class, 6, Side.CLIENT);
     }
 
     @Override

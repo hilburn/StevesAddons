@@ -5,43 +5,71 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+import stevesaddons.StevesAddons;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StevesAddonsTransformer implements IClassTransformer
 {
     private enum MethodName
     {
-        ACTIVATE_TRIGGER("activateTrigger", "(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V", "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF"),
-        GET_GUI("getGui", "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;", "vswe/stevesfactory/interfaces/GuiManager", "stevesaddons/interfaces/GuiRFManager"),
-        CREATE_TE("func_149915_a", "(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;", "vswe/stevesfactory/blocks/TileEntityCluster", "vswe/stevesfactory/blocks/TileEntityRFCluster"),
+        ACTIVATE_TRIGGER("activateTrigger", "(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V")
+                {
+                    @Override
+                    public InsnList transform(InsnList list)
+                    {
+                        return replace(list, "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF");
+                    }
+                },
+        GET_GUI("getGui", "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;")
+                {
+                    @Override
+                    public InsnList transform(InsnList list)
+                    {
+                        return replace(list, "vswe/stevesfactory/interfaces/GuiManager", "stevesaddons/interfaces/GuiRFManager");
+                    }
+                },
+        CREATE_TE("func_149915_a", "(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;")
+                {
+                    @Override
+                    public InsnList transform(InsnList list)
+                    {
+                        return replace(list, "vswe/stevesfactory/blocks/TileEntityCluster", "vswe/stevesfactory/blocks/TileEntityRFCluster");
+                    }
+                },
         MANAGER_INIT("<init>", "()")
                 {
                     @Override
-                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    public InsnList transform(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst())
                             node = node.getPrevious();
-                        return node;
+                        list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
+                        list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
+                        return list;
                     }
                 },
         ITEM_SETTING_LOAD("load", "(Lnet/minecraft/nbt/NBTTagCompound;)V")
                 {
                     @Override
-                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    public InsnList transform(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         while (node.getOpcode() != Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
-                        return node;
+                        list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
+                        list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
+                        list.insertBefore(node, new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
+                        list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixLoadingStack", "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", false));
+                        list.insertBefore(node, new FieldInsnNode(Opcodes.PUTFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
+                        return list;
                     }
                 },
-        STRING_NULL_CHECK("updateSearch","(Ljava/lang/String;Z)Ljava/util/List;")
+        STRING_NULL_CHECK("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    public InsnList transform(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         LabelNode labelNode = null;
@@ -57,76 +85,91 @@ public class StevesAddonsTransformer implements IClassTransformer
                             }
                             node = node.getPrevious();
                         }
-                        return node;
-                    }
-
-                    @Override
-                    public boolean inject()
-                    {
-                        return true;
+                        return list;
                     }
                 },
-        GET_DESCRIPTION("getDescription","(Lvswe/stevesfactory/interfaces/GuiManager;)Ljava/lang/String;")
+        GET_DESCRIPTION("getDescription", "(Lvswe/stevesfactory/interfaces/GuiManager;)Ljava/lang/String;")
                 {
                     @Override
-                    public AbstractInsnNode getInjectionPoint(InsnList list)
+                    public InsnList transform(InsnList list)
                     {
                         AbstractInsnNode node = list.getFirst();
                         while (node != null)
                         {
                             if (node.getOpcode() == Opcodes.ASTORE)
                             {
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD,0));
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
                                 list.insertBefore(node, new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/blocks/ConnectionBlock", "tileEntity", "Lnet/minecraft/tileentity/TileEntity;"));
-                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixToolTip", "(Ljava/lang/String;Lnet/minecraft/tileentity/TileEntity;)Ljava/lang/String;",false));
+                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixToolTip", "(Ljava/lang/String;Lnet/minecraft/tileentity/TileEntity;)Ljava/lang/String;", false));
                                 break;
                             }
                             node = node.getNext();
                         }
-                        return list.getLast();
+                        return list;
                     }
-
+                },
+        ITEM_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
+                {
                     @Override
-                    public boolean inject()
+                    public InsnList transform(InsnList list)
                     {
-                        return true;
+                        AbstractInsnNode first = list.getFirst();
+                        list.insertBefore(first, new VarInsnNode(Opcodes.ALOAD, 0));
+                        list.insertBefore(first, new VarInsnNode(Opcodes.ALOAD, 1));
+                        list.insertBefore(first, new VarInsnNode(Opcodes.ILOAD, 2));
+                        list.insertBefore(first, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "updateItemSearch", "(Lvswe/stevesfactory/components/ComponentMenuItem;Ljava/lang/String;Z)Ljava/util/List;", false));
+                        list.insertBefore(first, new InsnNode(Opcodes.ARETURN));
+                        return list;
+                    }
+                },
+        CONTAINER_SEARCH("updateSearch","(Ljava/lang/String;Z)Ljava/util/List;")
+                {
+                    @Override
+                    public InsnList transform(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        LabelNode label = null;
+                        while (node != null)
+                        {
+                            if (node instanceof JumpInsnNode)
+                            {
+                                label = ((JumpInsnNode)node).label;
+                            }
+                            if (node.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)node).var==8)
+                            {
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 8));
+                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 1));
+                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "containerAdvancedSearch", "(Lvswe/stevesfactory/blocks/ConnectionBlock;Ljava/lang/String;)Z", false));
+                                list.insertBefore(node, new JumpInsnNode(Opcodes.IFNE, label));
+                                break;
+                            }
+                            node = node.getNext();
+                        }
+                        return list;
                     }
                 };
 
         private String name;
         private String args;
-        public final String toReplace;
-        public final String replace;
-        public InsnList instructions = new InsnList();
 
         MethodName(String name, String args)
         {
-            this(name, args, "", "");
-        }
-
-        MethodName(String name, String args, String toReplace, String replace)
-        {
             this.name = name;
             this.args = args;
-            this.replace = replace;
-            this.toReplace = toReplace;
         }
 
-        static
-        {
-            MANAGER_INIT.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            MANAGER_INIT.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
+        public abstract InsnList transform(InsnList list);
 
-            ITEM_SETTING_LOAD.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            ITEM_SETTING_LOAD.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
-            ITEM_SETTING_LOAD.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixLoadingStack", "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", false));
-            ITEM_SETTING_LOAD.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
-        }
-
-        public AbstractInsnNode getInjectionPoint(InsnList list)
+        private static InsnList replace(InsnList list, String toReplace, String replace)
         {
-            return null;
+            AbstractInsnNode node = list.getFirst();
+            InsnList result = new InsnList();
+            while (node != null)
+            {
+                result.add(checkReplace(node, toReplace, replace));
+                node = node.getNext();
+            }
+            return result;
         }
 
         public String getName()
@@ -139,7 +182,22 @@ public class StevesAddonsTransformer implements IClassTransformer
             return args;
         }
 
-        public boolean inject() { return instructions.size()>0; }
+        private static AbstractInsnNode checkReplace(AbstractInsnNode node, String toReplace, String replace)
+        {
+            if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(toReplace))
+            {
+                return new TypeInsnNode(Opcodes.NEW, replace);
+            } else if (node instanceof MethodInsnNode && ((MethodInsnNode)node).owner.contains(toReplace))
+            {
+                return new MethodInsnNode(node.getOpcode(), replace, ((MethodInsnNode)node).name, ((MethodInsnNode)node).desc, false);
+            }
+            return node;
+        }
+
+        public void complete()
+        {
+            StevesAddons.log.info("Applied " + this + " transformer");
+        }
     }
 
     private enum ClassName
@@ -148,9 +206,10 @@ public class StevesAddonsTransformer implements IClassTransformer
         TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", MethodName.ACTIVATE_TRIGGER, MethodName.GET_GUI, MethodName.MANAGER_INIT),
         RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster", MethodName.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD),
-        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.STRING_NULL_CHECK),
-//        GUI_BASE("vswe.stevesfactory.interfaces.GuiBase",MethodName.GET_ITEMSTACK_FROM_BLOCK);
-        CONNECTION_BLOCK("vswe.stevesfactory.blocks.ConnectionBlock",MethodName.GET_DESCRIPTION);
+        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.ITEM_SEARCH),
+        CONNECTION_BLOCK("vswe.stevesfactory.blocks.ConnectionBlock", MethodName.GET_DESCRIPTION),
+        COMPONENT_MENU_CONTAINER("vswe.stevesfactory.components.ComponentMenuContainer$2", MethodName.CONTAINER_SEARCH);
+
         private String name;
         private MethodName[] methods;
 
@@ -187,7 +246,8 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             for (MethodName method : clazz.getMethods())
             {
-                bytes = method.inject() ? inject(method, bytes) : replace(method, bytes);
+                bytes = transform(method, bytes);
+                method.complete();
             }
             classMap.remove(className);
         }
@@ -195,45 +255,14 @@ public class StevesAddonsTransformer implements IClassTransformer
         return bytes;
     }
 
-    private byte[] inject(MethodName methodName, byte[] data)
+    private byte[] transform(MethodName methodName, byte[] data)
     {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(data);
         classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
         MethodNode methodNode = getMethodByName(classNode, methodName);
-        AbstractInsnNode node = methodName.getInjectionPoint(methodNode.instructions);
-        methodNode.instructions.insertBefore(node, methodName.instructions);
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classNode.accept(writer);
-        return writer.toByteArray();
-    }
-
-    private byte[] replace(MethodName methodName, byte[] data)
-    {
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(data);
-        classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
-
-        MethodNode methodNode = getMethodByName(classNode, methodName);
-        AbstractInsnNode node = methodNode.instructions.getFirst();
-
-
-        do
-        {
-            if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(methodName.toReplace))
-            {
-                TypeInsnNode newNode = new TypeInsnNode(Opcodes.NEW, methodName.replace);
-                methodNode.instructions.set(node, newNode);
-                node = newNode;
-            } else if (node instanceof MethodInsnNode && ((MethodInsnNode)node).owner.contains(methodName.toReplace))
-            {
-                MethodInsnNode newNode = new MethodInsnNode(node.getOpcode(), methodName.replace, ((MethodInsnNode)node).name, ((MethodInsnNode)node).desc, false);
-                methodNode.instructions.set(node, newNode);
-                node = newNode;
-            }
-            node = node.getNext();
-        } while (node.getNext() != null);
+        methodNode.instructions = methodName.transform(methodNode.instructions);
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);

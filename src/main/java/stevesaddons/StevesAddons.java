@@ -2,16 +2,16 @@ package stevesaddons;
 
 
 import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.command.CommandException;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import stevesaddons.helpers.Config;
 import stevesaddons.interfaces.GuiHandler;
 import stevesaddons.naming.EventHandler;
@@ -26,6 +26,7 @@ import stevesaddons.reference.Reference;
 import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.CommandRegistry;
 import stevesaddons.registry.ItemRegistry;
+import stevesaddons.threading.SearchItems;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
 import java.io.File;
@@ -47,6 +48,7 @@ public class StevesAddons
     public static CommonProxy PROXY;
 
     public static GuiHandler guiHandler = new GuiHandler();
+    public static Logger log = LogManager.getLogger("StevesAddons");
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)

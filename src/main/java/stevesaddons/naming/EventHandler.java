@@ -12,6 +12,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import stevesaddons.items.ItemLabeler;
+import stevesaddons.network.MessageHandler;
+import stevesaddons.network.message.SearchRegistryGenerateMessage;
 import stevesaddons.registry.ItemRegistry;
 
 public class EventHandler
@@ -51,6 +53,13 @@ public class EventHandler
         NameData nameData = NameRegistry.getWorldData(event.world.provider.dimensionId, false);
         if (nameData != null)
             event.world.perWorldStorage.setData(NameData.KEY, nameData);
+    }
+
+    @SubscribeEvent
+    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        if (event.player instanceof EntityPlayerMP)
+            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(),(EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent
