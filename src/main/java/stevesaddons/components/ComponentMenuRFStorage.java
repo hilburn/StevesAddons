@@ -1,9 +1,11 @@
 package stevesaddons.components;
 
 import stevesaddons.helpers.StevesEnum;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.FlowComponent;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class ComponentMenuRFStorage extends ComponentMenuContainer
@@ -25,6 +27,12 @@ public class ComponentMenuRFStorage extends ComponentMenuContainer
         {
             errors.add(StevesEnum.NO_RF_ERROR.toString());
         }
+    }
+
+    @Override
+    protected EnumSet<ConnectionBlockType> getValidTypes()
+    {
+        return EnumSet.of(StevesEnum.RF_PROVIDER, StevesEnum.RF_RECEIVER);
     }
 
     protected void initRadioButtons()
