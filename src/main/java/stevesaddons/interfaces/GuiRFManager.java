@@ -3,7 +3,9 @@ package stevesaddons.interfaces;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -392,6 +394,37 @@ public class GuiRFManager extends GuiManager
         }
 
         super.onGuiClosed();
+    }
+
+    @Override
+    public void drawItemStack(ItemStack itemstack, int x, int y) {
+        GL11.glPushMatrix();
+        RenderHelper.enableGUIStandardItemLighting();
+        GL11.glDisable(2896);
+        GL11.glEnable('耺');
+        GL11.glEnable(2903);
+        GL11.glEnable(GL11.GL_LIGHTING);
+        itemRender.zLevel = 1.0F;
+
+        try {
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), itemstack, x + this.guiLeft, y + this.guiTop);
+            itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), itemstack, x + this.guiLeft, y + this.guiTop, "");
+        } catch (Exception var9) {
+            if(itemstack.getItemDamage() != 0) {
+                ItemStack newStack = itemstack.copy();
+                newStack.setItemDamage(0);
+                this.drawItemStack(newStack, x, y);
+            }
+        } finally {
+            itemRender.zLevel = 0.0F;
+            bindTexture(this.getComponentResource());
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glBlendFunc(770, 771);
+            GL11.glEnable(3008);
+            GL11.glPopMatrix();
+        }
     }
 
     public TileEntityManager getManager()
