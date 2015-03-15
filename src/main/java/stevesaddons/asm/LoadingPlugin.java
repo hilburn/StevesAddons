@@ -1,6 +1,5 @@
 package stevesaddons.asm;
 
-import codechicken.core.launch.DepLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -10,12 +9,6 @@ import java.util.Map;
 public class LoadingPlugin implements IFMLLoadingPlugin
 {
     public static boolean runtimeDeobfEnabled = FMLForgePlugin.RUNTIME_DEOBF;
-
-    public LoadingPlugin()
-    {
-        DepLoader.load();
-    }
-
 
     @Override
     public String[] getASMTransformerClass()
