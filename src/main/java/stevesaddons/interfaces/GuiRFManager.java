@@ -400,6 +400,10 @@ public class GuiRFManager extends GuiManager
     public void drawItemStack(ItemStack itemstack, int x, int y) {
         GL11.glPushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
+        GL11.glDisable(2896);
+        GL11.glEnable(32826);
+        GL11.glEnable(2903);
+        GL11.glEnable(2896);
         itemRender.zLevel = 1.0F;
 
         try {
@@ -416,7 +420,7 @@ public class GuiRFManager extends GuiManager
             itemRender.zLevel = 0.0F;
             bindTexture(this.getComponentResource());
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderHelper.disableStandardItemLighting();
+            GL11.glDisable(2896);
             GL11.glBlendFunc(770, 771);
             GL11.glEnable(3008);
             GL11.glPopMatrix();

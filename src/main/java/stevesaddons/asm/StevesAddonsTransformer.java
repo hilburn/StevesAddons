@@ -38,7 +38,7 @@ public class StevesAddonsTransformer implements IClassTransformer
                         return replace(list, "vswe/stevesfactory/blocks/TileEntityCluster", "vswe/stevesfactory/blocks/TileEntityRFCluster");
                     }
                 },
-        MANAGER_INIT("<init>", "()")
+        MANAGER_INIT("<init>", "()V")
                 {
                     @Override
                     public InsnList transform(InsnList list)
@@ -262,7 +262,10 @@ public class StevesAddonsTransformer implements IClassTransformer
         classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
         MethodNode methodNode = getMethodByName(classNode, methodName);
-        methodNode.instructions = methodName.transform(methodNode.instructions);
+        if (methodNode != null)
+        {
+            methodNode.instructions = methodName.transform(methodNode.instructions);
+        }
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
@@ -278,6 +281,13 @@ public class StevesAddonsTransformer implements IClassTransformer
                 return method;
             }
         }
-        return classNode.methods.get(0);
+        for (MethodNode method : classNode.methods)
+        {
+            if (method.desc.equals(obfName.getArgs()))
+            {
+                return method;
+            }
+        }
+        return null;
     }
 }
