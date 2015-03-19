@@ -12,12 +12,17 @@ import java.util.Map;
 
 public class StevesAddonsTransformer implements IClassTransformer
 {
-    private enum MethodName
+    private enum TransformType
+    {
+        METHOD,FIELD,INNER_CLASS;
+    }
+
+    private enum Transformer
     {
         ACTIVATE_TRIGGER("activateTrigger", "(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         return replace(list, "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF");
                     }
@@ -25,7 +30,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         GET_GUI("getGui", "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         return replace(list, "vswe/stevesfactory/interfaces/GuiManager", "stevesaddons/interfaces/GuiRFManager");
                     }
@@ -33,7 +38,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         CREATE_TE("func_149915_a", "(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         return replace(list, "vswe/stevesfactory/blocks/TileEntityCluster", "vswe/stevesfactory/blocks/TileEntityRFCluster");
                     }
@@ -41,7 +46,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         MANAGER_INIT("<init>", "()V")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst())
@@ -54,7 +59,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         ITEM_SETTING_LOAD("load", "(Lnet/minecraft/nbt/NBTTagCompound;)V")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         while (node.getOpcode() != Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
@@ -69,7 +74,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         STRING_NULL_CHECK("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         LabelNode labelNode = null;
@@ -91,7 +96,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         GET_DESCRIPTION("getDescription", "(Lvswe/stevesfactory/interfaces/GuiManager;)Ljava/lang/String;")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getFirst();
                         while (node != null)
@@ -111,7 +116,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         ITEM_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode first = list.getFirst();
                         list.insertBefore(first, new VarInsnNode(Opcodes.ALOAD, 0));
@@ -125,7 +130,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         CONTAINER_SEARCH("updateSearch","(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public InsnList transform(InsnList list)
+                    public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getFirst();
                         LabelNode label = null;
@@ -147,18 +152,65 @@ public class StevesAddonsTransformer implements IClassTransformer
                         }
                         return list;
                     }
-                };
+                },
+        GET_PUBLIC_REGISTRATIONS("getRegistrations","(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
+                {
+                    @Override
+                    public void methodTransform(ClassNode node)
+                    {
+                        getMethod(node).access = 1;
+                    }
+                },
+        GET_REGISTRATIONS("getRegistrations","(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
+                {
+                    @Override
+                    public void methodTransform(ClassNode node)
+                    {
+                        node.methods.remove(getMethod(node));
+                    }
+                },
+        GET_RF_NODE("getTileEntity","(Ljava/lang/Object;)Lstevesaddons/tileentities/TileEntityRFNode;")
+                {
+                    @Override
+                    public InsnList modifyInstructions(InsnList list)
+                    {
+                        InsnList result = new InsnList();
+                        result.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        result.add(new TypeInsnNode(Opcodes.CHECKCAST, "vswe/stevesfactory/blocks/TileEntityCluster$Pair"));
+                        result.add(new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/blocks/TileEntityCluster$Pair", "te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;"));
+                        result.add(new TypeInsnNode(Opcodes.CHECKCAST, "stevesaddons/tileentities/TileEntityRFNode"));
+                        result.add(new InsnNode(Opcodes.ARETURN));
+                        return result;
+                    }
+                },
+        PUBLIC_TE("te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;", TransformType.FIELD),
+        PUBLIC_PAIR("Pair");
 
         private String name;
         private String args;
+        private TransformType type;
 
-        MethodName(String name, String args)
+        Transformer(String name)
+        {
+            this(name, "", TransformType.INNER_CLASS);
+        }
+
+        Transformer(String name, String args)
+        {
+            this(name, args, TransformType.METHOD);
+        }
+
+        Transformer(String name, String args, TransformType type)
         {
             this.name = name;
             this.args = args;
+            this.type = type;
         }
 
-        public abstract InsnList transform(InsnList list);
+        public InsnList modifyInstructions(InsnList list)
+        {
+            return list;
+        }
 
         private static InsnList replace(InsnList list, String toReplace, String replace)
         {
@@ -182,6 +234,44 @@ public class StevesAddonsTransformer implements IClassTransformer
             return args;
         }
 
+        public void methodTransform(ClassNode node)
+        {
+            MethodNode methodNode = getMethod(node);
+            if (node != null)
+            {
+                methodNode.instructions = modifyInstructions(methodNode.instructions);
+            }
+        }
+
+        public void fieldTransform(ClassNode node)
+        {
+            FieldNode fieldNode = getField(node);
+            if (fieldNode != null)
+                fieldNode.access = 1;
+        }
+
+        public void innerClassTransform(ClassNode node)
+        {
+            InnerClassNode innerClassNode = getInnerClass(node);
+            if (innerClassNode != null)
+                innerClassNode.access = 1;
+        }
+
+        public void transform(ClassNode node)
+        {
+            switch(this.type)
+            {
+                case METHOD:
+                    methodTransform(node);
+                    return;
+                case FIELD:
+                    fieldTransform(node);
+                    return;
+                case INNER_CLASS:
+                    innerClassTransform(node);
+            }
+        }
+
         private static AbstractInsnNode checkReplace(AbstractInsnNode node, String toReplace, String replace)
         {
             if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(toReplace))
@@ -198,26 +288,71 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             StevesAddons.log.info("Applied " + this + " transformer");
         }
+
+        public MethodNode getMethod(ClassNode classNode)
+        {
+            for (MethodNode method : classNode.methods)
+            {
+                if (method.name.equals(getName()) && method.desc.equals(getArgs()))
+                {
+                    return method;
+                }
+            }
+            for (MethodNode method : classNode.methods)
+            {
+                if (method.desc.equals(getArgs()))
+                {
+                    return method;
+                }
+            }
+            return null;
+        }
+
+        public FieldNode getField(ClassNode classNode)
+        {
+            for (FieldNode field : classNode.fields)
+            {
+                if (field.name.equals(getName()) && field.desc.equals(getArgs()))
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+
+        public InnerClassNode getInnerClass(ClassNode classNode)
+        {
+            String name = classNode.name + "$" + getName();
+            for (InnerClassNode inner : classNode.innerClasses)
+            {
+                if (name.equals(inner.name))
+                {
+                    return inner;
+                }
+            }
+            return null;
+        }
     }
 
     private enum ClassName
     {
-
-        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", MethodName.ACTIVATE_TRIGGER, MethodName.GET_GUI, MethodName.MANAGER_INIT),
-        RF_CLUSTER("vswe.stevesfactory.blocks.BlockCableCluster", MethodName.CREATE_TE),
-        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", MethodName.ITEM_SETTING_LOAD),
-        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", MethodName.ITEM_SEARCH),
-        CONNECTION_BLOCK("vswe.stevesfactory.blocks.ConnectionBlock", MethodName.GET_DESCRIPTION),
-        COMPONENT_MENU_CONTAINER("vswe.stevesfactory.components.ComponentMenuContainer$2", MethodName.CONTAINER_SEARCH);
+        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT),
+        CLUSTER_BLOCK("vswe.stevesfactory.blocks.BlockCableCluster", Transformer.CREATE_TE),
+        ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", Transformer.ITEM_SETTING_LOAD),
+        COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", Transformer.ITEM_SEARCH),
+        CONNECTION_BLOCK("vswe.stevesfactory.blocks.ConnectionBlock", Transformer.GET_DESCRIPTION),
+        COMPONENT_MENU_CONTAINER("vswe.stevesfactory.components.ComponentMenuContainer$2", Transformer.CONTAINER_SEARCH),
+        CLUSTER_TILE("vswe.stevesfactory.blocks.TileEntityCluster", Transformer.PUBLIC_PAIR, Transformer.GET_PUBLIC_REGISTRATIONS),
+        RF_CLUSTER_TILE("vswe.stevesfactory.blocks.TileEntityRFCluster", Transformer.GET_REGISTRATIONS, Transformer.GET_RF_NODE),
+        CLUSTER_PAIR("vswe.stevesfactory.blocks.TileEntityCluster$Pair", Transformer.PUBLIC_TE);
 
         private String name;
-        private MethodName[] methods;
+        private Transformer[] transformers;
 
-
-        ClassName(String name, MethodName... methods)
+        ClassName(String name, Transformer... transformers)
         {
             this.name = name;
-            this.methods = methods;
+            this.transformers = transformers;
         }
 
         public String getName()
@@ -225,9 +360,25 @@ public class StevesAddonsTransformer implements IClassTransformer
             return name;
         }
 
-        public MethodName[] getMethods()
+        public Transformer[] getTransformers()
         {
-            return methods;
+            return transformers;
+        }
+
+        public byte[] transform(byte[] bytes)
+        {
+            ClassNode classNode = new ClassNode();
+            ClassReader classReader = new ClassReader(bytes);
+            classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
+
+            for (Transformer transformer : getTransformers())
+            {
+                transformer.transform(classNode);
+            }
+
+            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            classNode.accept(writer);
+            return writer.toByteArray();
         }
     }
 
@@ -244,50 +395,10 @@ public class StevesAddonsTransformer implements IClassTransformer
         ClassName clazz = classMap.get(className);
         if (clazz != null)
         {
-            for (MethodName method : clazz.getMethods())
-            {
-                bytes = transform(method, bytes);
-                method.complete();
-            }
+            bytes = clazz.transform(bytes);
             classMap.remove(className);
         }
 
         return bytes;
-    }
-
-    private byte[] transform(MethodName methodName, byte[] data)
-    {
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(data);
-        classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
-
-        MethodNode methodNode = getMethodByName(classNode, methodName);
-        if (methodNode != null)
-        {
-            methodNode.instructions = methodName.transform(methodNode.instructions);
-        }
-
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classNode.accept(writer);
-        return writer.toByteArray();
-    }
-
-    public static MethodNode getMethodByName(ClassNode classNode, MethodName obfName)
-    {
-        for (MethodNode method : classNode.methods)
-        {
-            if (method.name.equals(obfName.getName()) && method.desc.equals(obfName.getArgs()))
-            {
-                return method;
-            }
-        }
-        for (MethodNode method : classNode.methods)
-        {
-            if (method.desc.equals(obfName.getArgs()))
-            {
-                return method;
-            }
-        }
-        return null;
     }
 }
