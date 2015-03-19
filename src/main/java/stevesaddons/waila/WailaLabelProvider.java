@@ -1,4 +1,4 @@
-package stevesaddons.naming;
+package stevesaddons.waila;
 
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -11,21 +11,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import stevesaddons.naming.BlockCoord;
+import stevesaddons.naming.NameRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WailaLabelProvider implements IWailaDataProvider
 {
-    public static final List<String> empty = new ArrayList<String>();
-
-    public static void register()
-    {
-        try{
-            ModuleRegistrar.instance().registerBodyProvider(new WailaLabelProvider(), Block.class);
-        }catch (Exception ignore){}
-    }
-
     @Override
     public ItemStack getWailaStack(IWailaDataAccessor iWailaDataAccessor, IWailaConfigHandler iWailaConfigHandler)
     {

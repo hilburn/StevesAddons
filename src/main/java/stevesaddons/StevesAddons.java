@@ -1,15 +1,11 @@
 package stevesaddons;
 
-
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import net.minecraft.command.CommandException;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stevesaddons.helpers.Config;
@@ -17,7 +13,6 @@ import stevesaddons.interfaces.GuiHandler;
 import stevesaddons.naming.EventHandler;
 import stevesaddons.naming.NameData;
 import stevesaddons.naming.NameRegistry;
-import stevesaddons.naming.WailaLabelProvider;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.proxy.CommonProxy;
 import stevesaddons.recipes.ClusterUncraftingRecipe;
@@ -26,14 +21,12 @@ import stevesaddons.reference.Reference;
 import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.CommandRegistry;
 import stevesaddons.registry.ItemRegistry;
-import stevesaddons.threading.SearchItems;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 @Mod(modid = Reference.ID, name = Reference.NAME, version = Reference.VERSION_FULL, dependencies = "required-after:StevesFactoryManager")
 public class StevesAddons
@@ -48,7 +41,7 @@ public class StevesAddons
     public static CommonProxy PROXY;
 
     public static GuiHandler guiHandler = new GuiHandler();
-    public static Logger log = LogManager.getLogger("StevesAddons");
+    public static Logger log = LogManager.getLogger(Reference.ID);
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -72,16 +65,17 @@ public class StevesAddons
         EventHandler handler = new EventHandler();
         FMLCommonHandler.instance().bus().register(handler);
         MinecraftForge.EVENT_BUS.register(handler);
+        PROXY.initHandlers();
+        if (Config.wailaIntegration)
+        {
+            FMLInterModComms.sendMessage("Waila", "register", "stevesaddons.waila.WailaManager.callbackRegister");
+        }
     }
 
     @Mod.EventHandler
     @SuppressWarnings(value="unchecked")
     public void postInit(FMLPostInitializationEvent e)
     {
-        if (Config.wailaIntegration && Loader.isModLoaded("Waila"))
-        {
-            WailaLabelProvider.register();
-        }
         if (Loader.isModLoaded("JABBA"))
         {
             try

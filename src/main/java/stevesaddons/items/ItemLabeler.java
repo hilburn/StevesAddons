@@ -48,8 +48,7 @@ public class ItemLabeler extends Item
     public static boolean isValidTile(World world, int x, int y, int z)
     {
         TileEntity te = world.getTileEntity(x, y, z);
-        return te instanceof IInventory || te instanceof IFluidHandler || te instanceof IEnergyProvider || te instanceof IEnergyReceiver || te instanceof TileEntityInput ||
-                te instanceof TileEntityOutput || te instanceof IRedstoneNode || te instanceof TileEntityCamouflage || te instanceof TileEntityBUD || te instanceof TileEntitySignUpdater;
+        return te instanceof IInventory || te instanceof IFluidHandler || te instanceof IEnergyProvider || te instanceof IEnergyReceiver || te instanceof TileEntityClusterElement;
     }
 
     public static List<String> getSavedStrings(ItemStack stack)
