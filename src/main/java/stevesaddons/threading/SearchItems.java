@@ -64,8 +64,7 @@ public class SearchItems implements Runnable
 
     public static void setResult(ScrollController controller, List<ItemStack> stackList)
     {
-        controller.getResult().clear();
-        controller.getResult().addAll(stackList);
+        ThreadSafeHandler.handle.put(controller, stackList);
     }
 
     public static void setItems()

@@ -15,4 +15,8 @@ public class CommonProxy
     {
     }
 
+    public void initHandlers()
+    {
+    }
+
 }
