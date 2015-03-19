@@ -374,6 +374,7 @@ public class StevesAddonsTransformer implements IClassTransformer
             for (Transformer transformer : getTransformers())
             {
                 transformer.transform(classNode);
+                transformer.complete();
             }
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
