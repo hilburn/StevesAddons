@@ -1,6 +1,7 @@
 package stevesaddons.asm;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -240,6 +241,7 @@ public class StevesAddonsTransformer implements IClassTransformer
             if (node != null)
             {
                 methodNode.instructions = modifyInstructions(methodNode.instructions);
+                complete();
             }
         }
 
@@ -247,14 +249,20 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             FieldNode fieldNode = getField(node);
             if (fieldNode != null)
+            {
                 fieldNode.access = 1;
+                complete();
+            }
         }
 
         public void innerClassTransform(ClassNode node)
         {
             InnerClassNode innerClassNode = getInnerClass(node);
             if (innerClassNode != null)
+            {
                 innerClassNode.access = 1;
+                complete();
+            }
         }
 
         public void transform(ClassNode node)
@@ -371,10 +379,11 @@ public class StevesAddonsTransformer implements IClassTransformer
             ClassReader classReader = new ClassReader(bytes);
             classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
+            StevesAddons.log.log(Level.INFO, "Applying Transformer" + (transformers.length > 1? "s ":" ") + "to " + getName());
+
             for (Transformer transformer : getTransformers())
             {
                 transformer.transform(classNode);
-                transformer.complete();
             }
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -399,7 +408,6 @@ public class StevesAddonsTransformer implements IClassTransformer
             bytes = clazz.transform(bytes);
             classMap.remove(className);
         }
-
         return bytes;
     }
 }
