@@ -15,7 +15,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 {
     private enum TransformType
     {
-        METHOD,FIELD,INNER_CLASS;
+        METHOD, FIELD, INNER_CLASS;
     }
 
     private enum Transformer
@@ -128,7 +128,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return list;
                     }
                 },
-        CONTAINER_SEARCH("updateSearch","(Ljava/lang/String;Z)Ljava/util/List;")
+        CONTAINER_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
                     public InsnList modifyInstructions(InsnList list)
@@ -141,7 +141,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                             {
                                 label = ((JumpInsnNode)node).label;
                             }
-                            if (node.getOpcode() == ALOAD && ((VarInsnNode)node).var==8)
+                            if (node.getOpcode() == ALOAD && ((VarInsnNode)node).var == 8)
                             {
                                 list.insertBefore(node, new VarInsnNode(ALOAD, 8));
                                 list.insertBefore(node, new VarInsnNode(ALOAD, 1));
@@ -154,7 +154,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return list;
                     }
                 },
-        GET_PUBLIC_REGISTRATIONS("getRegistrations","(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
+        GET_PUBLIC_REGISTRATIONS("getRegistrations", "(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
                 {
                     @Override
                     public void methodTransform(ClassNode node)
@@ -162,7 +162,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         getMethod(node).access = 1;
                     }
                 },
-        GET_REGISTRATIONS("getRegistrations","(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
+        GET_REGISTRATIONS("getRegistrations", "(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
                 {
                     @Override
                     public void methodTransform(ClassNode node)
@@ -170,7 +170,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         node.methods.remove(getMethod(node));
                     }
                 },
-        GET_RF_NODE("getTileEntity","(Ljava/lang/Object;)Lstevesaddons/tileentities/TileEntityRFNode;")
+        GET_RF_NODE("getTileEntity", "(Ljava/lang/Object;)Lstevesaddons/tileentities/TileEntityRFNode;")
                 {
                     @Override
                     public InsnList modifyInstructions(InsnList list)
@@ -267,7 +267,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 
         public void transform(ClassNode node)
         {
-            switch(this.type)
+            switch (this.type)
             {
                 case METHOD:
                     methodTransform(node);
@@ -379,7 +379,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
             ClassReader classReader = new ClassReader(bytes);
             classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
-            StevesAddons.log.log(Level.INFO, "Applying Transformer" + (transformers.length > 1? "s ":" ") + "to " + getName());
+            StevesAddons.log.log(Level.INFO, "Applying Transformer" + (transformers.length > 1 ? "s " : " ") + "to " + getName());
 
             for (Transformer transformer : getTransformers())
             {
