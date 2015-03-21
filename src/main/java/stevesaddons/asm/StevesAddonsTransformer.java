@@ -11,7 +11,7 @@ import stevesaddons.StevesAddons;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StevesAddonsTransformer implements IClassTransformer
+public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 {
     private enum TransformType
     {
@@ -52,8 +52,8 @@ public class StevesAddonsTransformer implements IClassTransformer
                         AbstractInsnNode node = list.getLast();
                         while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst())
                             node = node.getPrevious();
-                        list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
-                        list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
+                        list.insertBefore(node, new VarInsnNode(ALOAD, 0));
+                        list.insertBefore(node, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "addCopyButton", "(Lvswe/stevesfactory/blocks/TileEntityManager;)V", false));
                         return list;
                     }
                 },
@@ -63,12 +63,12 @@ public class StevesAddonsTransformer implements IClassTransformer
                     public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
-                        while (node.getOpcode() != Opcodes.RETURN && node != list.getFirst()) node = node.getPrevious();
-                        list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
-                        list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
-                        list.insertBefore(node, new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
-                        list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixLoadingStack", "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", false));
-                        list.insertBefore(node, new FieldInsnNode(Opcodes.PUTFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
+                        while (node.getOpcode() != RETURN && node != list.getFirst()) node = node.getPrevious();
+                        list.insertBefore(node, new VarInsnNode(ALOAD, 0));
+                        list.insertBefore(node, new VarInsnNode(ALOAD, 0));
+                        list.insertBefore(node, new FieldInsnNode(GETFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
+                        list.insertBefore(node, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixLoadingStack", "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", false));
+                        list.insertBefore(node, new FieldInsnNode(PUTFIELD, "vswe/stevesfactory/components/ItemSetting", "item", "Lnet/minecraft/item/ItemStack;"));
                         return list;
                     }
                 },
@@ -83,10 +83,10 @@ public class StevesAddonsTransformer implements IClassTransformer
                         {
                             if (node instanceof JumpInsnNode)
                                 labelNode = ((JumpInsnNode)node).label;
-                            else if (node instanceof VarInsnNode && node.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)node).var == 10)
+                            else if (node instanceof VarInsnNode && node.getOpcode() == ALOAD && ((VarInsnNode)node).var == 10)
                             {
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 10));
-                                list.insertBefore(node, new JumpInsnNode(Opcodes.IFNULL, labelNode));
+                                list.insertBefore(node, new VarInsnNode(ALOAD, 10));
+                                list.insertBefore(node, new JumpInsnNode(IFNULL, labelNode));
                                 break;
                             }
                             node = node.getPrevious();
@@ -102,11 +102,11 @@ public class StevesAddonsTransformer implements IClassTransformer
                         AbstractInsnNode node = list.getFirst();
                         while (node != null)
                         {
-                            if (node.getOpcode() == Opcodes.ASTORE)
+                            if (node.getOpcode() == ASTORE)
                             {
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 0));
-                                list.insertBefore(node, new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/blocks/ConnectionBlock", "tileEntity", "Lnet/minecraft/tileentity/TileEntity;"));
-                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixToolTip", "(Ljava/lang/String;Lnet/minecraft/tileentity/TileEntity;)Ljava/lang/String;", false));
+                                list.insertBefore(node, new VarInsnNode(ALOAD, 0));
+                                list.insertBefore(node, new FieldInsnNode(GETFIELD, "vswe/stevesfactory/blocks/ConnectionBlock", "tileEntity", "Lnet/minecraft/tileentity/TileEntity;"));
+                                list.insertBefore(node, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "fixToolTip", "(Ljava/lang/String;Lnet/minecraft/tileentity/TileEntity;)Ljava/lang/String;", false));
                                 break;
                             }
                             node = node.getNext();
@@ -120,11 +120,11 @@ public class StevesAddonsTransformer implements IClassTransformer
                     public InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode first = list.getFirst();
-                        list.insertBefore(first, new VarInsnNode(Opcodes.ALOAD, 0));
-                        list.insertBefore(first, new VarInsnNode(Opcodes.ALOAD, 1));
-                        list.insertBefore(first, new VarInsnNode(Opcodes.ILOAD, 2));
-                        list.insertBefore(first, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "updateItemSearch", "(Lvswe/stevesfactory/components/ComponentMenuItem;Ljava/lang/String;Z)Ljava/util/List;", false));
-                        list.insertBefore(first, new InsnNode(Opcodes.ARETURN));
+                        list.insertBefore(first, new VarInsnNode(ALOAD, 0));
+                        list.insertBefore(first, new VarInsnNode(ALOAD, 1));
+                        list.insertBefore(first, new VarInsnNode(ILOAD, 2));
+                        list.insertBefore(first, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "updateItemSearch", "(Lvswe/stevesfactory/components/ComponentMenuItem;Ljava/lang/String;Z)Ljava/util/List;", false));
+                        list.insertBefore(first, new InsnNode(ARETURN));
                         return list;
                     }
                 },
@@ -141,12 +141,12 @@ public class StevesAddonsTransformer implements IClassTransformer
                             {
                                 label = ((JumpInsnNode)node).label;
                             }
-                            if (node.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)node).var==8)
+                            if (node.getOpcode() == ALOAD && ((VarInsnNode)node).var==8)
                             {
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 8));
-                                list.insertBefore(node, new VarInsnNode(Opcodes.ALOAD, 1));
-                                list.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "stevesaddons/asm/StevesHooks", "containerAdvancedSearch", "(Lvswe/stevesfactory/blocks/ConnectionBlock;Ljava/lang/String;)Z", false));
-                                list.insertBefore(node, new JumpInsnNode(Opcodes.IFNE, label));
+                                list.insertBefore(node, new VarInsnNode(ALOAD, 8));
+                                list.insertBefore(node, new VarInsnNode(ALOAD, 1));
+                                list.insertBefore(node, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "containerAdvancedSearch", "(Lvswe/stevesfactory/blocks/ConnectionBlock;Ljava/lang/String;)Z", false));
+                                list.insertBefore(node, new JumpInsnNode(IFNE, label));
                                 break;
                             }
                             node = node.getNext();
@@ -176,11 +176,11 @@ public class StevesAddonsTransformer implements IClassTransformer
                     public InsnList modifyInstructions(InsnList list)
                     {
                         InsnList result = new InsnList();
-                        result.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                        result.add(new TypeInsnNode(Opcodes.CHECKCAST, "vswe/stevesfactory/blocks/TileEntityCluster$Pair"));
-                        result.add(new FieldInsnNode(Opcodes.GETFIELD, "vswe/stevesfactory/blocks/TileEntityCluster$Pair", "te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;"));
-                        result.add(new TypeInsnNode(Opcodes.CHECKCAST, "stevesaddons/tileentities/TileEntityRFNode"));
-                        result.add(new InsnNode(Opcodes.ARETURN));
+                        result.add(new VarInsnNode(ALOAD, 1));
+                        result.add(new TypeInsnNode(CHECKCAST, "vswe/stevesfactory/blocks/TileEntityCluster$Pair"));
+                        result.add(new FieldInsnNode(GETFIELD, "vswe/stevesfactory/blocks/TileEntityCluster$Pair", "te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;"));
+                        result.add(new TypeInsnNode(CHECKCAST, "stevesaddons/tileentities/TileEntityRFNode"));
+                        result.add(new InsnNode(ARETURN));
                         return result;
                     }
                 },
@@ -284,7 +284,7 @@ public class StevesAddonsTransformer implements IClassTransformer
         {
             if (node instanceof TypeInsnNode && ((TypeInsnNode)node).desc.equals(toReplace))
             {
-                return new TypeInsnNode(Opcodes.NEW, replace);
+                return new TypeInsnNode(NEW, replace);
             } else if (node instanceof MethodInsnNode && ((MethodInsnNode)node).owner.contains(toReplace))
             {
                 return new MethodInsnNode(node.getOpcode(), replace, ((MethodInsnNode)node).name, ((MethodInsnNode)node).desc, false);
