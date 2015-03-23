@@ -7,15 +7,12 @@ import net.minecraft.item.ItemStack;
 import vswe.stevesfactory.components.ScrollController;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class SearchItems implements Runnable
 {
-    public static Map<String, ItemStack> items = new LinkedHashMap<String, ItemStack>();
-    public static Map<String, ItemStack> advancedItems = new LinkedHashMap<String, ItemStack>();
+    public static List<SearchEntry> searchEntries = new ArrayList<SearchEntry>();
 
     private String search;
     private ScrollController controller;
@@ -50,13 +47,10 @@ public class SearchItems implements Runnable
             if (!showAll)
             {
                 Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
-                for (Map.Entry<String, ItemStack> entry : Minecraft.getMinecraft().gameSettings.advancedItemTooltips ? advancedItems.entrySet() : items.entrySet())
-                {
-                    if (pattern.matcher(entry.getKey()).find()) itemStacks.add(entry.getValue());
-                }
+                for (SearchEntry entry : searchEntries) entry.search(pattern, itemStacks, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
             } else
             {
-                itemStacks.addAll(Minecraft.getMinecraft().gameSettings.advancedItemTooltips ? advancedItems.values() : items.values());
+                for (SearchEntry entry : searchEntries) itemStacks.add(entry.getStack());
             }
         }
         setResult(this.controller, itemStacks);
@@ -72,34 +66,59 @@ public class SearchItems implements Runnable
         List<ItemStack> stacks = new ArrayList<ItemStack>();
         for (Object anItemRegistry : Item.itemRegistry)
         {
-            Item item = (Item)anItemRegistry;
-            item.getSubItems(item, null, stacks);
+            try
+            {
+                Item item = (Item)anItemRegistry;
+                item.getSubItems(item, item.getCreativeTab(), stacks);
+            }
+            catch (Exception ignore){}
         }
         for (ItemStack stack : stacks)
         {
-            String searchString = "";
             List tooltipList;
             List advTooltipList;
             try
             {
                 tooltipList = stack.getTooltip(Minecraft.getMinecraft().thePlayer, false);
                 advTooltipList = stack.getTooltip(Minecraft.getMinecraft().thePlayer, true);
-            } catch (Throwable var11)
-            {
-                continue;
-            }
-            for (Object string : tooltipList)
-            {
-                if (string != null)
-                    searchString += string + "\n";
-            }
-            items.put(searchString, stack);
-            for (Object string : advTooltipList)
-            {
-                if (string != null)
-                    searchString += string + "\n";
-            }
-            advancedItems.put(searchString, stack);
+                String searchString = "";
+                for (Object string : tooltipList)
+                {
+                    if (string != null)
+                        searchString += string + "\n";
+                }
+                String advSearchString = "";
+                for (Object string : advTooltipList)
+                {
+                    if (string != null)
+                        advSearchString += string + "\n";
+                }
+                searchEntries.add(new SearchEntry(searchString, advSearchString, stack));
+            } catch (Throwable ignore) {}
+        }
+    }
+
+    public static class SearchEntry
+    {
+        private String toolTip;
+        private String advToolTip;
+        private ItemStack stack;
+
+        public SearchEntry(String searchString, String advSearchString, ItemStack stack)
+        {
+            this.toolTip = searchString;
+            this.advToolTip = advSearchString;
+            this.stack = stack;
+        }
+
+        public void search(Pattern pattern, List<ItemStack> stacks, boolean advanced)
+        {
+            if (pattern.matcher(advanced? advToolTip : toolTip).find()) stacks.add(stack);
+        }
+
+        public ItemStack getStack()
+        {
+            return stack;
         }
     }
 }
