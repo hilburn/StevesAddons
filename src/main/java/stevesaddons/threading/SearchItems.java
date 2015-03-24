@@ -47,7 +47,8 @@ public class SearchItems implements Runnable
             if (!showAll)
             {
                 Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
-                for (SearchEntry entry : searchEntries) entry.search(pattern, itemStacks, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+                boolean advanced = Minecraft.getMinecraft().gameSettings.advancedItemTooltips;
+                for (SearchEntry entry : searchEntries) entry.search(pattern, itemStacks, advanced);
             } else
             {
                 for (SearchEntry entry : searchEntries) itemStacks.add(entry.getStack());
@@ -75,12 +76,10 @@ public class SearchItems implements Runnable
         }
         for (ItemStack stack : stacks)
         {
-            List tooltipList;
-            List advTooltipList;
             try
             {
-                tooltipList = stack.getTooltip(Minecraft.getMinecraft().thePlayer, false);
-                advTooltipList = stack.getTooltip(Minecraft.getMinecraft().thePlayer, true);
+                List tooltipList = stack.getTooltip(Minecraft.getMinecraft().thePlayer, false);
+                List advTooltipList = stack.getTooltip(Minecraft.getMinecraft().thePlayer, true);
                 String searchString = "";
                 for (Object string : tooltipList)
                 {

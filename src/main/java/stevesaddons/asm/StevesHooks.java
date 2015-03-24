@@ -177,9 +177,12 @@ public class StevesHooks
             String tankInfo = "";
             int i = 1;
             FluidTankInfo[] fluidTankInfo = ((IFluidHandler)tileEntity).getTankInfo(ForgeDirection.UNKNOWN);
-            for (FluidTankInfo info : fluidTankInfo)
+            if (fluidTankInfo != null)
             {
-                tankInfo += info.fluid != null ? info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "") : "";
+                for (FluidTankInfo info : fluidTankInfo)
+                {
+                    tankInfo += info.fluid != null ? info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "") : "";
+                }
             }
             if (tankInfo.isEmpty()) result+="\n"+StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
             else result += "\n" + StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", tankInfo);
