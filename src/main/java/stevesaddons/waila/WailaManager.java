@@ -17,11 +17,12 @@ public class WailaManager
         register.registerBodyProvider(new RFDataFixer(), TileEntityRFCluster.class);
         register.registerBodyProvider(new RFDataFixer(), TileEntityRFNode.class);
 
-        register.registerBodyProvider(new WailaLabelProvider(), IInventory.class);
-        register.registerBodyProvider(new WailaLabelProvider(), IFluidHandler.class);
-        register.registerBodyProvider(new WailaLabelProvider(), IEnergyProvider.class);
-        register.registerBodyProvider(new WailaLabelProvider(), IEnergyReceiver.class);
-        register.registerBodyProvider(new WailaLabelProvider(), TileEntityClusterElement.class);
-        register.registerBodyProvider(new WailaLabelProvider(), TileEntityCluster.class);
+        WailaLabelProvider labelProvider = new WailaLabelProvider();
+        register.registerBodyProvider(labelProvider, IInventory.class);
+        register.registerBodyProvider(labelProvider, IFluidHandler.class);
+        register.registerBodyProvider(labelProvider, IEnergyProvider.class);
+        register.registerBodyProvider(labelProvider, IEnergyReceiver.class);
+        register.registerBodyProvider(labelProvider, TileEntityClusterElement.class);
+        register.registerBodyProvider(labelProvider, TileEntityCluster.class);
     }
 }

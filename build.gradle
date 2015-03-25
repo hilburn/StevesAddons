@@ -52,6 +52,7 @@ dependencies {
     compile group: 'codechicken', name: 'NotEnoughItems', version: "${config.version.minecraft}-${config.version.nei}", ext: 'jar', classifier: "dev"
     compile group: 'codechicken', name: 'CodeChickenCore', version: "${config.version.minecraft}-${config.version.cccore}", ext: 'jar', classifier: "dev"
     compile group: 'codechicken', name: 'CodeChickenLib', version: "${config.version.minecraft}-${config.version.cclib}", ext: 'jar', classifier: "dev"
+	//compile "appeng:appliedenergistics2:rv2-beta-13:dev"
 	compile fileTree(dir: 'lib', include: '*.jar')
 }
 
@@ -68,7 +69,6 @@ minecraft {
 }
 
 processResources {
-    from 'build.properties'
 }
 
 allprojects {

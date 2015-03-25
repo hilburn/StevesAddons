@@ -15,7 +15,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 {
     private enum TransformType
     {
-        METHOD, FIELD, INNER_CLASS;
+        METHOD, FIELD, INNER_CLASS, MODIFY, MAKE_PUBLIC, DELETE
     }
 
     private enum Transformer
@@ -23,7 +23,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         ACTIVATE_TRIGGER("activateTrigger", "(Lvswe/stevesfactory/components/FlowComponent;Ljava/util/EnumSet;)V")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         return replace(list, "vswe/stevesfactory/components/CommandExecutor", "vswe/stevesfactory/components/CommandExecutorRF");
                     }
@@ -31,7 +31,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         GET_GUI("getGui", "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/player/InventoryPlayer;)Lnet/minecraft/client/gui/GuiScreen;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         return replace(list, "vswe/stevesfactory/interfaces/GuiManager", "stevesaddons/interfaces/GuiRFManager");
                     }
@@ -39,7 +39,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         CREATE_TE("func_149915_a", "(Lnet/minecraft/world/World;I)Lnet/minecraft/tileentity/TileEntity;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         return replace(list, "vswe/stevesfactory/blocks/TileEntityCluster", "vswe/stevesfactory/blocks/TileEntityRFCluster");
                     }
@@ -47,7 +47,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         MANAGER_INIT("<init>", "()V")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         while (!(node instanceof LineNumberNode && ((LineNumberNode)node).line == 85) && node != list.getFirst())
@@ -60,7 +60,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         ITEM_SETTING_LOAD("load", "(Lnet/minecraft/nbt/NBTTagCompound;)V")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         while (node.getOpcode() != RETURN && node != list.getFirst()) node = node.getPrevious();
@@ -75,7 +75,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         STRING_NULL_CHECK("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getLast();
                         LabelNode labelNode = null;
@@ -97,7 +97,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         GET_DESCRIPTION("getDescription", "(Lvswe/stevesfactory/interfaces/GuiManager;)Ljava/lang/String;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getFirst();
                         while (node != null)
@@ -117,7 +117,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         ITEM_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode first = list.getFirst();
                         list.insertBefore(first, new VarInsnNode(ALOAD, 0));
@@ -131,7 +131,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         CONTAINER_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         AbstractInsnNode node = list.getFirst();
                         LabelNode label = null;
@@ -154,26 +154,12 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return list;
                     }
                 },
-        GET_PUBLIC_REGISTRATIONS("getRegistrations", "(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
-                {
-                    @Override
-                    public void methodTransform(ClassNode node)
-                    {
-                        getMethod(node).access = 1;
-                    }
-                },
-        GET_REGISTRATIONS("getRegistrations", "(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;")
-                {
-                    @Override
-                    public void methodTransform(ClassNode node)
-                    {
-                        node.methods.remove(getMethod(node));
-                    }
-                },
+        GET_PUBLIC_REGISTRATIONS("getRegistrations", "(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;", TransformType.METHOD, TransformType.MAKE_PUBLIC),
+        GET_REGISTRATIONS("getRegistrations", "(Lvswe/stevesfactory/blocks/ClusterMethodRegistration;)Ljava/util/List;", TransformType.METHOD, TransformType.DELETE),
         GET_RF_NODE("getTileEntity", "(Ljava/lang/Object;)Lstevesaddons/tileentities/TileEntityRFNode;")
                 {
                     @Override
-                    public InsnList modifyInstructions(InsnList list)
+                    protected InsnList modifyInstructions(InsnList list)
                     {
                         InsnList result = new InsnList();
                         result.add(new VarInsnNode(ALOAD, 1));
@@ -184,31 +170,33 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return result;
                     }
                 },
-        PUBLIC_TE("te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;", TransformType.FIELD),
+        PUBLIC_TE("te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;", TransformType.FIELD, TransformType.MAKE_PUBLIC),
         PUBLIC_PAIR("Pair");
 
         private String name;
         private String args;
         private TransformType type;
+        private TransformType action;
 
         Transformer(String name)
         {
-            this(name, "", TransformType.INNER_CLASS);
+            this(name, "", TransformType.INNER_CLASS, TransformType.MAKE_PUBLIC);
         }
 
         Transformer(String name, String args)
         {
-            this(name, args, TransformType.METHOD);
+            this(name, args, TransformType.METHOD, TransformType.MODIFY);
         }
 
-        Transformer(String name, String args, TransformType type)
+        Transformer(String name, String args, TransformType type, TransformType action)
         {
             this.name = name;
             this.args = args;
             this.type = type;
+            this.action = action;
         }
 
-        public InsnList modifyInstructions(InsnList list)
+        protected InsnList modifyInstructions(InsnList list)
         {
             return list;
         }
@@ -235,34 +223,73 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
             return args;
         }
 
-        public void methodTransform(ClassNode node)
+        private void methodTransform(ClassNode node)
         {
             MethodNode methodNode = getMethod(node);
-            if (node != null)
+            if (methodNode != null)
             {
-                methodNode.instructions = modifyInstructions(methodNode.instructions);
+                switch (action)
+                {
+                    case MODIFY:
+                        methodNode.instructions = modifyInstructions(methodNode.instructions);
+                        break;
+                    case DELETE:
+                        node.methods.remove(methodNode);
+                        break;
+                    case MAKE_PUBLIC:
+                        methodNode.access = (methodNode.access & ~7) ^ 1;
+                }
                 complete();
             }
         }
 
-        public void fieldTransform(ClassNode node)
+        private void fieldTransform(ClassNode node)
         {
             FieldNode fieldNode = getField(node);
             if (fieldNode != null)
             {
-                fieldNode.access = 1;
+                switch (action)
+                {
+                    case MODIFY:
+                        modifyField(fieldNode);
+                        break;
+                    case DELETE:
+                        node.fields.remove(fieldNode);
+                        break;
+                    case MAKE_PUBLIC:
+                        fieldNode.access = (fieldNode.access & ~7) ^ 1;
+                }
                 complete();
             }
         }
 
-        public void innerClassTransform(ClassNode node)
+        private void modifyField(FieldNode fieldNode)
+        {
+        }
+        
+
+        private void innerClassTransform(ClassNode node)
         {
             InnerClassNode innerClassNode = getInnerClass(node);
             if (innerClassNode != null)
             {
-                innerClassNode.access = 1;
+                switch (action)
+                {
+                    case MODIFY:
+                        modifyInnerClass(innerClassNode);
+                        break;
+                    case DELETE:
+                        node.innerClasses.remove(innerClassNode);
+                        break;
+                    case MAKE_PUBLIC:
+                        innerClassNode.access = (innerClassNode.access & ~7) ^ 1;
+                }
                 complete();
             }
+        }
+
+        private void modifyInnerClass(InnerClassNode innerClassNode)
+        {
         }
 
         public void transform(ClassNode node)
@@ -377,7 +404,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         {
             ClassNode classNode = new ClassNode();
             ClassReader classReader = new ClassReader(bytes);
-            classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
+            classReader.accept(classNode, 0);
 
             StevesAddons.log.log(Level.INFO, "Applying Transformer" + (transformers.length > 1 ? "s " : " ") + "to " + getName());
 

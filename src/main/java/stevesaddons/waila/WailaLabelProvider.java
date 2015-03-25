@@ -1,9 +1,11 @@
 package stevesaddons.waila;
 
+import mcp.mobius.waila.api.ITaggedList;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.impl.ModuleRegistrar;
+import mcp.mobius.waila.api.impl.TipList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -15,10 +17,14 @@ import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class WailaLabelProvider implements IWailaDataProvider
 {
+    public static final String LABELLED = "stevesaddons.waila.labelled";
+
     @Override
     public ItemStack getWailaStack(IWailaDataAccessor iWailaDataAccessor, IWailaConfigHandler iWailaConfigHandler)
     {
@@ -32,15 +38,28 @@ public class WailaLabelProvider implements IWailaDataProvider
     }
 
     @Override
+    @SuppressWarnings(value="unchecked")
     public List<String> getWailaBody(ItemStack itemStack, List<String> list, IWailaDataAccessor iWailaDataAccessor, IWailaConfigHandler iWailaConfigHandler)
     {
-        if (iWailaDataAccessor.getBlock()!=null)
+        ITaggedList tagged = (ITaggedList)list;
+        if (iWailaDataAccessor.getBlock()!=null && tagged.getEntries(LABELLED).isEmpty())
         {
             BlockCoord coord = new BlockCoord(iWailaDataAccessor.getPosition().blockX, iWailaDataAccessor.getPosition().blockY, iWailaDataAccessor.getPosition().blockZ);
             String label = NameRegistry.getSavedName(iWailaDataAccessor.getWorld().provider.dimensionId, coord);
             if (label!=null)
             {
-                list.add(StatCollector.translateToLocalFormatted("stevesaddons.waila.labelled",label));
+                tagged.add(StatCollector.translateToLocalFormatted(LABELLED, label), LABELLED);
+                int size = tagged.size();
+                if (size > 1)
+                {
+                    for (Iterator<String> itr = tagged.iterator(); itr.hasNext() && size > 1; size--)
+                    {
+                        String val = itr.next();
+                        Set<String> tags = tagged.getTags(val);
+                        itr.remove();
+                        tagged.add(val, tags);
+                    }
+                }
             }
         }
         return list;
