@@ -181,7 +181,8 @@ public class StevesHooks
             {
                 for (FluidTankInfo info : fluidTankInfo)
                 {
-                    tankInfo += info.fluid != null ? info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "") : "";
+                    if (info.fluid == null || info.fluid.getFluid() == null) return result;
+                    tankInfo += info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "");
                 }
             }
             if (tankInfo.isEmpty()) result+="\n"+StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
