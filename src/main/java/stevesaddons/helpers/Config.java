@@ -19,8 +19,8 @@ public class Config
         whitelist.comment = "Add player names permitted to use Pastebin";
         CommandPastebin.usernameWhitelist.addAll(Arrays.asList(whitelist.getStringList()));
 
-        Property waila = config.get("General", "waila integration", wailaIntegration);
-        whitelist.comment = "Show set labels in WAILA tags";
+        Property waila = config.get("General", "waila_integration", wailaIntegration);
+        waila.comment = "Show set labels in WAILA tags";
         wailaIntegration = waila.getBoolean();
 
         config.save();
