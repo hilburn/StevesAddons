@@ -64,6 +64,7 @@ public class CommandPastebin extends CommandDuplicator
                     tagCompound.removeTag("x");
                     tagCompound.removeTag("y");
                     tagCompound.removeTag("z");
+                    stripBaseNBT(tagCompound);
                     tagCompound.setString("Author", sender.getCommandSenderName());
                     httpPost.put("api_paste_code", tagCompound.toString());
                     String inputLine = httpPost.getContents();
