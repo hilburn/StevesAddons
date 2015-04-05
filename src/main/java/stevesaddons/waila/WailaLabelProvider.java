@@ -4,9 +4,6 @@ import mcp.mobius.waila.api.ITaggedList;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
-import mcp.mobius.waila.api.impl.ModuleRegistrar;
-import mcp.mobius.waila.api.impl.TipList;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +13,6 @@ import net.minecraft.world.World;
 import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -38,15 +34,15 @@ public class WailaLabelProvider implements IWailaDataProvider
     }
 
     @Override
-    @SuppressWarnings(value="unchecked")
+    @SuppressWarnings(value = "unchecked")
     public List<String> getWailaBody(ItemStack itemStack, List<String> list, IWailaDataAccessor iWailaDataAccessor, IWailaConfigHandler iWailaConfigHandler)
     {
         ITaggedList tagged = (ITaggedList)list;
-        if (iWailaDataAccessor.getBlock()!=null && tagged.getEntries(LABELLED).isEmpty())
+        if (iWailaDataAccessor.getBlock() != null && tagged.getEntries(LABELLED).isEmpty())
         {
             BlockCoord coord = new BlockCoord(iWailaDataAccessor.getPosition().blockX, iWailaDataAccessor.getPosition().blockY, iWailaDataAccessor.getPosition().blockZ);
             String label = NameRegistry.getSavedName(iWailaDataAccessor.getWorld().provider.dimensionId, coord);
-            if (label!=null)
+            if (label != null)
             {
                 tagged.add(StatCollector.translateToLocalFormatted(LABELLED, label), LABELLED);
                 int size = tagged.size();

@@ -1,11 +1,10 @@
 package stevesaddons.naming;
 
-import stevesaddons.network.message.NameDataUpdateMessage;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.FullDataSyncMessage;
+import stevesaddons.network.message.NameDataUpdateMessage;
 import stevesaddons.network.message.WorldDataSyncMessage;
 
 import java.util.HashMap;
@@ -21,7 +20,7 @@ public class NameRegistry
     {
         NameData data = instance.nameMapping.get(world.provider.dimensionId);
         if (data == null) return null;
-        return data.get(new BlockCoord(x,y,z));
+        return data.get(new BlockCoord(x, y, z));
     }
 
     public static String getSavedName(int dimensionId, BlockCoord coord)
@@ -34,7 +33,8 @@ public class NameRegistry
     public static void saveName(World world, int x, int y, int z, String name)
     {
         BlockCoord coord = new BlockCoord(x, y, z, name);
-        if (!instance.nameMapping.containsKey(world.provider.dimensionId)) instance.nameMapping.put(world.provider.dimensionId, new NameData());
+        if (!instance.nameMapping.containsKey(world.provider.dimensionId))
+            instance.nameMapping.put(world.provider.dimensionId, new NameData());
         NameData data = instance.nameMapping.get(world.provider.dimensionId);
         data.markDirty();
         //if (world.isRemote) MessageHandler.INSTANCE.sendToServer(new NameDataUpdateMessage(world.provider.dimensionId, coord));
@@ -54,7 +54,8 @@ public class NameRegistry
         if (!instance.nameMapping.containsKey(world.provider.dimensionId)) return false;
         NameData data = instance.nameMapping.get(world.provider.dimensionId);
         if (!data.names.containsKey(coord)) return false;
-        if (world.isRemote) MessageHandler.INSTANCE.sendToServer(new NameDataUpdateMessage(world.provider.dimensionId, coord, true));
+        if (world.isRemote)
+            MessageHandler.INSTANCE.sendToServer(new NameDataUpdateMessage(world.provider.dimensionId, coord, true));
         else
         {
             data.remove(coord);

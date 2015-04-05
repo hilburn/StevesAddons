@@ -67,7 +67,7 @@ public class CommandExecutorRF extends CommandExecutor
         for (int i$ = 0; i$ < len$; ++i$)
         {
             Variable variable = arr$[i$];
-            if (variable.isValid() && (!variable.hasBeenExecuted() || ((ComponentMenuVariable) variable.getDeclaration().getMenus().get(0)).getVariableMode() == VariableMode.LOCAL))
+            if (variable.isValid() && (!variable.hasBeenExecuted() || ((ComponentMenuVariable)variable.getDeclaration().getMenus().get(0)).getVariableMode() == VariableMode.LOCAL))
             {
                 this.executeCommand(variable.getDeclaration(), 0);
                 variable.setExecuted(true);
@@ -180,8 +180,8 @@ public class CommandExecutorRF extends CommandExecutor
 
                             while (var26.hasNext())
                             {
-                                SlotInventoryHolder var27 = (SlotInventoryHolder) var26.next();
-                                var27.getEmitter().updateState((ComponentMenuRedstoneSidesEmitter) command.getMenus().get(1), (ComponentMenuRedstoneOutput) command.getMenus().get(2), (ComponentMenuPulse) command.getMenus().get(3));
+                                SlotInventoryHolder var27 = (SlotInventoryHolder)var26.next();
+                                var27.getEmitter().updateState((ComponentMenuRedstoneSidesEmitter)command.getMenus().get(1), (ComponentMenuRedstoneOutput)command.getMenus().get(2), (ComponentMenuPulse)command.getMenus().get(3));
                             }
                         }
                         break;
@@ -205,16 +205,16 @@ public class CommandExecutorRF extends CommandExecutor
                         List tiles = this.getTiles(command.getMenus().get(2));
                         if (tiles != null)
                         {
-                            this.updateVariable(tiles, (ComponentMenuVariable) command.getMenus().get(0), (ComponentMenuListOrder) command.getMenus().get(3));
+                            this.updateVariable(tiles, (ComponentMenuVariable)command.getMenus().get(0), (ComponentMenuListOrder)command.getMenus().get(3));
                         }
                         break;
                     case 11:
-                        this.updateForLoop(command, (ComponentMenuVariableLoop) command.getMenus().get(0), (ComponentMenuContainerTypes) command.getMenus().get(1), (ComponentMenuListOrder) command.getMenus().get(2));
+                        this.updateForLoop(command, (ComponentMenuVariableLoop)command.getMenus().get(0), (ComponentMenuContainerTypes)command.getMenus().get(1), (ComponentMenuListOrder)command.getMenus().get(2));
                         this.executeChildCommands(command, EnumSet.of(ConnectionOption.STANDARD_OUTPUT));
                         return;
                     case 12:
-                        CraftingBufferElement element = new CraftingBufferElement(this, (ComponentMenuCrafting) command.getMenus().get(0), (ComponentMenuContainerScrap) command.getMenus().get(2));
-                        if (((ComponentMenuCraftingPriority) command.getMenus().get(1)).shouldPrioritizeCrafting())
+                        CraftingBufferElement element = new CraftingBufferElement(this, (ComponentMenuCrafting)command.getMenus().get(0), (ComponentMenuContainerScrap)command.getMenus().get(2));
+                        if (((ComponentMenuCraftingPriority)command.getMenus().get(1)).shouldPrioritizeCrafting())
                         {
                             this.craftingBufferHigh.add(element);
                         } else
@@ -251,18 +251,18 @@ public class CommandExecutorRF extends CommandExecutor
                         List camouflage = this.getCamouflage(command.getMenus().get(0));
                         if (camouflage != null)
                         {
-                            ComponentMenuCamouflageShape var29 = (ComponentMenuCamouflageShape) command.getMenus().get(1);
-                            ComponentMenuCamouflageInside var31 = (ComponentMenuCamouflageInside) command.getMenus().get(2);
-                            ComponentMenuCamouflageSides var32 = (ComponentMenuCamouflageSides) command.getMenus().get(3);
-                            ComponentMenuCamouflageItems items = (ComponentMenuCamouflageItems) command.getMenus().get(4);
+                            ComponentMenuCamouflageShape var29 = (ComponentMenuCamouflageShape)command.getMenus().get(1);
+                            ComponentMenuCamouflageInside var31 = (ComponentMenuCamouflageInside)command.getMenus().get(2);
+                            ComponentMenuCamouflageSides var32 = (ComponentMenuCamouflageSides)command.getMenus().get(3);
+                            ComponentMenuCamouflageItems items = (ComponentMenuCamouflageItems)command.getMenus().get(4);
                             if (items.isFirstRadioButtonSelected() || items.getSettings().get(0).isValid())
                             {
-                                ItemStack itemStack = items.isFirstRadioButtonSelected() ? null : ((ItemSetting) items.getSettings().get(0)).getItem();
+                                ItemStack itemStack = items.isFirstRadioButtonSelected() ? null : ((ItemSetting)items.getSettings().get(0)).getItem();
                                 Iterator i$1 = camouflage.iterator();
 
                                 while (i$1.hasNext())
                                 {
-                                    SlotInventoryHolder slotInventoryHolder1 = (SlotInventoryHolder) i$1.next();
+                                    SlotInventoryHolder slotInventoryHolder1 = (SlotInventoryHolder)i$1.next();
                                     slotInventoryHolder1.getCamouflage().setBounds(var29);
 
                                     for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; ++i)
@@ -284,8 +284,8 @@ public class CommandExecutorRF extends CommandExecutor
 
                             while (i$.hasNext())
                             {
-                                SlotInventoryHolder slotInventoryHolder = (SlotInventoryHolder) i$.next();
-                                slotInventoryHolder.getSign().updateSign((ComponentMenuSignText) command.getMenus().get(1));
+                                SlotInventoryHolder slotInventoryHolder = (SlotInventoryHolder)i$.next();
+                                slotInventoryHolder.getSign().updateSign((ComponentMenuSignText)command.getMenus().get(1));
                             }
                         }
                         break;
@@ -308,7 +308,7 @@ public class CommandExecutorRF extends CommandExecutor
                         if (conditionStorage != null)
                         {
                             this.getValidRFStorage(command.getMenus().get(1), conditionStorage);
-                            if (this.searchForPower((ComponentMenuRFCondition) command.getMenus().get(2), conditionStorage))
+                            if (this.searchForPower((ComponentMenuRFCondition)command.getMenus().get(2), conditionStorage))
                             {
                                 this.executeChildCommands(command, EnumSet.of(ConnectionOption.CONDITION_TRUE));
                             } else
@@ -380,7 +380,7 @@ public class CommandExecutorRF extends CommandExecutor
     public static List<SlotInventoryHolder> getContainers(TileEntityManager manager, ComponentMenu componentMenu, ConnectionBlockType type)
     {
         if (!(componentMenu instanceof ComponentMenuContainer)) return null;
-        ComponentMenuContainer menuContainer = (ComponentMenuContainer) componentMenu;
+        ComponentMenuContainer menuContainer = (ComponentMenuContainer)componentMenu;
         if (menuContainer.getSelectedInventories().size() == 0)
         {
             return null;
@@ -401,7 +401,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                     while (i$.hasNext())
                     {
-                        int val = ((Integer) i$.next()).intValue();
+                        int val = ((Integer)i$.next()).intValue();
                         if (val == i)
                         {
                             List selection = selected.getContainers();
@@ -414,8 +414,8 @@ public class CommandExecutorRF extends CommandExecutor
                                     continue label50;
                                 }
 
-                                int selected1 = ((Integer) i$1.next()).intValue();
-                                addContainer(inventories, ret, selected1, menuContainer, type, ((ComponentMenuContainerTypes) selected.getDeclaration().getMenus().get(1)).getValidTypes());
+                                int selected1 = ((Integer)i$1.next()).intValue();
+                                addContainer(inventories, ret, selected1, menuContainer, type, ((ComponentMenuContainerTypes)selected.getDeclaration().getMenus().get(1)).getValidTypes());
                             }
                         }
                     }
@@ -462,7 +462,7 @@ public class CommandExecutorRF extends CommandExecutor
                 return false;
             }
 
-            slotInventoryHolder = (SlotInventoryHolder) i$.next();
+            slotInventoryHolder = (SlotInventoryHolder)i$.next();
         }
         while (slotInventoryHolder.getTile().xCoord != te.xCoord || slotInventoryHolder.getTile().yCoord != te.yCoord || slotInventoryHolder.getTile().zCoord != te.zCoord || !slotInventoryHolder.getTile().getClass().equals(te.getClass()));
 
@@ -471,7 +471,7 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void getValidSlots(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories)
     {
-        ComponentMenuTargetInventory menuTarget = (ComponentMenuTargetInventory) componentMenu;
+        ComponentMenuTargetInventory menuTarget = (ComponentMenuTargetInventory)componentMenu;
 
         for (int i = 0; i < inventories.size(); ++i)
         {
@@ -486,7 +486,7 @@ public class CommandExecutorRF extends CommandExecutor
                     int start;
                     if (inventory instanceof ISidedInventory)
                     {
-                        inventoryValidSlots = ((ISidedInventory) inventory).getAccessibleSlotsFromSide(side);
+                        inventoryValidSlots = ((ISidedInventory)inventory).getAccessibleSlotsFromSide(side);
                     } else
                     {
                         inventoryValidSlots = new int[inventory.getSizeInventory()];
@@ -518,7 +518,7 @@ public class CommandExecutorRF extends CommandExecutor
                             int inventoryValidSlot = arr$[i$];
                             if (inventoryValidSlot >= start && inventoryValidSlot <= end)
                             {
-                                SlotSideTarget target = (SlotSideTarget) validSlots.get(Integer.valueOf(inventoryValidSlot));
+                                SlotSideTarget target = (SlotSideTarget)validSlots.get(Integer.valueOf(inventoryValidSlot));
                                 if (target == null)
                                 {
                                     validSlots.put(Integer.valueOf(inventoryValidSlot), new SlotSideTarget(inventoryValidSlot, side));
@@ -537,11 +537,11 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void getValidRFStorage(ComponentMenu componentMenu, List<SlotInventoryHolder> cells)
     {
-        ComponentMenuTargetRF menuTarget = (ComponentMenuTargetRF) componentMenu;
+        ComponentMenuTargetRF menuTarget = (ComponentMenuTargetRF)componentMenu;
         List<SlotInventoryHolder> result = new ArrayList<SlotInventoryHolder>();
         for (int i = 0; i < cells.size(); ++i)
         {
-            IEnergyConnection cell = (IEnergyConnection) cells.get(i).getTile();
+            IEnergyConnection cell = (IEnergyConnection)cells.get(i).getTile();
             if (cell == null || cells.get(i).getTile() instanceof TileEntityRFNode) continue;
             if (cell instanceof IEnergyReceiver || cell instanceof IEnergyProvider)
             {
@@ -566,7 +566,7 @@ public class CommandExecutorRF extends CommandExecutor
         int total = 0;
         for (int i = 0; i < cells.size(); ++i)
         {
-            IEnergyConnection cell = (IEnergyConnection) cells.get(i).getTile();
+            IEnergyConnection cell = (IEnergyConnection)cells.get(i).getTile();
             if (cell instanceof IEnergyReceiver || cell instanceof IEnergyProvider)
             {
                 for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
@@ -587,14 +587,14 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void getInputRF(ComponentMenu componentMenu, List<SlotInventoryHolder> inputStorage)
     {
-        ComponentMenuTargetRF menuTarget = (ComponentMenuTargetRF) componentMenu;
+        ComponentMenuTargetRF menuTarget = (ComponentMenuTargetRF)componentMenu;
         List<Integer> validSides = getValidSides(menuTarget);
         for (int i = 0; i < inputStorage.size(); ++i)
         {
-            IEnergyProvider cell = (IEnergyProvider) (inputStorage.get(i)).getTile();
+            IEnergyProvider cell = (IEnergyProvider)(inputStorage.get(i)).getTile();
             if (cell == null) continue;
             if (cell instanceof TileEntityRFNode)
-                ((TileEntityRFNode) cell).setInputSides(validSides.toArray(new Integer[validSides.size()]));
+                ((TileEntityRFNode)cell).setInputSides(validSides.toArray(new Integer[validSides.size()]));
             for (int side : validSides)
             {
                 ForgeDirection dir = ForgeDirection.getOrientation(side);
@@ -623,7 +623,7 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void insertRF(ComponentMenu componentMenu, List<SlotInventoryHolder> outputStorage)
     {
-        ComponentMenuTargetRF menuTarget = (ComponentMenuTargetRF) componentMenu;
+        ComponentMenuTargetRF menuTarget = (ComponentMenuTargetRF)componentMenu;
         long bufferSize = 0;
         for (RFBufferElement rfElement : rfBuffer)
             bufferSize += rfElement.getMaxExtract();
@@ -631,10 +631,10 @@ public class CommandExecutorRF extends CommandExecutor
         List<IEnergyReceiver> validOutputs = new ArrayList<IEnergyReceiver>();
         for (SlotInventoryHolder holder : outputStorage)
         {
-            IEnergyReceiver cell = (IEnergyReceiver) holder.getTile();
+            IEnergyReceiver cell = (IEnergyReceiver)holder.getTile();
             if (cell == null) continue;
             if (cell instanceof TileEntityRFNode)
-                ((TileEntityRFNode) cell).setOutputSides(validSides.toArray(new Integer[validSides.size()]));
+                ((TileEntityRFNode)cell).setOutputSides(validSides.toArray(new Integer[validSides.size()]));
             for (int side : validSides)
             {
                 int maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(side), Integer.MAX_VALUE, true);
@@ -668,7 +668,7 @@ public class CommandExecutorRF extends CommandExecutor
         for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext(); inserted--)
         {
             IEnergyReceiver cell = itr.next();
-            int maxReceive = ((int) bufferSize) / (inserted);
+            int maxReceive = ((int)bufferSize) / (inserted);
             for (int side : directions)
             {
                 int insert = cell.receiveEnergy(ForgeDirection.getOrientation(side), maxReceive, false);
@@ -710,14 +710,14 @@ public class CommandExecutorRF extends CommandExecutor
 
                 while (i$.hasNext())
                 {
-                    int side = ((Integer) i$.next()).intValue();
-                    if (isInput && ((ISidedInventory) inventory).canExtractItem(slot.getSlot(), item, side))
+                    int side = ((Integer)i$.next()).intValue();
+                    if (isInput && ((ISidedInventory)inventory).canExtractItem(slot.getSlot(), item, side))
                     {
                         hasValidSide = true;
                         break;
                     }
 
-                    if (!isInput && ((ISidedInventory) inventory).canInsertItem(slot.getSlot(), item, side))
+                    if (!isInput && ((ISidedInventory)inventory).canInsertItem(slot.getSlot(), item, side))
                     {
                         hasValidSide = true;
                         break;
@@ -740,8 +740,8 @@ public class CommandExecutorRF extends CommandExecutor
 
         while (i$.hasNext())
         {
-            SlotInventoryHolder inventory = (SlotInventoryHolder) i$.next();
-            ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
+            SlotInventoryHolder inventory = (SlotInventoryHolder)i$.next();
+            ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
             Iterator i$1;
             SlotSideTarget slot;
             Setting setting;
@@ -753,13 +753,13 @@ public class CommandExecutorRF extends CommandExecutor
 
                     while (i$1.hasNext())
                     {
-                        slot = (SlotSideTarget) i$1.next();
+                        slot = (SlotSideTarget)i$1.next();
                         Iterator itemStack1 = menuItem.getSettings().iterator();
 
                         while (itemStack1.hasNext())
                         {
-                            setting = (Setting) itemStack1.next();
-                            ItemStack item = ((ItemSetting) setting).getItem();
+                            setting = (Setting)itemStack1.next();
+                            ItemStack item = ((ItemSetting)setting).getItem();
                             if (item != null)
                             {
                                 item = item.copy();
@@ -775,7 +775,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                 while (i$1.hasNext())
                 {
-                    slot = (SlotSideTarget) i$1.next();
+                    slot = (SlotSideTarget)i$1.next();
                     ItemStack itemStack = inventory.getInventory().getStackInSlot(slot.getSlot());
                     if (this.isSlotValid(inventory.getInventory(), itemStack, slot, true))
                     {
@@ -799,7 +799,7 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (itemBufferElement.hasNext())
             {
-                ItemBufferElement itemBufferElement1 = (ItemBufferElement) itemBufferElement.next();
+                ItemBufferElement itemBufferElement1 = (ItemBufferElement)itemBufferElement.next();
                 if (itemBufferElement1.addTarget(owner, setting, inventory, target))
                 {
                     added = true;
@@ -818,7 +818,7 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void getValidTanks(ComponentMenu componentMenu, List<SlotInventoryHolder> tanks)
     {
-        ComponentMenuTargetTank menuTarget = (ComponentMenuTargetTank) componentMenu;
+        ComponentMenuTargetTank menuTarget = (ComponentMenuTargetTank)componentMenu;
 
         for (int i = 0; i < tanks.size(); ++i)
         {
@@ -851,7 +851,7 @@ public class CommandExecutorRF extends CommandExecutor
                         }
                     }
 
-                    SlotSideTarget var13 = (SlotSideTarget) validTanks.get(Integer.valueOf(0));
+                    SlotSideTarget var13 = (SlotSideTarget)validTanks.get(Integer.valueOf(0));
                     if (var13 == null)
                     {
                         validTanks.put(Integer.valueOf(0), new SlotSideTarget(0, side));
@@ -871,8 +871,8 @@ public class CommandExecutorRF extends CommandExecutor
 
         while (i$.hasNext())
         {
-            SlotInventoryHolder tank = (SlotInventoryHolder) i$.next();
-            ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
+            SlotInventoryHolder tank = (SlotInventoryHolder)i$.next();
+            ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
             Iterator i$1;
             SlotSideTarget slot;
             if (tank.getTank() instanceof TileEntityCreative)
@@ -883,13 +883,13 @@ public class CommandExecutorRF extends CommandExecutor
 
                     while (i$1.hasNext())
                     {
-                        slot = (SlotSideTarget) i$1.next();
+                        slot = (SlotSideTarget)i$1.next();
                         Iterator var19 = menuItem.getSettings().iterator();
 
                         while (var19.hasNext())
                         {
-                            Setting var20 = (Setting) var19.next();
-                            Fluid var21 = ((LiquidSetting) var20).getFluid();
+                            Setting var20 = (Setting)var19.next();
+                            Fluid var21 = ((LiquidSetting)var20).getFluid();
                             if (var21 != null)
                             {
                                 FluidStack var22 = new FluidStack(var21, var20.isLimitedByAmount() ? var20.getAmount() : var20.getDefaultAmount());
@@ -907,13 +907,13 @@ public class CommandExecutorRF extends CommandExecutor
 
                 while (i$1.hasNext())
                 {
-                    slot = (SlotSideTarget) i$1.next();
+                    slot = (SlotSideTarget)i$1.next();
                     ArrayList tankInfos = new ArrayList();
                     Iterator i$2 = slot.getSides().iterator();
 
                     while (i$2.hasNext())
                     {
-                        int side = ((Integer) i$2.next()).intValue();
+                        int side = ((Integer)i$2.next()).intValue();
                         FluidTankInfo[] currentTankInfos = tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
                         if (currentTankInfos != null)
                         {
@@ -932,7 +932,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                                     while (fluidStack.hasNext())
                                     {
-                                        FluidTankInfo setting = (FluidTankInfo) fluidStack.next();
+                                        FluidTankInfo setting = (FluidTankInfo)fluidStack.next();
                                         if (FluidStack.areFluidStackTagsEqual(setting.fluid, fluidTankInfo.fluid) && setting.capacity == fluidTankInfo.capacity)
                                         {
                                             alreadyUsed = true;
@@ -982,7 +982,7 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (itemBufferElement.hasNext())
             {
-                LiquidBufferElement liquidBufferElement = (LiquidBufferElement) itemBufferElement.next();
+                LiquidBufferElement liquidBufferElement = (LiquidBufferElement)itemBufferElement.next();
                 if (liquidBufferElement.addTarget(owner, setting, tank, target))
                 {
                     added = true;
@@ -1001,7 +1001,7 @@ public class CommandExecutorRF extends CommandExecutor
 
     private Setting isItemValid(ComponentMenu componentMenu, ItemStack itemStack)
     {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
+        ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         Iterator i$ = menuItem.getSettings().iterator();
 
         Setting setting;
@@ -1012,15 +1012,15 @@ public class CommandExecutorRF extends CommandExecutor
                 return null;
             }
 
-            setting = (Setting) i$.next();
-        } while (!((ItemSetting) setting).isEqualForCommandExecutor(itemStack));
+            setting = (Setting)i$.next();
+        } while (!((ItemSetting)setting).isEqualForCommandExecutor(itemStack));
 
         return setting;
     }
 
     private Setting isLiquidValid(ComponentMenu componentMenu, FluidStack fluidStack)
     {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
+        ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         if (fluidStack != null)
         {
             int fluidId = fluidStack.fluidID;
@@ -1028,8 +1028,8 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (i$.hasNext())
             {
-                Setting setting = (Setting) i$.next();
-                if (setting.isValid() && ((LiquidSetting) setting).getLiquidId() == fluidId)
+                Setting setting = (Setting)i$.next();
+                if (setting.isValid() && ((LiquidSetting)setting).getLiquidId() == fluidId)
                 {
                     return setting;
                 }
@@ -1041,13 +1041,13 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void insertItems(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories)
     {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
+        ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         ArrayList outputCounters = new ArrayList();
         Iterator i$ = inventories.iterator();
 
         while (i$.hasNext())
         {
-            SlotInventoryHolder inventoryHolder = (SlotInventoryHolder) i$.next();
+            SlotInventoryHolder inventoryHolder = (SlotInventoryHolder)i$.next();
             if (!inventoryHolder.isShared())
             {
                 outputCounters.clear();
@@ -1058,7 +1058,7 @@ public class CommandExecutorRF extends CommandExecutor
             CraftingBufferElement craftingBufferElement;
             while (i$1.hasNext())
             {
-                craftingBufferElement = (CraftingBufferElement) i$1.next();
+                craftingBufferElement = (CraftingBufferElement)i$1.next();
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
             }
 
@@ -1066,7 +1066,7 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (i$1.hasNext())
             {
-                ItemBufferElement craftingBufferElement1 = (ItemBufferElement) i$1.next();
+                ItemBufferElement craftingBufferElement1 = (ItemBufferElement)i$1.next();
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement1);
             }
 
@@ -1074,7 +1074,7 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (i$1.hasNext())
             {
-                craftingBufferElement = (CraftingBufferElement) i$1.next();
+                craftingBufferElement = (CraftingBufferElement)i$1.next();
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
             }
         }
@@ -1098,7 +1098,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                 while (i$.hasNext())
                 {
-                    OutputItemCounter slot = (OutputItemCounter) i$.next();
+                    OutputItemCounter slot = (OutputItemCounter)i$.next();
                     if (slot.areSettingsSame(setting))
                     {
                         outputItemCounter = slot;
@@ -1116,7 +1116,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                 while (i$.hasNext())
                 {
-                    SlotSideTarget slot1 = (SlotSideTarget) i$.next();
+                    SlotSideTarget slot1 = (SlotSideTarget)i$.next();
                     if (this.isSlotValid(inventory, itemStack, slot1, false))
                     {
                         ItemStack itemInSlot = inventory.getStackInSlot(slot1.getSlot());
@@ -1170,13 +1170,13 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void insertLiquids(ComponentMenu componentMenu, List<SlotInventoryHolder> cells)
     {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
+        ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         ArrayList outputCounters = new ArrayList();
         Iterator i$ = cells.iterator();
 
         while (i$.hasNext())
         {
-            SlotInventoryHolder tankHolder = (SlotInventoryHolder) i$.next();
+            SlotInventoryHolder tankHolder = (SlotInventoryHolder)i$.next();
             if (!tankHolder.isShared())
             {
                 outputCounters.clear();
@@ -1187,12 +1187,12 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (bufferIterator.hasNext())
             {
-                LiquidBufferElement liquidBufferElement = (LiquidBufferElement) bufferIterator.next();
+                LiquidBufferElement liquidBufferElement = (LiquidBufferElement)bufferIterator.next();
                 Iterator liquidIterator = liquidBufferElement.getHolders().iterator();
 
                 while (liquidIterator.hasNext())
                 {
-                    StackTankHolder holder = (StackTankHolder) liquidIterator.next();
+                    StackTankHolder holder = (StackTankHolder)liquidIterator.next();
                     FluidStack fluidStack = holder.getFluidStack();
                     Setting setting = this.isLiquidValid(componentMenu, fluidStack);
                     if (menuItem.useWhiteList() != (setting == null) || setting != null && setting.isLimitedByAmount())
@@ -1202,7 +1202,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                         while (i$1.hasNext())
                         {
-                            OutputLiquidCounter slot = (OutputLiquidCounter) i$1.next();
+                            OutputLiquidCounter slot = (OutputLiquidCounter)i$1.next();
                             if (slot.areSettingsSame(setting))
                             {
                                 outputLiquidCounter = slot;
@@ -1220,12 +1220,12 @@ public class CommandExecutorRF extends CommandExecutor
 
                         while (i$1.hasNext())
                         {
-                            SlotSideTarget slot1 = (SlotSideTarget) i$1.next();
+                            SlotSideTarget slot1 = (SlotSideTarget)i$1.next();
                             Iterator i$2 = slot1.getSides().iterator();
 
                             while (i$2.hasNext())
                             {
-                                int side = ((Integer) i$2.next()).intValue();
+                                int side = ((Integer)i$2.next()).intValue();
                                 FluidStack temp = fluidStack.copy();
                                 temp.amount = holder.getSizeLeft();
                                 int amount = tank.fill(ForgeDirection.VALID_DIRECTIONS[side], temp, false);
@@ -1312,10 +1312,11 @@ public class CommandExecutorRF extends CommandExecutor
     {
         for (SlotSideTarget slot : inventoryHolder.getValidSlots().values())
         {
-            ItemStack itemStack =  inventoryHolder.getInventory().getStackInSlot(slot.getSlot());
+            ItemStack itemStack = inventoryHolder.getInventory().getStackInSlot(slot.getSlot());
             if (this.isSlotValid(inventoryHolder.getInventory(), itemStack, slot, true))
             {
-                if (inventoryHolder.getInventory() instanceof IDeepStorageUnit) itemStack = ((IDeepStorageUnit)inventoryHolder.getInventory()).getStoredItemType();
+                if (inventoryHolder.getInventory() instanceof IDeepStorageUnit)
+                    itemStack = ((IDeepStorageUnit)inventoryHolder.getInventory()).getStoredItemType();
                 Setting setting = this.isItemValid(componentMenu, itemStack);
                 if (setting != null)
                 {
@@ -1338,13 +1339,13 @@ public class CommandExecutorRF extends CommandExecutor
 
         while (i$.hasNext())
         {
-            SlotSideTarget slot = (SlotSideTarget) i$.next();
+            SlotSideTarget slot = (SlotSideTarget)i$.next();
             ArrayList tankInfos = new ArrayList();
             Iterator i$1 = slot.getSides().iterator();
 
             while (i$1.hasNext())
             {
-                int side = ((Integer) i$1.next()).intValue();
+                int side = ((Integer)i$1.next()).intValue();
                 FluidTankInfo[] currentTankInfos = tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
                 if (currentTankInfos != null)
                 {
@@ -1363,7 +1364,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                             while (fluidStack.hasNext())
                             {
-                                FluidTankInfo setting = (FluidTankInfo) fluidStack.next();
+                                FluidTankInfo setting = (FluidTankInfo)fluidStack.next();
                                 if (FluidStack.areFluidStackTagsEqual(setting.fluid, fluidTankInfo.fluid) && setting.capacity == fluidTankInfo.capacity)
                                 {
                                     alreadyUsed = true;
@@ -1407,13 +1408,13 @@ public class CommandExecutorRF extends CommandExecutor
 
     private boolean checkConditionResult(ComponentMenu componentMenu, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
     {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
-        IConditionStuffMenu menuCondition = (IConditionStuffMenu) componentMenu;
+        ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
+        IConditionStuffMenu menuCondition = (IConditionStuffMenu)componentMenu;
         Iterator i$ = menuItem.getSettings().iterator();
 
         while (i$.hasNext())
         {
-            Setting setting = (Setting) i$.next();
+            Setting setting = (Setting)i$.next();
             if (setting.isValid())
             {
                 ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(Integer.valueOf(setting.getId()));
@@ -1435,7 +1436,7 @@ public class CommandExecutorRF extends CommandExecutor
 
     private boolean splitFlow(ComponentMenu componentMenu)
     {
-        ComponentMenuSplit split = (ComponentMenuSplit) componentMenu;
+        ComponentMenuSplit split = (ComponentMenuSplit)componentMenu;
         if (!split.useSplit())
         {
             return false;
@@ -1471,7 +1472,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                     while (usedCommandCopy.hasNext())
                     {
-                        ItemBufferElement newExecutor = (ItemBufferElement) usedCommandCopy.next();
+                        ItemBufferElement newExecutor = (ItemBufferElement)usedCommandCopy.next();
                         itemBufferSplit.add(newExecutor.getSplitElement(amount, var14, split.useFair()));
                     }
 
@@ -1479,7 +1480,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                     while (usedCommandCopy.hasNext())
                     {
-                        LiquidBufferElement var18 = (LiquidBufferElement) usedCommandCopy.next();
+                        LiquidBufferElement var18 = (LiquidBufferElement)usedCommandCopy.next();
                         liquidBufferSplit.add(var18.getSplitElement(amount, var14, split.useFair()));
                     }
 
@@ -1488,7 +1489,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                     while (var19.hasNext())
                     {
-                        int usedCommand = ((Integer) var19.next()).intValue();
+                        int usedCommand = ((Integer)var19.next()).intValue();
                         var17.add(Integer.valueOf(usedCommand));
                     }
 
@@ -1524,26 +1525,26 @@ public class CommandExecutorRF extends CommandExecutor
 
             while (inventories.hasNext())
             {
-                SlotInventoryHolder validTypes = (SlotInventoryHolder) inventories.next();
-                ((List) idList).add(Integer.valueOf(validTypes.getId()));
+                SlotInventoryHolder validTypes = (SlotInventoryHolder)inventories.next();
+                ((List)idList).add(Integer.valueOf(validTypes.getId()));
             }
 
             if (!menuVariable.isDeclaration())
             {
-                idList = this.applyOrder((List) idList, menuOrder);
+                idList = this.applyOrder((List)idList, menuOrder);
             }
 
             List inventories1 = this.manager.getConnectedInventories();
-            EnumSet validTypes1 = ((ComponentMenuContainerTypes) variable.getDeclaration().getMenus().get(1)).getValidTypes();
-            Iterator i$ = ((List) idList).iterator();
+            EnumSet validTypes1 = ((ComponentMenuContainerTypes)variable.getDeclaration().getMenus().get(1)).getValidTypes();
+            Iterator i$ = ((List)idList).iterator();
 
             while (i$.hasNext())
             {
-                int id = ((Integer) i$.next()).intValue();
+                int id = ((Integer)i$.next()).intValue();
                 if (remove)
                 {
                     variable.remove(id);
-                } else if (id >= 0 && id < inventories1.size() && ((ConnectionBlock) inventories1.get(id)).isOfAnyType(validTypes1))
+                } else if (id >= 0 && id < inventories1.size() && ((ConnectionBlock)inventories1.get(id)).isOfAnyType(validTypes1))
                 {
                     variable.add(id);
                 }
@@ -1560,16 +1561,16 @@ public class CommandExecutorRF extends CommandExecutor
         {
             List selection = this.applyOrder(list.getContainers(), orderMenu);
             EnumSet validTypes = typesMenu.getValidTypes();
-            validTypes.addAll(((ComponentMenuContainerTypes) element.getDeclaration().getMenus().get(1)).getValidTypes());
+            validTypes.addAll(((ComponentMenuContainerTypes)element.getDeclaration().getMenus().get(1)).getValidTypes());
             List inventories = this.manager.getConnectedInventories();
             Iterator i$ = selection.iterator();
 
             while (i$.hasNext())
             {
-                Integer selected = (Integer) i$.next();
+                Integer selected = (Integer)i$.next();
                 if (selected.intValue() >= 0 && selected.intValue() < inventories.size())
                 {
-                    ConnectionBlock inventory = (ConnectionBlock) inventories.get(selected.intValue());
+                    ConnectionBlock inventory = (ConnectionBlock)inventories.get(selected.intValue());
                     if (inventory.isOfAnyType(validTypes))
                     {
                         element.clearContainers();

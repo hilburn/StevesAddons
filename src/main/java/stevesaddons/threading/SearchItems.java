@@ -71,8 +71,9 @@ public class SearchItems implements Runnable
             {
                 Item item = (Item)anItemRegistry;
                 item.getSubItems(item, item.getCreativeTab(), stacks);
+            } catch (Exception ignore)
+            {
             }
-            catch (Exception ignore){}
         }
         for (ItemStack stack : stacks)
         {
@@ -93,7 +94,9 @@ public class SearchItems implements Runnable
                         advSearchString += string + "\n";
                 }
                 searchEntries.add(new SearchEntry(searchString, advSearchString, stack));
-            } catch (Throwable ignore) {}
+            } catch (Throwable ignore)
+            {
+            }
         }
     }
 
@@ -112,7 +115,7 @@ public class SearchItems implements Runnable
 
         public void search(Pattern pattern, List<ItemStack> stacks, boolean advanced)
         {
-            if (pattern.matcher(advanced? advToolTip : toolTip).find()) stacks.add(stack);
+            if (pattern.matcher(advanced ? advToolTip : toolTip).find()) stacks.add(stack);
         }
 
         public ItemStack getStack()

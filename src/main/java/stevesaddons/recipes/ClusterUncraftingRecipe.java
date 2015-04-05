@@ -19,7 +19,7 @@ public class ClusterUncraftingRecipe implements IRecipe
 
     static
     {
-        RecipeSorter.register("clusterUncrafting", ClusterUncraftingRecipe.class, RecipeSorter.Category.SHAPELESS,"after:minecraft:shapeless");
+        RecipeSorter.register("clusterUncrafting", ClusterUncraftingRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
     }
 
     @Override

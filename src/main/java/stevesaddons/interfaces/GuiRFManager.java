@@ -397,7 +397,8 @@ public class GuiRFManager extends GuiManager
     }
 
     @Override
-    public void drawItemStack(ItemStack itemstack, int x, int y) {
+    public void drawItemStack(ItemStack itemstack, int x, int y)
+    {
         GL11.glPushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glDisable(2896);
@@ -406,17 +407,21 @@ public class GuiRFManager extends GuiManager
         GL11.glEnable(2896);
         itemRender.zLevel = 1.0F;
 
-        try {
+        try
+        {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
             itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), itemstack, x + this.guiLeft, y + this.guiTop);
             itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), itemstack, x + this.guiLeft, y + this.guiTop, "");
-        } catch (Exception var9) {
-            if(itemstack.getItemDamage() != 0) {
+        } catch (Exception var9)
+        {
+            if (itemstack.getItemDamage() != 0)
+            {
                 ItemStack newStack = itemstack.copy();
                 newStack.setItemDamage(0);
                 this.drawItemStack(newStack, x, y);
             }
-        } finally {
+        } finally
+        {
             itemRender.zLevel = 0.0F;
             bindTexture(this.getComponentResource());
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

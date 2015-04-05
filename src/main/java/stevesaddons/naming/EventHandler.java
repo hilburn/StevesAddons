@@ -35,8 +35,8 @@ public class EventHandler
     public void worldLoad(WorldEvent.Load event)
     {
         WorldSavedData data = event.world.perWorldStorage.loadData(NameData.class, NameData.KEY);
-        if (data!=null)
-            NameRegistry.setWorldData(event.world.provider.dimensionId, (NameData) data);
+        if (data != null)
+            NameRegistry.setWorldData(event.world.provider.dimensionId, (NameData)data);
     }
 
     @SubscribeEvent
@@ -59,7 +59,7 @@ public class EventHandler
     public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
     {
         if (event.player instanceof EntityPlayerMP)
-            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(),(EntityPlayerMP) event.player);
+            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(), (EntityPlayerMP)event.player);
     }
 
     @SubscribeEvent
@@ -81,7 +81,7 @@ public class EventHandler
                     {
                         event.entityPlayer.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
                     }
-                }else
+                } else
                 {
                     NameRegistry.saveName(world, x, y, z, label);
                     event.entityPlayer.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
@@ -93,6 +93,6 @@ public class EventHandler
 
     private static boolean isLabeler(ItemStack stack)
     {
-        return stack!=null && stack.getItem() == ItemRegistry.labeler;
+        return stack != null && stack.getItem() == ItemRegistry.labeler;
     }
 }

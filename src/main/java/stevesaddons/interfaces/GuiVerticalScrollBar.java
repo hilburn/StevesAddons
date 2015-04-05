@@ -166,7 +166,7 @@ public class GuiVerticalScrollBar extends Gui
 
     public void draw()
     {
-        drawRect(this.xpos-1, this.startingYPos-1, this.xpos + width+1, this.startingYPos + this.maxDisplacement + this.height + 1, 0xFF787878);
+        drawRect(this.xpos - 1, this.startingYPos - 1, this.xpos + width + 1, this.startingYPos + this.maxDisplacement + this.height + 1, 0xFF787878);
         drawRect(this.xpos, this.startingYPos, this.xpos + width, this.startingYPos + this.maxDisplacement + this.height, 0xFF9c9c9c);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_BLEND);

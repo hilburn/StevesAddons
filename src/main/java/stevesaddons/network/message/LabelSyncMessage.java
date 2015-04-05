@@ -5,18 +5,17 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.common.registry.EntityRegistry;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 
-public class LabelSyncMessage  implements IMessage, IMessageHandler<LabelSyncMessage, IMessage>
+public class LabelSyncMessage implements IMessage, IMessageHandler<LabelSyncMessage, IMessage>
 {
     ItemStack stack;
     int id;
+
     public LabelSyncMessage()
     {
     }
@@ -54,7 +53,7 @@ public class LabelSyncMessage  implements IMessage, IMessageHandler<LabelSyncMes
                 break;
             }
         }
-        if (player!=null)
+        if (player != null)
         {
             player.inventory.setInventorySlotContents(player.inventory.currentItem, message.stack);
         }

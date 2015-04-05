@@ -73,7 +73,7 @@ public class StevesAddons
     }
 
     @Mod.EventHandler
-    @SuppressWarnings(value="unchecked")
+    @SuppressWarnings(value = "unchecked")
     public void postInit(FMLPostInitializationEvent e)
     {
         if (Loader.isModLoaded("JABBA"))

@@ -27,8 +27,8 @@ public class NameData extends WorldSavedData
     @Override
     public void readFromNBT(NBTTagCompound tagCompound)
     {
-        NBTTagList list = tagCompound.getTagList("l",10);
-        for (int i = 0; i<list.tagCount(); i++)
+        NBTTagList list = tagCompound.getTagList("l", 10);
+        for (int i = 0; i < list.tagCount(); i++)
         {
             put(new BlockCoord(list.getCompoundTagAt(i)));
         }
@@ -42,7 +42,7 @@ public class NameData extends WorldSavedData
         {
             list.appendTag(coord.writeToNBT());
         }
-        tagCompound.setTag("l",list);
+        tagCompound.setTag("l", list);
     }
 
     public String get(BlockCoord blockCoord)

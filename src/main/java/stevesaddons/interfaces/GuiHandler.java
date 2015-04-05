@@ -15,6 +15,6 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        return ID == 0? new GuiLabeler(player.getCurrentEquippedItem(), player):null;
+        return ID == 0 ? new GuiLabeler(player.getCurrentEquippedItem(), player) : null;
     }
 }

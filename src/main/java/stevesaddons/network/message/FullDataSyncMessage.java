@@ -35,7 +35,7 @@ public class FullDataSyncMessage implements IMessage, IMessageHandler<FullDataSy
         int length = pb.readInt();
         try
         {
-            for (int i = 0; i<length; i++)
+            for (int i = 0; i < length; i++)
             {
                 int dim = pb.readInt();
                 NBTTagCompound tagCompound = pb.readNBTTagCompoundFromBuffer();
@@ -56,7 +56,7 @@ public class FullDataSyncMessage implements IMessage, IMessageHandler<FullDataSy
         pb.writeInt(nameMapping.entrySet().size());
         try
         {
-            for (Map.Entry<Integer,NameData> entry : nameMapping.entrySet())
+            for (Map.Entry<Integer, NameData> entry : nameMapping.entrySet())
             {
                 pb.writeInt(entry.getKey());
                 NBTTagCompound tagCompound = new NBTTagCompound();

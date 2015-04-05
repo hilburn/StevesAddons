@@ -69,7 +69,7 @@ public class GuiTextEntry extends Gui
     private void drawBackground()
     {
         drawRect(this.x, this.y, this.x + width, this.y + height, 0xFF787878);
-        drawRect(this.x+1, this.y+1, this.x + width - 1, this.y + height - 1, isSelected?0xffb5b4b4:0xff9c9c9c);
+        drawRect(this.x + 1, this.y + 1, this.x + width - 1, this.y + height - 1, isSelected ? 0xffb5b4b4 : 0xff9c9c9c);
     }
 
     public String getText()
@@ -79,7 +79,7 @@ public class GuiTextEntry extends Gui
 
     public void drawText()
     {
-        fontRenderer.drawString(getText(), this.x + 2, this.y + height / 2 - 4, isEditing?0x207020:0x000000);
+        fontRenderer.drawString(getText(), this.x + 2, this.y + height / 2 - 4, isEditing ? 0x207020 : 0x000000);
     }
 
     public void setText(String text)

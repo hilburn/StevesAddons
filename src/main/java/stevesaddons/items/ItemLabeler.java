@@ -16,11 +16,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 import stevesaddons.StevesAddons;
-import stevesaddons.naming.NameRegistry;
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
 import stevesaddons.registry.ItemRegistry;
-import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.blocks.ModBlocks;
+import vswe.stevesfactory.blocks.TileEntityClusterElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class ItemLabeler extends Item
     }
 
     @SideOnly(Side.CLIENT)
-    @SuppressWarnings(value="unchecked")
+    @SuppressWarnings(value = "unchecked")
     public void getSubItems(Item item, CreativeTabs tab, List list)
     {
         list.add(ItemRegistry.defaultLabeler);
@@ -73,7 +73,7 @@ public class ItemLabeler extends Item
 
     public static void setLabel(ItemStack stack, String string)
     {
-        stack.getTagCompound().setString("Label",string);
+        stack.getTagCompound().setString("Label", string);
     }
 
     public static void saveStrings(ItemStack stack, List<String> strings)
@@ -91,16 +91,16 @@ public class ItemLabeler extends Item
 
     public static String getLabel(ItemStack stack)
     {
-        return stack.hasTagCompound()?stack.getTagCompound().getString("Label"):"";
+        return stack.hasTagCompound() ? stack.getTagCompound().getString("Label") : "";
     }
 
     @Override
-    @SuppressWarnings(value="unchecked")
+    @SuppressWarnings(value = "unchecked")
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extra)
     {
         super.addInformation(stack, player, list, extra);
         String label = getLabel(stack);
         if (label.isEmpty()) list.add("Clear Label");
-        else list.add("Label: "+label);
+        else list.add("Label: " + label);
     }
 }

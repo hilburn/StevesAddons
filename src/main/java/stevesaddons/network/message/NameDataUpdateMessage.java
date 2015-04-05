@@ -4,11 +4,9 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
-import stevesaddons.network.MessageHandler;
 
 public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameDataUpdateMessage, IMessage>
 {
@@ -37,7 +35,7 @@ public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameData
     {
         dimId = buf.readInt();
         remove = buf.readBoolean();
-        blockCoord = new BlockCoord(buf.readInt(),buf.readInt(),buf.readInt(),ByteBufUtils.readUTF8String(buf));
+        blockCoord = new BlockCoord(buf.readInt(), buf.readInt(), buf.readInt(), ByteBufUtils.readUTF8String(buf));
     }
 
     @Override
