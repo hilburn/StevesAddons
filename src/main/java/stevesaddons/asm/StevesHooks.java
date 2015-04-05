@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 public class StevesHooks
 {
     public static ItemStack JABBA_EMPTY_STACK = new ItemStack(Blocks.end_portal);
+
     public static void addCopyButton(final TileEntityManager manager)
     {
         int index = getAfterDelete(manager.buttons);
@@ -161,6 +162,47 @@ public class StevesHooks
         return string;
     }
 
+    public static void removeFlowComponent(TileEntityManager manager, int idToRemove)
+    {
+        for (int id : getIdsToRemove(idToRemove, manager.getFlowItems()))
+        {
+            manager.removeFlowComponent(id, manager.getFlowItems());
+            if (!manager.getWorldObj().isRemote)
+            {
+                manager.getRemovedIds().add(id);
+            } else
+            {
+                for (int i = 0; i < manager.getZLevelRenderingList().size(); ++i)
+                {
+                    if ((manager.getZLevelRenderingList().get(i)).getId() == id)
+                    {
+                        manager.getZLevelRenderingList().remove(i);
+                        break;
+                    }
+                }
+            }
+            manager.updateVariables();
+        }
+    }
+
+    public static List<Integer> getIdsToRemove(int idToRemove, List<FlowComponent> items)
+    {
+        List<Integer> ids = new ArrayList<Integer>();
+        getIdsToRemove(ids, idToRemove, items);
+        Collections.sort(ids);
+        Collections.reverse(ids);
+        return ids;
+    }
+    
+    private static void getIdsToRemove(List<Integer> ids, int idToRemove, List<FlowComponent> items)
+    {
+        for (FlowComponent component : items)
+        {
+            if (component.getParent() != null && component.getParent().getId() == idToRemove) getIdsToRemove(ids, component.getId(), items);
+        }
+        ids.add(idToRemove);
+    }
+
     public static String getContentString(TileEntity tileEntity)
     {
         String result = "";
@@ -168,7 +210,8 @@ public class StevesHooks
         {
             ItemStack stack = ((IDeepStorageUnit)tileEntity).getStoredItemType();
             String contains = "\n";
-            if (stack == null || stack.isItemEqual(JABBA_EMPTY_STACK)) contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
+            if (stack == null || stack.isItemEqual(JABBA_EMPTY_STACK))
+                contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
             else
                 contains += StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());
             result += contains;
@@ -185,7 +228,7 @@ public class StevesHooks
                     tankInfo += info.fluid.getLocalizedName() + (i++ < fluidTankInfo.length ? ", " : "");
                 }
             }
-            if (tankInfo.isEmpty()) result+="\n"+StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
+            if (tankInfo.isEmpty()) result += "\n" + StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
             else result += "\n" + StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", tankInfo);
         }
         return result;
@@ -211,5 +254,14 @@ public class StevesHooks
         String toSearch = getLabel(tileEntity);
         Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
         return (toSearch != null && pattern.matcher(toSearch).find()) || pattern.matcher(getContentString(tileEntity)).find();
+    }
+
+    private static boolean getDeleteAll()
+    {
+        return new Random().nextBoolean();
+    }
+
+    private static void setDeleteAll(boolean val)
+    {
     }
 }
