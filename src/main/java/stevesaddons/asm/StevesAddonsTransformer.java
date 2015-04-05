@@ -1,6 +1,7 @@
 package stevesaddons.asm;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.classloading.FMLForgePlugin;
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -209,6 +210,70 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                             {
                                 list.remove(node.getPrevious());
                                 list.insertBefore(node, new InsnNode(ICONST_1));
+                            }
+                            node = node.getNext();
+                        }
+                        return list;
+                    }
+                },
+        READ_FROM_NBT("readFromNBT", "(Lnet/minecraft/nbt/NBTTagCompound;IZ)V")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        while (node != null)
+                        {
+                            if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode)node).name.equals(FMLForgePlugin.RUNTIME_DEOBF?"func_74771_c":"getByte"))
+                            {
+                                node = node.getPrevious();
+                                list.remove(node.getNext());
+                                list.insert(node, new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", FMLForgePlugin.RUNTIME_DEOBF? "func_74765_d":"getShort", "(Ljava/lang/String;)S", false));
+                                break;
+                            }
+                            node = node.getNext();
+                        }
+                        return list;
+                    }
+                },
+        WRITE_TO_NBT("writeToNBT","(Lnet/minecraft/nbt/NBTTagCompound;Z)V")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        while (node != null)
+                        {
+                            if (node.getOpcode() == I2B)
+                            {
+                                node = node.getPrevious();
+                                list.remove(node.getNext());
+                                list.insert(node, new InsnNode(I2S));
+                            }
+                            else if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode)node).name.equals(FMLForgePlugin.RUNTIME_DEOBF?"func_74774_a":"setByte"))
+                            {
+                                node = node.getPrevious();
+                                list.remove(node.getNext());
+                                list.insert(node, new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", FMLForgePlugin.RUNTIME_DEOBF?"func_74777_a":"setShort", "(Ljava/lang/String;S)V", false));
+                            }
+                            node = node.getNext();
+                        }
+                        return list;
+                    }
+                },
+        BIT_HELPER_INIT("<clinit>","()V")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        while (node != null)
+                        {
+                            if (node.getOpcode() == BIPUSH && ((IntInsnNode)node).operand == 39)
+                            {
+                                list.remove(node.getNext());
+                                list.insert(node, new InsnNode(ICONST_4));
+                                break;
                             }
                             node = node.getNext();
                         }
@@ -423,7 +488,9 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         CLUSTER_TILE("vswe.stevesfactory.blocks.TileEntityCluster", Transformer.PUBLIC_PAIR, Transformer.GET_PUBLIC_REGISTRATIONS),
         RF_CLUSTER_TILE("vswe.stevesfactory.blocks.TileEntityRFCluster", Transformer.GET_REGISTRATIONS, Transformer.GET_RF_NODE),
         CLUSTER_PAIR("vswe.stevesfactory.blocks.TileEntityCluster$Pair", Transformer.PUBLIC_TE),
-        SETTINGS("vswe.stevesfactory.settings.Settings", Transformer.LOAD_DEFAULT);
+        SETTINGS("vswe.stevesfactory.settings.Settings", Transformer.LOAD_DEFAULT),
+        CONTAINER_TYPES("vswe.stevesfactory.components.ComponentMenuContainerTypes", Transformer.WRITE_TO_NBT, Transformer.READ_FROM_NBT),
+        DATA_BIT_HELPER("vswe.stevesfactory.network.DataBitHelper", Transformer.BIT_HELPER_INIT);
 
         private String name;
         private Transformer[] transformers;
