@@ -22,6 +22,13 @@ import java.util.Iterator;
 
 public class MEHelper
 {
+    /**
+     * Get the full {@link IGrid}
+     *
+     * @param node the {@link IGridNode} to get the {@link IGrid} from
+     * @return the {@link IGrid} the {@link IGridNode} is in
+     * @throws GridAccessException
+     */
     public static IGrid getGrid(IGridNode node) throws GridAccessException
     {
         if( node == null )
@@ -32,6 +39,13 @@ public class MEHelper
         return grid;
     }
 
+    /**
+     * Get the {@link ITickManager}
+     *
+     * @param node the {@link IGridNode} to get the {@link ITickManager} from
+     * @return the {@link ITickManager} for the {@link IGridNode}
+     * @throws GridAccessException
+     */
     public ITickManager getTick(IGridNode node) throws GridAccessException
     {
         IGrid grid = getGrid(node);
@@ -43,6 +57,13 @@ public class MEHelper
         return pg;
     }
 
+    /**
+     * Get the {@link IStorageGrid}
+     *
+     * @param node the {@link IGridNode} to get the {@link IStorageGrid} from
+     * @return the {@link IStorageGrid} for the {@link IGridNode}
+     * @throws GridAccessException
+     */
     public IStorageGrid getStorage(IGridNode node) throws GridAccessException
     {
         IGrid grid = getGrid(node);
@@ -57,6 +78,13 @@ public class MEHelper
         return pg;
     }
 
+    /**
+     * Get the {@link P2PCache}
+     *
+     * @param node the {@link IGridNode} to get the {@link P2PCache} from
+     * @return the {@link P2PCache} for the {@link IGridNode}
+     * @throws GridAccessException
+     */
     public P2PCache getP2P(IGridNode node) throws GridAccessException
     {
         IGrid grid = getGrid(node);
@@ -71,6 +99,13 @@ public class MEHelper
         return pg;
     }
 
+    /**
+     * Get the {@link ISecurityGrid}
+     *
+     * @param node the {@link IGridNode} to get the {@link ISecurityGrid} from
+     * @return the {@link ISecurityGrid} for the {@link IGridNode}
+     * @throws GridAccessException
+     */
     public ISecurityGrid getSecurity(IGridNode node) throws GridAccessException
     {
         IGrid grid = getGrid(node);
@@ -85,6 +120,13 @@ public class MEHelper
         return sg;
     }
 
+    /**
+     * Get the {@link ICraftingGrid}
+     *
+     * @param node the {@link IGridNode} to get the {@link ICraftingGrid} from
+     * @return the {@link ICraftingGrid} for the {@link IGridNode}
+     * @throws GridAccessException
+     */
     public ICraftingGrid getCrafting(IGridNode node) throws GridAccessException
     {
         IGrid grid = getGrid(node);
@@ -99,6 +141,13 @@ public class MEHelper
         return sg;
     }
 
+    /**
+     * Can the given {@link ItemStack} be inserted
+     *
+     * @param node the {@link IGridNode} used to insert the {@link ItemStack}
+     * @param stack the to insert {@link ItemStack}
+     * @return true or false whether is can be inserted or not
+     */
     public boolean canInsert(IGridNode node, ItemStack stack)
     {
         try
@@ -110,6 +159,14 @@ public class MEHelper
         }
     }
 
+    /**
+     * Insert given {@link ItemStack}
+     *
+     * @param node the {@link IGridNode} used to insert the {@link ItemStack}
+     * @param stack the to insert {@link ItemStack}
+     * @param host the {@link IActionHost} to insert from
+     * @return true if inserted
+     */
     public boolean insert(IGridNode node, ItemStack stack, IActionHost host)
     {
         if (canInsert(node, stack))
@@ -125,6 +182,14 @@ public class MEHelper
         return false;
     }
 
+    /**
+     * Extract given {@link ItemStack}
+     *
+     * @param node the {@link IGridNode} used to extract the {@link ItemStack}
+     * @param stack the to extract {@link ItemStack}
+     * @param host the {@link IActionHost} to extract from
+     * @return the extracted {@link ItemStack} can be null
+     */
     public ItemStack extract(IGridNode node, ItemStack stack, IActionHost host)
     {
         try
@@ -136,6 +201,13 @@ public class MEHelper
         }
     }
 
+    /**
+     * Can the given {@link FluidStack} be inserted
+     *
+     * @param node the {@link IGridNode} used to insert the {@link FluidStack}
+     * @param stack the to insert {@link FluidStack}
+     * @return true or false whether is can be inserted or not
+     */
     public boolean canInsert(IGridNode node, FluidStack stack)
     {
         try
@@ -147,6 +219,14 @@ public class MEHelper
         }
     }
 
+    /**
+     * Insert given {@link FluidStack}
+     *
+     * @param node the {@link IGridNode} used to insert the {@link FluidStack}
+     * @param stack the to insert {@link FluidStack}
+     * @param host the {@link IActionHost} to insert from
+     * @return true if inserted
+     */
     public boolean insert(IGridNode node, FluidStack stack, IActionHost host)
     {
         if (canInsert(node, stack))
@@ -162,6 +242,14 @@ public class MEHelper
         return false;
     }
 
+    /**
+     * Extract given {@link FluidStack}
+     *
+     * @param node the {@link IGridNode} used to extract the {@link FluidStack}
+     * @param stack the to extract {@link FluidStack}
+     * @param host the {@link IActionHost} to extract from
+     * @return the extracted {@link FluidStack} can be null
+     */
     public FluidStack extract(IGridNode node, FluidStack stack, IActionHost host)
     {
         try
@@ -173,6 +261,13 @@ public class MEHelper
         }
     }
 
+    /**
+     * Find an {@link ItemStack}
+     *
+     * @param node the {@link IGridNode} to search for the {@link ItemStack}
+     * @param stack the {@link ItemStack} to find
+     * @return
+     */
     public ItemStack find(IGridNode node, ItemStack stack)
     {
         try
@@ -184,6 +279,13 @@ public class MEHelper
         }
     }
 
+    /**
+     * Find a {@link FluidStack}
+     *
+     * @param node the {@link IGridNode} to search for the {@link FluidStack}
+     * @param stack the {@link FluidStack} to find
+     * @return
+     */
     public FluidStack find(IGridNode node, FluidStack stack)
     {
         try
@@ -195,6 +297,12 @@ public class MEHelper
         }
     }
 
+    /**
+     * Get the {@link Iterator<IAEItemStack>}
+     *
+     * @param node the {@link IGridNode} to get the list from
+     * @return the {@link Iterator<IAEItemStack>} with all items for given {@link IGridNode}
+     */
     public Iterator<IAEItemStack> getItrItems(IGridNode node)
     {
         try
@@ -206,6 +314,12 @@ public class MEHelper
         }
     }
 
+    /**
+     * Get the {@link Iterator<IAEFluidStack>}
+     *
+     * @param node the {@link IGridNode} to get the list from
+     * @return the {@link Iterator<IAEFluidStack>} with all fluids for given {@link IGridNode}
+     */
     public Iterator<IAEFluidStack> getItrFluids(IGridNode node)
     {
         try
