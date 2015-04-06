@@ -2,6 +2,12 @@
 item.duplicator.name=Manager Duplicator
 item.labeler.name=Factory Labeler
 
+tile.cable_rf.name=RF Node
+tile.cable_ae.name=Energistics Connector
+
+
+
+
 gui.sfm.RfInputLong=RF Input
 gui.sfm.RfInputShort=RF Input
 
@@ -21,8 +27,6 @@ gui.sfm.RfConditionMenu=RF Level
 gui.sfm.RfConditionInfo=Set the trigger level in the text box, and trigger above or below
 gui.sfm.RfConditionError=Invalid trigger level
 gui.sfm.Below=Trigger low
-
-tile.cable_rf.name=RF Node
 
 stevesaddons.waila.labelled=Label: %s
 stevesaddons.idsucompat.isEmpty=Empty

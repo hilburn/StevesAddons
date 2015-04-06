@@ -9,23 +9,21 @@ import appeng.api.util.DimensionalCoord;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+import stevesaddons.helpers.MEHelper;
 import stevesaddons.registry.BlockRegistry;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
 
 import java.util.EnumSet;
 
-public class TileEntityMENode extends TileEntityClusterElement implements IGridHost, IActionHost
+public class TileEntityAENode extends TileEntityClusterElement implements IGridHost, IActionHost
 {
     private class GridBlock implements IGridBlock
     {
-        private TileEntityMENode te;
-
-        private GridBlock(TileEntityMENode te)
-        {
-            this.te = te;
-        }
-
         @Override
         public double getIdlePowerUsage()
         {
@@ -47,7 +45,7 @@ public class TileEntityMENode extends TileEntityClusterElement implements IGridH
         @Override
         public DimensionalCoord getLocation()
         {
-            return new DimensionalCoord(this.te);
+            return new DimensionalCoord(TileEntityAENode.this);
         }
 
         @Override
@@ -77,7 +75,7 @@ public class TileEntityMENode extends TileEntityClusterElement implements IGridH
         @Override
         public IGridHost getMachine()
         {
-            return this.te;
+            return TileEntityAENode.this;
         }
 
         @Override
@@ -93,13 +91,66 @@ public class TileEntityMENode extends TileEntityClusterElement implements IGridH
         }
     }
 
+    private class AEFakeTank implements IFluidHandler
+    {
+        @Override
+        public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
+        {
+            FluidStack toAdd = resource.copy();
+            int stepSize = Math.max(toAdd.amount/10,1);
+            while (!MEHelper.canInsert(TileEntityAENode.this.getNode(), toAdd) && toAdd.amount > 0)
+            {
+                toAdd.amount -= stepSize;
+            }
+            if (doFill) MEHelper.insert(TileEntityAENode.this.getNode(), toAdd, TileEntityAENode.this);
+            return toAdd.amount;
+        }
+
+        @Override
+        public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+        {
+            if (doDrain) return MEHelper.extract(TileEntityAENode.this.getNode(), resource, TileEntityAENode.this);
+            FluidStack result = MEHelper.find(TileEntityAENode.this.getNode(), resource);
+            if (result!=null) result.amount = resource.amount;
+            return result;
+        }
+
+        @Override
+        public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+        {
+            FluidStack stack = MEHelper.getItrFluids(TileEntityAENode.this.getNode()).next().getFluidStack();
+            stack.amount = Math.min(maxDrain, stack.amount);
+            return drain(from, stack, doDrain);
+        }
+
+        @Override
+        public boolean canFill(ForgeDirection from, Fluid fluid)
+        {
+            return MEHelper.canInsert(TileEntityAENode.this.getNode(), new FluidStack(fluid, 1));
+        }
+
+        @Override
+        public boolean canDrain(ForgeDirection from, Fluid fluid)
+        {
+            return MEHelper.find(TileEntityAENode.this.getNode(), new FluidStack(fluid,1))!=null;
+        }
+
+        @Override
+        public FluidTankInfo[] getTankInfo(ForgeDirection from)
+        {
+            return new FluidTankInfo[0];
+        }
+    }
+
     private GridBlock gridBlock;
     private IGridNode gridNode;
+    private IFluidHandler tank;
     private boolean isReady;
 
-    public TileEntityMENode()
+    public TileEntityAENode()
     {
-        this.gridBlock = new GridBlock(this);
+        this.gridBlock = new GridBlock();
+        this.tank = new AEFakeTank();
     }
 
     @Override
@@ -116,7 +167,7 @@ public class TileEntityMENode extends TileEntityClusterElement implements IGridH
         return !this.isReady;
     }
 
-    private IGridNode getNode()
+    public IGridNode getNode()
     {
         if( this.gridNode == null && FMLCommonHandler.instance().getEffectiveSide().isServer() && this.isReady)
         {
@@ -177,5 +228,10 @@ public class TileEntityMENode extends TileEntityClusterElement implements IGridH
             this.gridNode.destroy();
             this.gridNode = null;
         }
+    }
+
+    public IFluidHandler getTank()
+    {
+        return tank;
     }
 }

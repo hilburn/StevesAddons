@@ -1,6 +1,10 @@
 package stevesaddons.asm;
 
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
@@ -11,7 +15,9 @@ import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
+import stevesaddons.reference.Null;
 import stevesaddons.threading.SearchItems;
+import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.TileEntityManager;
@@ -25,7 +31,7 @@ import java.util.regex.Pattern;
 
 public class StevesHooks
 {
-    public static ItemStack JABBA_EMPTY_STACK = new ItemStack(Blocks.end_portal);
+    public static boolean EXTRA_CELLS;
 
     public static void addCopyButton(final TileEntityManager manager)
     {
@@ -210,6 +216,13 @@ public class StevesHooks
         ids.add(idToRemove);
     }
 
+    public static boolean instanceOf(Class clazz, TileEntity entity)
+    {
+        if (clazz.isInstance(entity)) return true;
+        if (entity instanceof TileEntityAENode) return clazz == IInventory.class || (EXTRA_CELLS && clazz == IFluidHandler.class);
+        return clazz == IEnergyConnection.class && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
+    }
+
     public static String getContentString(TileEntity tileEntity)
     {
         String result = "";
@@ -217,7 +230,7 @@ public class StevesHooks
         {
             ItemStack stack = ((IDeepStorageUnit)tileEntity).getStoredItemType();
             String contains = "\n";
-            if (stack == null || stack.isItemEqual(JABBA_EMPTY_STACK))
+            if (stack == null || stack.isItemEqual(Null.NULL_STACK))
                 contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
             else
                 contains += StatCollector.translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());

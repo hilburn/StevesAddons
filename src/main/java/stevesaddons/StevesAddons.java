@@ -8,6 +8,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stevesaddons.asm.StevesHooks;
 import stevesaddons.helpers.Config;
 import stevesaddons.interfaces.GuiHandler;
 import stevesaddons.naming.EventHandler;
@@ -52,6 +53,7 @@ public class StevesAddons
         MessageHandler.init();
         Config.init(event.getSuggestedConfigurationFile());
         NetworkRegistry.INSTANCE.registerGuiHandler(StevesAddons.INSTANCE, guiHandler);
+        StevesHooks.EXTRA_CELLS = Loader.isModLoaded("extracells");
     }
 
     @Mod.EventHandler

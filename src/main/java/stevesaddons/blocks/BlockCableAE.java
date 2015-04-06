@@ -7,29 +7,29 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
-import stevesaddons.tileentities.TileEntityMENode;
+import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.blocks.ModBlocks;
 
-public class BlockCableME extends BlockContainer
+public class BlockCableAE extends BlockContainer
 {
-    public BlockCableME()
+    public BlockCableAE()
     {
         super(Material.glass);
         this.setCreativeTab(ModBlocks.creativeTab);
         this.setStepSound(soundTypeGlass);
-        this.setBlockName(Names.CABLE_ME);
+        this.setBlockName(Names.CABLE_AE);
         this.setHardness(1.2F);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
-        return new TileEntityMENode();
+        return new TileEntityAENode();
     }
 
     @Override
     public void registerBlockIcons(IIconRegister ir)
     {
-        this.blockIcon = ir.registerIcon(Reference.ID + ":" + Names.CABLE_ME);
+        this.blockIcon = ir.registerIcon(Reference.ID + ":" + Names.CABLE_AE);
     }
 }

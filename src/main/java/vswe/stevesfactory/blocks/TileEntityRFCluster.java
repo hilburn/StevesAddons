@@ -18,7 +18,7 @@ public class TileEntityRFCluster extends TileEntityCluster implements IEnergyHan
 
     private TileEntityRFNode getTileEntity(Object i)
     {
-        return null; //This return value gets ASMed int when the access transformers take place
+        return null; //This return value gets ASMed in when the access transformers take place
     }
 
     @Override

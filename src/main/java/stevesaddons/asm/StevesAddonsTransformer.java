@@ -279,6 +279,20 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         }
                         return list;
                     }
+                },
+        IS_INSTANCE("isInstance", "(Lnet/minecraft/tileentity/TileEntity;)Z")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        list.clear();
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, "vswe/stevesfactory/blocks/ConnectionBlockType", "clazz", "Ljava/lang/Class;"));
+                        list.add(new VarInsnNode(ALOAD, 1));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "instanceOf", "(Ljava/lang/Class;Lnet/minecraft/tileentity/TileEntity;)Z", false));
+                        list.add(new InsnNode(IRETURN));
+                        return list;
+                    }
                 };
 
         private String name;
@@ -490,7 +504,8 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         CLUSTER_PAIR("vswe.stevesfactory.blocks.TileEntityCluster$Pair", Transformer.PUBLIC_TE),
         SETTINGS("vswe.stevesfactory.settings.Settings", Transformer.LOAD_DEFAULT),
         CONTAINER_TYPES("vswe.stevesfactory.components.ComponentMenuContainerTypes", Transformer.WRITE_TO_NBT, Transformer.READ_FROM_NBT),
-        DATA_BIT_HELPER("vswe.stevesfactory.network.DataBitHelper", Transformer.BIT_HELPER_INIT);
+        DATA_BIT_HELPER("vswe.stevesfactory.network.DataBitHelper", Transformer.BIT_HELPER_INIT),
+        CONNECTION_BLOCK_TYPE("vswe.stevesfactory.blocks.ConnectionBlockType", Transformer.IS_INSTANCE);
 
         private String name;
         private Transformer[] transformers;
