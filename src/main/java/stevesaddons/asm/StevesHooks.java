@@ -135,11 +135,18 @@ public class StevesHooks
         {
             for (Map.Entry<Integer, Connection> entry : component.getConnections().entrySet())
             {
-                FlowComponent connectTo = added.get(oldComponents.get(entry.getValue().getComponentId()));
-                if (connectTo != null)
+                try
                 {
-                    Connection newConnection = new Connection(connectTo.getId(), entry.getValue().getConnectionId());
-                    added.get(component).setConnection(entry.getKey(), newConnection);
+                    FlowComponent connectTo = added.get(oldComponents.get(entry.getValue().getComponentId()));
+                    if (connectTo != null)
+                    {
+                        Connection newConnection = new Connection(connectTo.getId(), entry.getValue().getConnectionId());
+                        added.get(component).setConnection(entry.getKey(), newConnection);
+                    }
+                }
+                catch (NullPointerException ignored)
+                {
+                    break;
                 }
             }
         }
@@ -254,14 +261,5 @@ public class StevesHooks
         String toSearch = getLabel(tileEntity);
         Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
         return (toSearch != null && pattern.matcher(toSearch).find()) || pattern.matcher(getContentString(tileEntity)).find();
-    }
-
-    private static boolean getDeleteAll()
-    {
-        return new Random().nextBoolean();
-    }
-
-    private static void setDeleteAll(boolean val)
-    {
     }
 }
