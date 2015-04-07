@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
+import stevesaddons.api.IHiddenTank;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
@@ -31,8 +32,6 @@ import java.util.regex.Pattern;
 
 public class StevesHooks
 {
-    public static boolean EXTRA_CELLS;
-
     public static void addCopyButton(final TileEntityManager manager)
     {
         int index = getAfterDelete(manager.buttons);
@@ -219,7 +218,8 @@ public class StevesHooks
     public static boolean instanceOf(Class clazz, TileEntity entity)
     {
         if (clazz.isInstance(entity)) return true;
-        if (entity instanceof TileEntityAENode) return clazz == IInventory.class || (EXTRA_CELLS && clazz == IFluidHandler.class);
+        if (entity instanceof IHiddenTank) return clazz == IFluidHandler.class;
+        if (entity instanceof TileEntityAENode) return clazz == IInventory.class;
         return clazz == IEnergyConnection.class && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
     }
 

@@ -48,12 +48,11 @@ public class StevesAddons
     public void preInit(FMLPreInitializationEvent event)
     {
         metadata = Metadata.init(metadata);
+        Config.init(event.getSuggestedConfigurationFile());
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();
         MessageHandler.init();
-        Config.init(event.getSuggestedConfigurationFile());
         NetworkRegistry.INSTANCE.registerGuiHandler(StevesAddons.INSTANCE, guiHandler);
-        StevesHooks.EXTRA_CELLS = Loader.isModLoaded("extracells");
     }
 
     @Mod.EventHandler

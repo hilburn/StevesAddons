@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
+import stevesaddons.api.IHiddenTank;
 import stevesaddons.components.*;
 import stevesaddons.helpers.AEHelper;
 import stevesaddons.helpers.StevesEnum;
@@ -799,7 +800,7 @@ public class CommandExecutorRF extends CommandExecutor
         for (SlotInventoryHolder slotHolder : tanks)
         {
             Map<Integer, SlotSideTarget> validTanks = slotHolder.getValidSlots();
-            if (slotHolder.getTile() instanceof TileEntityAENode)
+            if (slotHolder.getTile() instanceof IHiddenTank)
             {
                 SlotSideTarget var13 = validTanks.get(0);
                 if (var13 == null)
@@ -855,9 +856,9 @@ public class CommandExecutorRF extends CommandExecutor
         for (SlotInventoryHolder tank : tanks)
         {
             ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
-            if (tank.getTile() instanceof TileEntityAENode)
+            if (tank.getTile() instanceof IHiddenTank)
             {
-                TileEntityAENode node = (TileEntityAENode) tank.getTile();
+                IHiddenTank node = (IHiddenTank) tank.getTile();
                 node.addFluidsToBuffer(menuItem, tank, liquidBuffer, this);
             }
             else if (tank.getTank() instanceof TileEntityCreative)
@@ -1162,7 +1163,7 @@ public class CommandExecutorRF extends CommandExecutor
                 outputCounters.clear();
             }
 
-            IFluidHandler tank = tankHolder.getTile() instanceof TileEntityAENode? ((TileEntityAENode)tankHolder.getTile()).getTank() : tankHolder.getTank();
+            IFluidHandler tank = tankHolder.getTile() instanceof IHiddenTank? ((IHiddenTank)tankHolder.getTile()).getTank() : tankHolder.getTank();
 
             for (LiquidBufferElement liquidBufferElement : this.liquidBuffer)
             {
@@ -1335,7 +1336,7 @@ public class CommandExecutorRF extends CommandExecutor
 
             for (int side : slot.getSides())
             {
-                FluidTankInfo[] currentTankInfos = tank.getTile() instanceof TileEntityAENode ? ((TileEntityAENode)tank.getTile()).getTank().getTankInfo(null):tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
+                FluidTankInfo[] currentTankInfos = tank.getTile() instanceof IHiddenTank ? ((IHiddenTank)tank.getTile()).getTank().getTankInfo(null):tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
                 if (currentTankInfos != null)
                 {
                     for (FluidTankInfo fluidTankInfo : currentTankInfos)
