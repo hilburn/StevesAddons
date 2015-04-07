@@ -4,7 +4,7 @@ import appeng.api.storage.data.IAEFluidStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-import stevesaddons.helpers.MEHelper;
+import stevesaddons.helpers.AEHelper;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.components.StackTankHolder;
 
@@ -39,7 +39,7 @@ public class AEFluidBufferElement extends StackTankHolder
 
     @Override
     public void reduceAmount(int val) {
-        MEHelper.extract(node.getNode(), fluid.copy().setStackSize(val), node);
+        AEHelper.extract(node.getNode(), fluid.copy().setStackSize(val), node);
     }
 
     @Override
