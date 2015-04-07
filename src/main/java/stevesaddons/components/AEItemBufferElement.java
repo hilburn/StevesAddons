@@ -1,10 +1,9 @@
 package stevesaddons.components;
 
 import appeng.api.storage.data.IAEItemStack;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import stevesaddons.helpers.MEHelper;
+import stevesaddons.helpers.AEHelper;
 import stevesaddons.reference.Null;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.components.SlotStackInventoryHolder;
@@ -54,7 +53,7 @@ public class AEItemBufferElement extends SlotStackInventoryHolder
     }
 
     public void reduceAmount(int val) {
-        MEHelper.extract(inventory.getNode(), item.copy().setStackSize(val), inventory);
+        AEHelper.extract(inventory.getNode(), item.copy().setStackSize(val), inventory);
     }
 
     public SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair) {

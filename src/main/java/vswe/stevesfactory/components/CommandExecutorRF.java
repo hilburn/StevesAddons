@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.components.*;
-import stevesaddons.helpers.MEHelper;
+import stevesaddons.helpers.AEHelper;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.reference.Null;
 import stevesaddons.tileentities.TileEntityAENode;
@@ -724,7 +724,7 @@ public class CommandExecutorRF extends CommandExecutor
             if (inventory.getTile() instanceof TileEntityAENode)
             {
                 TileEntityAENode node = (TileEntityAENode) inventory.getTile();
-                Iterator<IAEItemStack> itr = MEHelper.getItrItems(node.getNode());
+                Iterator<IAEItemStack> itr = AEHelper.getItrItems(node.getNode());
                 while (itr.hasNext())
                 {
                     IAEItemStack stack = itr.next();
@@ -922,7 +922,7 @@ public class CommandExecutorRF extends CommandExecutor
             if (tank.getTile() instanceof TileEntityAENode)
             {
                 TileEntityAENode node = (TileEntityAENode) tank.getTile();
-                Iterator<IAEFluidStack> itr = MEHelper.getItrFluids(node.getNode());
+                Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(node.getNode());
                 while (itr.hasNext())
                 {
                     IAEFluidStack stack = itr.next();
@@ -1148,7 +1148,7 @@ public class CommandExecutorRF extends CommandExecutor
                 if (inventoryHolder.getTile() instanceof TileEntityAENode)
                 {
                     TileEntityAENode node = (TileEntityAENode) inventoryHolder.getTile();
-                    if (MEHelper.canInsert(node.getNode(), itemStack))
+                    if (AEHelper.canInsert(node.getNode(), itemStack))
                     {
                         int moveCount = Math.min(subElement.getSizeLeft(), itemStack.stackSize);
                         moveCount = outputItemCounter.retrieveItemCount(moveCount);
@@ -1159,7 +1159,7 @@ public class CommandExecutorRF extends CommandExecutor
                             outputItemCounter.modifyStackSize(moveCount);
                             ItemStack toInsert = itemStack.copy();
                             toInsert.stackSize = moveCount;
-                            MEHelper.insert(node.getNode(), toInsert, node);
+                            AEHelper.insert(node.getNode(), toInsert, node);
                             subElement.reduceAmount(moveCount);
 
                             if (subElement.getSizeLeft() == 0)
@@ -1360,7 +1360,7 @@ public class CommandExecutorRF extends CommandExecutor
     {
         if (inventoryHolder.getTile() instanceof TileEntityAENode)
         {
-            isAEItemValid((TileEntityAENode)inventoryHolder.getTile(), (ComponentMenuStuff)componentMenu, conditionSettingCheckerMap);
+            isAEItemValid((TileEntityAENode) inventoryHolder.getTile(), (ComponentMenuStuff) componentMenu, conditionSettingCheckerMap);
         }
         else
         {
@@ -1391,7 +1391,7 @@ public class CommandExecutorRF extends CommandExecutor
     {
         for (Setting setting : componentMenu.getSettings())
         {
-            ItemStack stack = MEHelper.find(tile.getNode(), ((ItemSetting)setting).getItem());
+            ItemStack stack = AEHelper.find(tile.getNode(), ((ItemSetting) setting).getItem());
             if (stack != null)
             {
                 ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());

@@ -22,7 +22,7 @@ import stevesaddons.tileentities.TileEntityAENode;
 import java.util.Iterator;
 import java.util.Set;
 
-public class MEHelper
+public class AEHelper
 {
     /**
      * Get the full {@link IGrid}

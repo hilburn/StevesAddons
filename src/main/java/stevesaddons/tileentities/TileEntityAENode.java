@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import stevesaddons.helpers.MEHelper;
+import stevesaddons.helpers.AEHelper;
 import stevesaddons.registry.BlockRegistry;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
@@ -98,19 +98,19 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         {
             FluidStack toAdd = resource.copy();
             int stepSize = Math.max(toAdd.amount/10,1);
-            while (!MEHelper.canInsert(TileEntityAENode.this.getNode(), toAdd) && toAdd.amount > 0)
+            while (!AEHelper.canInsert(TileEntityAENode.this.getNode(), toAdd) && toAdd.amount > 0)
             {
                 toAdd.amount -= stepSize;
             }
-            if (doFill) MEHelper.insert(TileEntityAENode.this.getNode(), toAdd, TileEntityAENode.this);
+            if (doFill) AEHelper.insert(TileEntityAENode.this.getNode(), toAdd, TileEntityAENode.this);
             return toAdd.amount;
         }
 
         @Override
         public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
         {
-            if (doDrain) return MEHelper.extract(TileEntityAENode.this.getNode(), resource, TileEntityAENode.this);
-            FluidStack result = MEHelper.find(TileEntityAENode.this.getNode(), resource);
+            if (doDrain) return AEHelper.extract(TileEntityAENode.this.getNode(), resource, TileEntityAENode.this);
+            FluidStack result = AEHelper.find(TileEntityAENode.this.getNode(), resource);
             if (result!=null) result.amount = resource.amount;
             return result;
         }
@@ -118,7 +118,7 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         @Override
         public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
         {
-            FluidStack stack = MEHelper.getItrFluids(TileEntityAENode.this.getNode()).next().getFluidStack();
+            FluidStack stack = AEHelper.getItrFluids(TileEntityAENode.this.getNode()).next().getFluidStack();
             stack.amount = Math.min(maxDrain, stack.amount);
             return drain(from, stack, doDrain);
         }
@@ -126,13 +126,13 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         @Override
         public boolean canFill(ForgeDirection from, Fluid fluid)
         {
-            return MEHelper.canInsert(TileEntityAENode.this.getNode(), new FluidStack(fluid, 1));
+            return AEHelper.canInsert(TileEntityAENode.this.getNode(), new FluidStack(fluid, 1));
         }
 
         @Override
         public boolean canDrain(ForgeDirection from, Fluid fluid)
         {
-            return MEHelper.find(TileEntityAENode.this.getNode(), new FluidStack(fluid,1))!=null;
+            return AEHelper.find(TileEntityAENode.this.getNode(), new FluidStack(fluid, 1))!=null;
         }
 
         @Override
