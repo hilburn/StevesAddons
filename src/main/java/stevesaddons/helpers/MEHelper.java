@@ -93,7 +93,7 @@ public class MEHelper
         if( grid == null )
             throw new GridAccessException();
 
-        P2PCache pg = grid.getCache( P2PCache.class );
+        P2PCache pg = grid.getCache(P2PCache.class);
 
         if( pg == null )
             throw new GridAccessException();
@@ -208,15 +208,15 @@ public class MEHelper
      * Extract given {@link appeng.util.item.AEItemStack}
      *
      * @param node the {@link IGridNode} used to extract the {@link ItemStack}
-     * @param stack the to extract {@link ItemStack}
+     * @param stack the to extract {@link IAEItemStack}
      * @param host the {@link IActionHost} to extract from
-     * @return the extracted {@link ItemStack} can be null
+     * @return the extracted {@link IAEItemStack} can be null
      */
-    public static ItemStack extract(IGridNode node, IAEItemStack stack, IActionHost host)
+    public static IAEItemStack extract(IGridNode node, IAEItemStack stack, IActionHost host)
     {
         try
         {
-            return getStorage(node).getItemInventory().extractItems(stack, Actionable.MODULATE, new MachineSource(host)).getItemStack();
+            return getStorage(node).getItemInventory().extractItems(stack, Actionable.MODULATE, new MachineSource(host));
         } catch (GridAccessException e)
         {
             return null;
@@ -284,12 +284,12 @@ public class MEHelper
     }
 
     /**
-     * Extract given {@link FluidStack}
+     * Extract given {@link IAEFluidStack}
      *
-     * @param node the {@link IGridNode} used to extract the {@link FluidStack}
-     * @param stack the to extract {@link FluidStack}
+     * @param node the {@link IGridNode} used to extract the {@link IAEFluidStack}
+     * @param stack the to extract {@link IAEFluidStack}
      * @param host the {@link IActionHost} to extract from
-     * @return the extracted {@link FluidStack} can be null
+     * @return the extracted {@link IAEFluidStack} can be null
      */
     public static IAEFluidStack extract(IGridNode node, IAEFluidStack stack, IActionHost host)
     {
@@ -317,7 +317,7 @@ public class MEHelper
     }
 
     /**
-     * Find an {@link ItemStack}
+     * Find an {@link AEItemStack}
      *
      * @param node the {@link IGridNode} to search for the {@link ItemStack}
      * @param stack the {@link ItemStack} to find
