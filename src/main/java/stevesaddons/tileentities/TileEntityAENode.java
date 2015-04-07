@@ -3,6 +3,8 @@ package stevesaddons.tileentities;
 import appeng.api.AEApi;
 import appeng.api.networking.*;
 import appeng.api.networking.security.IActionHost;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AECableType;
 import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
@@ -13,15 +15,96 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import stevesaddons.components.AEFluidBufferElement;
+import stevesaddons.components.AEItemBufferElement;
 import stevesaddons.helpers.AEHelper;
 import stevesaddons.registry.BlockRegistry;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
+import vswe.stevesfactory.components.*;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
 
 public class TileEntityAENode extends TileEntityClusterElement implements IGridHost, IActionHost
 {
+    public void addItemsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, List<ItemBufferElement> itemBuffer, CommandExecutorRF commandExecutorRF)
+    {
+        Iterator<IAEItemStack> itr = AEHelper.getItrItems(this.getNode());
+        while (itr.hasNext())
+        {
+            IAEItemStack stack = itr.next();
+            if (stack != null)
+            {
+                Setting setting = commandExecutorRF.isItemValid(menuItem, stack.getItemStack());
+                addAEItemToBuffer(menuItem, inventory, setting, stack, itemBuffer);
+            }
+        }
+    }
+
+    private void addAEItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting, IAEItemStack stack, List<ItemBufferElement> itemBuffer)
+    {
+        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())
+        {
+            FlowComponent owner = menuItem.getParent();
+            SlotStackInventoryHolder target =  new AEItemBufferElement(stack, this);
+            boolean added = false;
+
+            for (ItemBufferElement itemBufferElement : itemBuffer)
+            {
+                if (itemBufferElement.addTarget(owner, setting, inventory, target))
+                {
+                    added = true;
+                    break;
+                }
+            }
+            if (!added)
+            {
+                itemBuffer.add(new ItemBufferElement(owner, setting, inventory, menuItem.useWhiteList(), target));
+            }
+        }
+    }
+
+    public void addFluidsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, List<LiquidBufferElement> liquidBuffer, CommandExecutorRF commandExecutorRF)
+    {
+        Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(this.getNode());
+        while (itr.hasNext())
+        {
+            IAEFluidStack stack = itr.next();
+            if (stack != null)
+            {
+                Setting setting = commandExecutorRF.isLiquidValid(menuItem, stack.getFluidStack());
+                addAEFluidToBuffer(menuItem, tank, setting, stack, liquidBuffer);
+            }
+        }
+    }
+
+    private void addAEFluidToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting, IAEFluidStack stack, List<LiquidBufferElement> liquidBuffer)
+    {
+        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())
+        {
+            FlowComponent owner = menuItem.getParent();
+            StackTankHolder target =  new AEFluidBufferElement(stack, (TileEntityAENode)tank.getTile());
+            boolean added = false;
+
+            for (LiquidBufferElement liquidBufferElement : liquidBuffer)
+            {
+                if (liquidBufferElement.addTarget(owner, setting, tank, target))
+                {
+                    added = true;
+                    break;
+                }
+            }
+
+            if (!added)
+            {
+                liquidBuffer.add(new LiquidBufferElement(owner, setting, tank, menuItem.useWhiteList(), target));
+            }
+        }
+    }
+
     private class GridBlock implements IGridBlock
     {
         @Override
@@ -96,23 +179,15 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         @Override
         public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
         {
-            FluidStack toAdd = resource.copy();
-            int stepSize = Math.max(toAdd.amount/10,1);
-            while (!AEHelper.canInsert(TileEntityAENode.this.getNode(), toAdd) && toAdd.amount > 0)
-            {
-                toAdd.amount -= stepSize;
-            }
-            if (doFill) AEHelper.insert(TileEntityAENode.this.getNode(), toAdd, TileEntityAENode.this);
-            return toAdd.amount;
+            IAEFluidStack toAdd = AEHelper.insert(TileEntityAENode.this.getNode(), resource, TileEntityAENode.this, doFill);
+            return toAdd == null ? resource.amount : resource.amount - (int)toAdd.getStackSize();
         }
 
         @Override
         public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
         {
-            if (doDrain) return AEHelper.extract(TileEntityAENode.this.getNode(), resource, TileEntityAENode.this);
-            FluidStack result = AEHelper.find(TileEntityAENode.this.getNode(), resource);
-            if (result!=null) result.amount = resource.amount;
-            return result;
+            IAEFluidStack drain = AEHelper.extract(TileEntityAENode.this.getNode(), resource, TileEntityAENode.this, doDrain);
+            return drain.getFluidStack();
         }
 
         @Override
@@ -126,19 +201,26 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         @Override
         public boolean canFill(ForgeDirection from, Fluid fluid)
         {
-            return AEHelper.canInsert(TileEntityAENode.this.getNode(), new FluidStack(fluid, 1));
+            return AEHelper.insert(getNode(), new FluidStack(fluid, 1), TileEntityAENode.this, true) != null;
         }
 
         @Override
         public boolean canDrain(ForgeDirection from, Fluid fluid)
         {
-            return AEHelper.find(TileEntityAENode.this.getNode(), new FluidStack(fluid, 1))!=null;
+            return AEHelper.find(getNode(), new FluidStack(fluid, 1))!=null;
         }
 
         @Override
         public FluidTankInfo[] getTankInfo(ForgeDirection from)
         {
-            return new FluidTankInfo[0];
+            List<FluidTankInfo> tankInfo = new ArrayList<FluidTankInfo>();
+            Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(getNode());
+            while (itr.hasNext())
+            {
+                FluidStack stack = itr.next().getFluidStack();
+                tankInfo.add(new FluidTankInfo(stack, stack.amount));
+            }
+            return tankInfo.toArray(new FluidTankInfo[tankInfo.size()]);
         }
     }
 

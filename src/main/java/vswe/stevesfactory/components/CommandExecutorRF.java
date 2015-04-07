@@ -1,7 +1,5 @@
 package vswe.stevesfactory.components;
 
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IAEItemStack;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
@@ -71,7 +69,6 @@ public class CommandExecutorRF extends CommandExecutor
                 variable.setExecuted(true);
             }
         }
-
         this.executeChildCommands(command, validTriggerOutputs);
     }
 
@@ -516,7 +513,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
     }
 
     private void getValidRFStorage(ComponentMenu componentMenu, List<SlotInventoryHolder> cells)
@@ -711,7 +707,6 @@ public class CommandExecutorRF extends CommandExecutor
                     return false;
                 }
             }
-
             return isInput || inventory.isItemValidForSlot(slot.getSlot(), item);
         }
     }
@@ -724,16 +719,7 @@ public class CommandExecutorRF extends CommandExecutor
             if (inventory.getTile() instanceof TileEntityAENode)
             {
                 TileEntityAENode node = (TileEntityAENode) inventory.getTile();
-                Iterator<IAEItemStack> itr = AEHelper.getItrItems(node.getNode());
-                while (itr.hasNext())
-                {
-                    IAEItemStack stack = itr.next();
-                    if (stack != null)
-                    {
-                        Setting setting = this.isItemValid(componentMenu, stack.getItemStack());
-                        addAEItemToBuffer(menuItem, inventory, setting, stack);
-                    }
-                }
+                node.addItemsToBuffer(menuItem, inventory, itemBuffer, this);
             }
             else
             {
@@ -780,30 +766,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
-    }
-
-    private void addAEItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting, IAEItemStack stack)
-    {
-        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())
-        {
-            FlowComponent owner = menuItem.getParent();
-            SlotStackInventoryHolder target =  new AEItemBufferElement(stack, (TileEntityAENode)inventory.getTile());
-            boolean added = false;
-
-            for (ItemBufferElement itemBufferElement : this.itemBuffer)
-            {
-                if (itemBufferElement.addTarget(owner, setting, inventory, target))
-                {
-                    added = true;
-                    break;
-                }
-            }
-            if (!added)
-            {
-                this.itemBuffer.add(new ItemBufferElement(owner, setting, inventory, menuItem.useWhiteList(), target));
-            }
-        }
     }
 
     private void addItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting, ItemStack itemStack, SlotSideTarget slot)
@@ -828,7 +790,6 @@ public class CommandExecutorRF extends CommandExecutor
                 this.itemBuffer.add(new ItemBufferElement(owner, setting, inventory, menuItem.useWhiteList(), target));
             }
         }
-
     }
 
     private void getValidTanks(ComponentMenu componentMenu, List<SlotInventoryHolder> tanks)
@@ -887,31 +848,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
-    }
-
-    private void addAEFluidToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting, IAEFluidStack stack)
-    {
-        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())
-        {
-            FlowComponent owner = menuItem.getParent();
-            StackTankHolder target =  new AEFluidBufferElement(stack, (TileEntityAENode)tank.getTile());
-            boolean added = false;
-
-            for (LiquidBufferElement liquidBufferElement : this.liquidBuffer)
-            {
-                if (liquidBufferElement.addTarget(owner, setting, tank, target))
-                {
-                    added = true;
-                    break;
-                }
-            }
-
-            if (!added)
-            {
-                this.liquidBuffer.add(new LiquidBufferElement(owner, setting, tank, menuItem.useWhiteList(), target));
-            }
-        }
     }
 
     private void getLiquids(ComponentMenu componentMenu, List<SlotInventoryHolder> tanks)
@@ -922,16 +858,7 @@ public class CommandExecutorRF extends CommandExecutor
             if (tank.getTile() instanceof TileEntityAENode)
             {
                 TileEntityAENode node = (TileEntityAENode) tank.getTile();
-                Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(node.getNode());
-                while (itr.hasNext())
-                {
-                    IAEFluidStack stack = itr.next();
-                    if (stack != null)
-                    {
-                        Setting setting = this.isLiquidValid(componentMenu, stack.getFluidStack());
-                        addAEFluidToBuffer(menuItem, tank, setting, stack);
-                    }
-                }
+                node.addFluidsToBuffer(menuItem, tank, liquidBuffer, this);
             }
             else if (tank.getTank() instanceof TileEntityCreative)
             {
@@ -1018,7 +945,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
     }
 
     private void addLiquidToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting, FluidStack fluidStack, int side)
@@ -1044,10 +970,9 @@ public class CommandExecutorRF extends CommandExecutor
                 this.liquidBuffer.add(itemBufferElement1);
             }
         }
-
     }
 
-    private Setting isItemValid(ComponentMenu componentMenu, ItemStack itemStack)
+    public Setting isItemValid(ComponentMenu componentMenu, ItemStack itemStack)
     {
         ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         Iterator<Setting> i$ = menuItem.getSettings().iterator();
@@ -1066,7 +991,7 @@ public class CommandExecutorRF extends CommandExecutor
         return setting;
     }
 
-    private Setting isLiquidValid(ComponentMenu componentMenu, FluidStack fluidStack)
+    public Setting isLiquidValid(ComponentMenu componentMenu, FluidStack fluidStack)
     {
         ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         if (fluidStack != null)
@@ -1081,7 +1006,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
         return null;
     }
 
@@ -1113,7 +1037,6 @@ public class CommandExecutorRF extends CommandExecutor
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
             }
         }
-
     }
 
     private void insertItemsFromInputBufferElement(ComponentMenuStuff menuItem, List<SlotInventoryHolder> inventories, List<OutputItemCounter> outputCounters, SlotInventoryHolder inventoryHolder, IItemBufferElement itemBufferElement)
@@ -1148,7 +1071,7 @@ public class CommandExecutorRF extends CommandExecutor
                 if (inventoryHolder.getTile() instanceof TileEntityAENode)
                 {
                     TileEntityAENode node = (TileEntityAENode) inventoryHolder.getTile();
-                    if (AEHelper.canInsert(node.getNode(), itemStack))
+                    if ((itemStack = AEHelper.getInsertable(node.getNode(), itemStack, node))!=null)
                     {
                         int moveCount = Math.min(subElement.getSizeLeft(), itemStack.stackSize);
                         moveCount = outputItemCounter.retrieveItemCount(moveCount);
@@ -1159,7 +1082,7 @@ public class CommandExecutorRF extends CommandExecutor
                             outputItemCounter.modifyStackSize(moveCount);
                             ItemStack toInsert = itemStack.copy();
                             toInsert.stackSize = moveCount;
-                            AEHelper.insert(node.getNode(), toInsert, node);
+                            AEHelper.insert(node.getNode(), toInsert, node, false);
                             subElement.reduceAmount(moveCount);
 
                             if (subElement.getSizeLeft() == 0)
@@ -1303,7 +1226,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
     }
 
 
@@ -1413,17 +1335,11 @@ public class CommandExecutorRF extends CommandExecutor
 
             for (int side : slot.getSides())
             {
-                FluidTankInfo[] currentTankInfos = tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
+                FluidTankInfo[] currentTankInfos = tank.getTile() instanceof TileEntityAENode ? ((TileEntityAENode)tank.getTile()).getTank().getTankInfo(null):tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
                 if (currentTankInfos != null)
                 {
-                    FluidTankInfo[] arr$ = currentTankInfos;
-                    int len$ = currentTankInfos.length;
-
-                    int i$2;
-                    FluidTankInfo fluidTankInfo;
-                    for (i$2 = 0; i$2 < len$; ++i$2)
+                    for (FluidTankInfo fluidTankInfo : currentTankInfos)
                     {
-                        fluidTankInfo = arr$[i$2];
                         if (fluidTankInfo != null)
                         {
                             boolean alreadyUsed = false;
@@ -1439,13 +1355,13 @@ public class CommandExecutorRF extends CommandExecutor
                             if (!alreadyUsed)
                             {
                                 FluidStack var18 = fluidTankInfo.fluid;
-                                Setting var19 = this.isLiquidValid(componentMenu, var18);
-                                if (var19 != null)
+                                Setting setting = this.isLiquidValid(componentMenu, var18);
+                                if (setting != null)
                                 {
-                                    ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(var19.getId());
+                                    ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());
                                     if (conditionSettingChecker == null)
                                     {
-                                        conditionSettingCheckerMap.put(var19.getId(), conditionSettingChecker = new ConditionSettingChecker(var19));
+                                        conditionSettingCheckerMap.put(setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
                                     }
 
                                     conditionSettingChecker.addCount(var18.amount);
@@ -1454,12 +1370,8 @@ public class CommandExecutorRF extends CommandExecutor
                         }
                     }
 
-                    arr$ = tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
-                    len$ = arr$.length;
-
-                    for (i$2 = 0; i$2 < len$; ++i$2)
+                    for (FluidTankInfo fluidTankInfo : currentTankInfos)
                     {
-                        fluidTankInfo = arr$[i$2];
                         if (fluidTankInfo != null)
                         {
                             tankInfos.add(fluidTankInfo);
@@ -1468,7 +1380,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
     }
 
     private boolean checkConditionResult(ComponentMenu componentMenu, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
@@ -1493,7 +1404,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
         return menuCondition.requiresAll();
     }
 
@@ -1559,7 +1469,6 @@ public class CommandExecutorRF extends CommandExecutor
                     ++var14;
                 }
             }
-
             return true;
         }
     }
@@ -1607,7 +1516,6 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-
     }
 
     private void updateForLoop(FlowComponent command, ComponentMenuVariableLoop variableMenu, ComponentMenuContainerTypes typesMenu, ComponentMenuListOrder orderMenu)
@@ -1634,7 +1542,6 @@ public class CommandExecutorRF extends CommandExecutor
                     }
                 }
             }
-
         }
     }
 
