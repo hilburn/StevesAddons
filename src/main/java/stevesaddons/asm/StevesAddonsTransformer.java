@@ -5,6 +5,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 import stevesaddons.StevesAddons;
@@ -293,12 +294,32 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         list.add(new InsnNode(IRETURN));
                         return list;
                     }
+                },
+        IS_VISIBLE("isVisible", "()Z")
+                {
+                    @Override
+                    public void transform(ClassNode node)
+                    {
+                        MethodNode isVisible = new MethodNode(ACC_PUBLIC, this.name, this.args, null, new String[0]);
+                        isVisible.instructions.add(new VarInsnNode(ALOAD, 0));
+                        isVisible.instructions.add(new MethodInsnNode(INVOKEVIRTUAL,"vswe/stevesfactory/components/ComponentMenuInterval","getParent","()Lvswe/stevesfactory/components/FlowComponent;",false));
+                        isVisible.instructions.add(new MethodInsnNode(INVOKEVIRTUAL,"vswe/stevesfactory/components/FlowComponent", "getConnectionSet", "()Lvswe/stevesfactory/components/ConnectionSet;",false));
+                        isVisible.instructions.add(new FieldInsnNode(GETSTATIC, "stevesaddons/helpers/StevesEnum", "DELAYED", "Lvswe/stevesfactory/components/ConnectionSet;"));
+                        LabelNode l1 = new LabelNode(new Label());
+                        isVisible.instructions.add(new JumpInsnNode(IF_ACMPEQ, l1));
+                        isVisible.instructions.add(new InsnNode(ICONST_1));
+                        isVisible.instructions.add(new InsnNode(IRETURN));
+                        isVisible.instructions.add(l1);
+                        isVisible.instructions.add(new InsnNode(ICONST_0));
+                        isVisible.instructions.add(new InsnNode(IRETURN));
+                        node.methods.add(isVisible);
+                    }
                 };
 
-        private String name;
-        private String args;
-        private TransformType type;
-        private TransformType action;
+        protected String name;
+        protected String args;
+        protected TransformType type;
+        protected TransformType action;
 
         Transformer(String name)
         {
@@ -505,7 +526,8 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         SETTINGS("vswe.stevesfactory.settings.Settings", Transformer.LOAD_DEFAULT),
         CONTAINER_TYPES("vswe.stevesfactory.components.ComponentMenuContainerTypes", Transformer.WRITE_TO_NBT, Transformer.READ_FROM_NBT),
         DATA_BIT_HELPER("vswe.stevesfactory.network.DataBitHelper", Transformer.BIT_HELPER_INIT),
-        CONNECTION_BLOCK_TYPE("vswe.stevesfactory.blocks.ConnectionBlockType", Transformer.IS_INSTANCE);
+        CONNECTION_BLOCK_TYPE("vswe.stevesfactory.blocks.ConnectionBlockType", Transformer.IS_INSTANCE),
+        COMPONENT_MENU_INTERVAL("vswe.stevesfactory.components.ComponentMenuInterval", Transformer.IS_VISIBLE);
 
         private String name;
         private Transformer[] transformers;

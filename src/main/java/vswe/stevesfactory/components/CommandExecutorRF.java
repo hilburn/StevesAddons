@@ -96,6 +96,9 @@ public class CommandExecutorRF extends CommandExecutor
                 this.usedCommands.add(command.getId());
                 switch (command.getType().ordinal())
                 {
+                    case 0:
+
+                        break;
                     case 1:
                         List<SlotInventoryHolder> inputInventory = this.getInventories(command.getMenus().get(0));
                         if (inputInventory != null)

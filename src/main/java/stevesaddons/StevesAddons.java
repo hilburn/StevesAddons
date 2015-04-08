@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stevesaddons.asm.StevesHooks;
 import stevesaddons.helpers.Config;
+import stevesaddons.helpers.StevesEnum;
 import stevesaddons.interfaces.GuiHandler;
 import stevesaddons.naming.EventHandler;
 import stevesaddons.naming.NameData;
@@ -98,6 +99,7 @@ public class StevesAddons
             {
             }
         }
+        StevesEnum.applyEnumHacks();
     }
 
     @Mod.EventHandler
