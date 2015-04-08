@@ -217,10 +217,7 @@ public class StevesHooks
 
     public static boolean instanceOf(Class clazz, TileEntity entity)
     {
-        if (clazz.isInstance(entity)) return true;
-        if (entity instanceof IHiddenTank) return clazz == IFluidHandler.class;
-        if (entity instanceof TileEntityAENode) return clazz == IInventory.class;
-        return clazz == IEnergyConnection.class && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
+        return clazz.isInstance(entity) || entity instanceof IHiddenTank && clazz == IFluidHandler.class || entity instanceof TileEntityAENode && clazz == IInventory.class || clazz == IEnergyConnection.class && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
     }
 
     public static String getContentString(TileEntity tileEntity)

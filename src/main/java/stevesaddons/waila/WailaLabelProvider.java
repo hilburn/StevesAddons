@@ -45,17 +45,17 @@ public class WailaLabelProvider implements IWailaDataProvider
             if (label != null)
             {
                 tagged.add(StatCollector.translateToLocalFormatted(LABELLED, label), LABELLED);
-                int size = tagged.size();
-                if (size > 1)
-                {
-                    for (Iterator<String> itr = tagged.iterator(); itr.hasNext() && size > 1; size--)
-                    {
-                        String val = itr.next();
-                        Set<String> tags = tagged.getTags(val);
-                        itr.remove();
-                        tagged.add(val, tags);
-                    }
-                }
+//                int size = tagged.size();
+//                if (size > 1)
+//                {
+//                    for (Iterator<String> itr = tagged.iterator(); itr.hasNext() && size > 1; size--)
+//                    {
+//                        String val = itr.next();
+//                        Set<String> tags = tagged.getTags(val);
+//                        itr.remove();
+//                        tagged.add(val, tags);
+//                    }
+//                }
             }
         }
         return list;
