@@ -35,14 +35,22 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
             public void onNumberChanged()
             {
                 DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeData(getDelay(), 31);
+                int val = getDelay();
+                if(val < getMin()) {
+                    val = getMin();
+                }
+                dw.writeData(val, 31);
                 PacketHandler.sendDataToServer(dw);
             }
         });
         this.textBoxes.addTextBox(this.intervalTicks = new TextBoxNumber(TEXT_BOX_X + intervalSeconds.getWidth() + TEXT_MARGIN_X, TEXT_BOX_Y, 2, true) {
             public void onNumberChanged() {
                 DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeData(getDelay(), 31);
+                int val = getDelay();
+                if(val < getMin()) {
+                    val = getMin();
+                }
+                dw.writeData(val, 31);
                 PacketHandler.sendDataToServer(dw);
             }
 
