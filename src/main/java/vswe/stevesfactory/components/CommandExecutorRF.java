@@ -13,12 +13,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
+import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
 import stevesaddons.components.*;
-import stevesaddons.helpers.AEHelper;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.reference.Null;
-import stevesaddons.tileentities.TileEntityAENode;
 import stevesaddons.tileentities.TileEntityRFNode;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
@@ -465,7 +464,7 @@ public class CommandExecutorRF extends CommandExecutor
 
         for (SlotInventoryHolder slotInventoryHolder : inventories)
         {
-            if (!(slotInventoryHolder.getTile() instanceof TileEntityAENode))
+            if (!(slotInventoryHolder.getTile() instanceof IHiddenInventory))
             {
                 IInventory inventory = slotInventoryHolder.getInventory();
                 Map<Integer, SlotSideTarget> validSlots = slotInventoryHolder.getValidSlots();
@@ -721,9 +720,9 @@ public class CommandExecutorRF extends CommandExecutor
         ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         for (SlotInventoryHolder inventory : inventories)
         {
-            if (inventory.getTile() instanceof TileEntityAENode)
+            if (inventory.getTile() instanceof IHiddenInventory)
             {
-                TileEntityAENode node = (TileEntityAENode) inventory.getTile();
+                IHiddenInventory node = (IHiddenInventory) inventory.getTile();
                 node.addItemsToBuffer(menuItem, inventory, itemBuffer, this);
             }
             else
@@ -764,7 +763,7 @@ public class CommandExecutorRF extends CommandExecutor
                         ItemStack itemStack = inventory.getInventory().getStackInSlot(slot.getSlot());
                         if (this.isSlotValid(inventory.getInventory(), itemStack, slot, true))
                         {
-                            setting = this.isItemValid(componentMenu, itemStack);
+                            setting = this.isItemValid(((ComponentMenuStuff)componentMenu).getSettings(), itemStack);
                             this.addItemToBuffer(menuItem, inventory, setting, itemStack, slot);
                         }
                     }
@@ -878,14 +877,11 @@ public class CommandExecutorRF extends CommandExecutor
 
                         for (Setting setting : menuItem.getSettings())
                         {
-                            Fluid var21 = ((LiquidSetting)setting).getFluid();
-                            if (var21 != null)
+                            Fluid fluid = ((LiquidSetting)setting).getFluid();
+                            if (fluid != null)
                             {
-                                FluidStack fluid = new FluidStack(var21, setting.isLimitedByAmount() ? setting.getAmount() : setting.getDefaultAmount());
-                                if (fluid != null)
-                                {
-                                    this.addLiquidToBuffer(menuItem, tank, setting, fluid, 0);
-                                }
+                                FluidStack stack = new FluidStack(fluid, setting.isLimitedByAmount() ? setting.getAmount() : setting.getDefaultAmount());
+                                this.addLiquidToBuffer(menuItem, tank, setting, stack, 0);
                             }
                         }
                     }
@@ -977,20 +973,18 @@ public class CommandExecutorRF extends CommandExecutor
         }
     }
 
-    public Setting isItemValid(ComponentMenu componentMenu, ItemStack itemStack)
+    public Setting isItemValid(List<Setting> settings, ItemStack itemStack)
     {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
-        Iterator<Setting> i$ = menuItem.getSettings().iterator();
-
+        Iterator<Setting> itr = settings.iterator();
         Setting setting;
         do
         {
-            if (!i$.hasNext())
+            if (!itr.hasNext())
             {
                 return null;
             }
 
-            setting = i$.next();
+            setting = itr.next();
         } while (!((ItemSetting)setting).isEqualForCommandExecutor(itemStack));
 
         return setting;
@@ -1048,12 +1042,12 @@ public class CommandExecutorRF extends CommandExecutor
     {
         itemBufferElement.prepareSubElements();
 
-        IInventory inventory = inventoryHolder.getTile() instanceof TileEntityAENode? Null.NULL_INVENTORY :inventoryHolder.getInventory();
+        IInventory inventory = inventoryHolder.getTile() instanceof IHiddenInventory? Null.NULL_INVENTORY :inventoryHolder.getInventory();
         IItemBufferSubElement subElement;
         while ((subElement = itemBufferElement.getSubElement()) != null)
         {
             ItemStack itemStack = subElement.getItemStack();
-            Setting setting = this.isItemValid(menuItem, itemStack);
+            Setting setting = this.isItemValid(menuItem.getSettings(), itemStack);
             if (menuItem.useWhiteList() != (setting == null) || setting != null && setting.isLimitedByAmount())
             {
                 OutputItemCounter outputItemCounter = null;
@@ -1073,12 +1067,13 @@ public class CommandExecutorRF extends CommandExecutor
                     outputCounters.add(outputItemCounter);
                 }
 
-                if (inventoryHolder.getTile() instanceof TileEntityAENode)
+                if (inventoryHolder.getTile() instanceof IHiddenInventory)
                 {
-                    TileEntityAENode node = (TileEntityAENode) inventoryHolder.getTile();
-                    if ((itemStack = AEHelper.getInsertable(node.getNode(), itemStack, node))!=null)
+                    IHiddenInventory hidden = (IHiddenInventory) inventoryHolder.getTile();
+                    int moveCount = Math.min(hidden.getInsertable(itemStack), itemStack.stackSize);
+                    if (moveCount > 0)
                     {
-                        int moveCount = Math.min(subElement.getSizeLeft(), itemStack.stackSize);
+                        moveCount = Math.min(subElement.getSizeLeft(), moveCount);
                         moveCount = outputItemCounter.retrieveItemCount(moveCount);
                         moveCount = itemBufferElement.retrieveItemCount(moveCount);
                         if (moveCount > 0)
@@ -1087,7 +1082,7 @@ public class CommandExecutorRF extends CommandExecutor
                             outputItemCounter.modifyStackSize(moveCount);
                             ItemStack toInsert = itemStack.copy();
                             toInsert.stackSize = moveCount;
-                            AEHelper.insert(node.getNode(), toInsert, node, false);
+                            hidden.insertItemStack(toInsert);
                             subElement.reduceAmount(moveCount);
 
                             if (subElement.getSizeLeft() == 0)
@@ -1285,9 +1280,9 @@ public class CommandExecutorRF extends CommandExecutor
 
     private void calculateConditionDataItem(ComponentMenu componentMenu, SlotInventoryHolder inventoryHolder, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
     {
-        if (inventoryHolder.getTile() instanceof TileEntityAENode)
+        if (inventoryHolder.getTile() instanceof IHiddenInventory)
         {
-            isAEItemValid((TileEntityAENode) inventoryHolder.getTile(), (ComponentMenuStuff) componentMenu, conditionSettingCheckerMap);
+            ((IHiddenInventory)inventoryHolder.getTile()).isItemValid(((ComponentMenuStuff)componentMenu).getSettings(), conditionSettingCheckerMap);
         }
         else
         {
@@ -1298,7 +1293,7 @@ public class CommandExecutorRF extends CommandExecutor
                 {
                     if (inventoryHolder.getInventory() instanceof IDeepStorageUnit)
                         itemStack = ((IDeepStorageUnit)inventoryHolder.getInventory()).getStoredItemType();
-                    Setting setting = this.isItemValid(componentMenu, itemStack);
+                    Setting setting = this.isItemValid(((ComponentMenuStuff)componentMenu).getSettings(), itemStack);
                     if (setting != null)
                     {
                         ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());
@@ -1310,23 +1305,6 @@ public class CommandExecutorRF extends CommandExecutor
                         conditionSettingChecker.addCount(itemStack.stackSize);
                     }
                 }
-            }
-        }
-    }
-
-    private void isAEItemValid(TileEntityAENode tile, ComponentMenuStuff componentMenu, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
-    {
-        for (Setting setting : componentMenu.getSettings())
-        {
-            ItemStack stack = AEHelper.find(tile.getNode(), ((ItemSetting) setting).getItem());
-            if (stack != null)
-            {
-                ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());
-                if (conditionSettingChecker == null)
-                {
-                    conditionSettingCheckerMap.put(setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
-                }
-                conditionSettingChecker.addCount(stack.stackSize);
             }
         }
     }

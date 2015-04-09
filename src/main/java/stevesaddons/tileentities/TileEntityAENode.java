@@ -16,6 +16,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
 import stevesaddons.components.AEFluidBufferElement;
 import stevesaddons.components.AEItemBufferElement;
@@ -25,13 +26,10 @@ import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
 import vswe.stevesfactory.components.*;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Optional.Interface(iface = "stevesaddons.api.IHiddenTank", modid = "extracells")
-public class TileEntityAENode extends TileEntityClusterElement implements IGridHost, IActionHost, IHiddenTank
+public class TileEntityAENode extends TileEntityClusterElement implements IGridHost, IActionHost, IHiddenInventory, IHiddenTank
 {
     private class GridBlock implements IGridBlock
     {
@@ -246,6 +244,20 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         }
     }
 
+    @Override
+    public int getInsertable(ItemStack stack)
+    {
+        ItemStack insertable = AEHelper.getInsertable(getNode(), stack, this);
+        return insertable == null? 0 : insertable.stackSize;
+    }
+
+    @Override
+    public void insertItemStack(ItemStack stack)
+    {
+        AEHelper.insert(getNode(), stack, this, false);
+    }
+
+    @Override
     public void addItemsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, List<ItemBufferElement> itemBuffer, CommandExecutorRF commandExecutorRF)
     {
         Iterator<IAEItemStack> itr = AEHelper.getItrItems(this.getNode());
@@ -255,8 +267,26 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
             IAEItemStack stack = itr.next();
             if (stack != null)
             {
-                Setting setting = commandExecutorRF.isItemValid(menuItem, stack.getItemStack());
+                Setting setting = commandExecutorRF.isItemValid(menuItem.getSettings(), stack.getItemStack());
                 addAEItemToBuffer(menuItem, inventory, setting, stack, itemBuffer);
+            }
+        }
+    }
+
+    @Override
+    public void isItemValid(Collection<Setting> settings, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
+    {
+        for (Setting setting : settings)
+        {
+            ItemStack stack = AEHelper.find(getNode(), ((ItemSetting) setting).getItem());
+            if (stack != null)
+            {
+                ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());
+                if (conditionSettingChecker == null)
+                {
+                    conditionSettingCheckerMap.put(setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
+                }
+                conditionSettingChecker.addCount(stack.stackSize);
             }
         }
     }

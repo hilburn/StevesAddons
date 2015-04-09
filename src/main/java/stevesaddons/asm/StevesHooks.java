@@ -13,6 +13,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
+import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
 import stevesaddons.components.ComponentMenuDelayed;
 import stevesaddons.components.ComponentMenuTriggered;
@@ -222,7 +223,7 @@ public class StevesHooks
 
     public static boolean instanceOf(Class clazz, TileEntity entity)
     {
-        return clazz.isInstance(entity) || entity instanceof IHiddenTank && clazz == IFluidHandler.class || entity instanceof TileEntityAENode && clazz == IInventory.class || clazz == IEnergyConnection.class && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
+        return clazz.isInstance(entity) || entity instanceof IHiddenTank && clazz == IFluidHandler.class || entity instanceof IHiddenInventory && clazz == IInventory.class || clazz == IEnergyConnection.class && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
     }
 
     public static String getContentString(TileEntity tileEntity)
