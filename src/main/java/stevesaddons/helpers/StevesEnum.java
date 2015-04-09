@@ -19,6 +19,7 @@ public class StevesEnum
     private static final Class[][] connectionTypeClasses = new Class[][]{{ConnectionBlockType.class, Localization.class, Class.class, boolean.class}};
     private static final Class[][] componentTypeClasses = new Class[][]{{ComponentType.class, int.class, Localization.class, Localization.class, ConnectionSet[].class, Class[].class}};
     private static final Class[][] connectionSetClasses = new Class[][]{{ConnectionSet.class, Localization.class, ConnectionOption[].class}};
+    private static final Class[][] connectionOptionClasses = new Class[][]{{ConnectionOption.class, Localization.class, ConnectionOption.ConnectionType.class}};
 
     public static final Localization TYPE_RF = addLocalization("TYPE_RF");
     public static final Localization TYPE_RF_INPUT = addLocalization("TYPE_RF_INPUT");
@@ -36,6 +37,7 @@ public class StevesEnum
     public static final Localization COPY_COMMAND = addLocalization("COPY_COMMAND");
     public static final Localization BELOW = addLocalization("BELOW");
     public static final Localization DELAY = addLocalization("DELAY_MENU");
+    public static final Localization DELAY_INFO = addLocalization("DELAY_INFO");
     public static final ConnectionBlockType RF_PROVIDER = addConnectionBlockType("RF_PROVIDER", TYPE_RF_INPUT, IEnergyProvider.class, false);
     public static final ConnectionBlockType RF_RECEIVER = addConnectionBlockType("RF_RECEIVER", TYPE_RF_OUTPUT, IEnergyReceiver.class, false);
     public static final ConnectionBlockType RF_CONNECTION = addConnectionBlockType("RF_CONNECTION", TYPE_RF, IEnergyConnection.class, false);
@@ -45,7 +47,8 @@ public class StevesEnum
     public static final ClusterMethodRegistration CONNECT_ENERGY = addClusterMethod("CONNECT_ENERGY");
     public static final ClusterMethodRegistration EXTRACT_ENERGY = addClusterMethod("EXTRACT_ENERGY");
     public static final ClusterMethodRegistration RECEIVE_ENERGY = addClusterMethod("RECEIVE_ENERGY");
-    public static final ConnectionSet DELAYED = addConnectionSet("DELAY", DELAY, new ConnectionOption[]{ConnectionOption.STANDARD_INPUT, ConnectionOption.STANDARD_OUTPUT});
+    public static final ConnectionOption DELAYED_OUTPUT = addConnectionMethod("DELAYED_OUTPUT", DELAY, ConnectionOption.ConnectionType.OUTPUT);
+    public static final ConnectionSet DELAYED = addConnectionSet("DELAY", DELAY, new ConnectionOption[]{ConnectionOption.STANDARD_INPUT, DELAYED_OUTPUT});
     
     public static Localization addLocalization(String key)
     {
@@ -72,6 +75,11 @@ public class StevesEnum
         return EnumHelper.addEnum(connectionSetClasses, ConnectionSet.class, key, localization, options);
     }
 
+    public static ConnectionOption addConnectionMethod(String key, Localization localization, ConnectionOption.ConnectionType type)
+    {
+        return EnumHelper.addEnum(connectionOptionClasses, ConnectionOption.class, key, localization, type);
+    }
+
     public static void applyEnumHacks()
     {
         try
@@ -80,7 +88,7 @@ public class StevesEnum
             Field sets = ComponentType.class.getDeclaredField("sets");
             classes.setAccessible(true);
             sets.setAccessible(true);
-            classes.set(ComponentType.TRIGGER, new Class[]{ComponentMenuReceivers.class, ComponentMenuBUDs.class, ComponentMenuInterval.class, ComponentMenuRedstoneSidesTrigger.class, ComponentMenuRedstoneStrength.class, ComponentMenuUpdateBlock.class, DelayedTrigger.class, ComponentMenuResult.class});
+            classes.set(ComponentType.TRIGGER, new Class[]{ComponentMenuReceivers.class, ComponentMenuBUDs.class, ComponentMenuInterval.class, ComponentMenuRedstoneSidesTrigger.class, ComponentMenuRedstoneStrength.class, ComponentMenuUpdateBlock.class, ComponentMenuDelayed.class, ComponentMenuResult.class});
             sets.set(ComponentType.TRIGGER, new ConnectionSet[]{ConnectionSet.CONTINUOUSLY, ConnectionSet.REDSTONE, ConnectionSet.BUD, DELAYED});
         } catch (Exception e)
         {

@@ -3,7 +3,8 @@ package stevesaddons.asm;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import net.minecraft.init.Blocks;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -13,6 +14,8 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.api.IHiddenTank;
+import stevesaddons.components.ComponentMenuDelayed;
+import stevesaddons.components.ComponentMenuTriggered;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
@@ -32,6 +35,8 @@ import java.util.regex.Pattern;
 
 public class StevesHooks
 {
+    public static final Multimap<TileEntityManager, FlowComponent> delayedRegistry = HashMultimap.create();
+
     public static void addCopyButton(final TileEntityManager manager)
     {
         int index = getAfterDelete(manager.buttons);
@@ -271,5 +276,47 @@ public class StevesHooks
         String toSearch = getLabel(tileEntity);
         Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
         return (toSearch != null && pattern.matcher(toSearch).find()) || pattern.matcher(getContentString(tileEntity)).find();
+    }
+
+    public static void registerTicker(FlowComponent component, ComponentMenuTriggered menu)
+    {
+        if (!getRegistry(menu).containsEntry(component.getManager(), component))
+        {
+            getRegistry(menu).put(component.getManager(), component);
+        }
+    }
+
+    public static TileEntityManager tickTriggers(TileEntityManager manager)
+    {
+        tick(delayedRegistry.get(manager));
+        return manager;
+    }
+
+    private static void tick(Collection<FlowComponent> triggers)
+    {
+        if (triggers != null)
+        {
+            for (Iterator<FlowComponent> itr = triggers.iterator(); itr.hasNext();)
+            {
+                ComponentMenuTriggered toTrigger = (ComponentMenuTriggered)itr.next().getMenus().get(6);
+                if (toTrigger.isVisible())
+                {
+                    toTrigger.tick();
+                }else
+                {
+                    itr.remove();
+                }
+            }
+        }
+    }
+
+    public static void unregisterTrigger(FlowComponent parent, ComponentMenuTriggered menu)
+    {
+        getRegistry(menu).get(parent.getManager()).remove(parent);
+    }
+
+    private static Multimap<TileEntityManager, FlowComponent> getRegistry(ComponentMenuTriggered menu)
+    {
+        return delayedRegistry;
     }
 }

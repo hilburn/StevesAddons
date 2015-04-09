@@ -97,8 +97,9 @@ public class CommandExecutorRF extends CommandExecutor
                 switch (command.getType().ordinal())
                 {
                     case 0:
-
-                        break;
+                        ComponentMenuTriggered trigger = (ComponentMenuTriggered)command.getMenus().get(6);
+                        trigger.setCountdown();
+                        return;
                     case 1:
                         List<SlotInventoryHolder> inputInventory = this.getInventories(command.getMenus().get(0));
                         if (inputInventory != null)

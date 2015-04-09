@@ -225,7 +225,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         AbstractInsnNode node = list.getFirst();
                         while (node != null)
                         {
-                            if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode)node).name.equals(FMLForgePlugin.RUNTIME_DEOBF?"func_74771_c":"getByte"))
+                            if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode)node).name.equals(FMLForgePlugin.RUNTIME_DEOBF ? "func_74771_c" : "getByte"))
                             {
                                 node = node.getPrevious();
                                 list.remove(node.getNext());
@@ -313,6 +313,24 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         isVisible.instructions.add(new InsnNode(ICONST_0));
                         isVisible.instructions.add(new InsnNode(IRETURN));
                         node.methods.add(isVisible);
+                    }
+                },
+        UPDATE_ENTITY(FMLForgePlugin.RUNTIME_DEOBF? "func_145845_h": "updateEntity", "()V")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        while (node != null)
+                        {
+                            if (node instanceof FieldInsnNode && ((FieldInsnNode)node).name.equals("timer"))
+                            {
+                                list.insertBefore(node, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "tickTriggers", "(Lvswe/stevesfactory/blocks/TileEntityManager;)Lvswe/stevesfactory/blocks/TileEntityManager;", false));
+                                break;
+                            }
+                            node = node.getNext();
+                        }
+                        return list;
                     }
                 };
 
@@ -514,7 +532,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 
     private enum ClassName
     {
-        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT, Transformer.REMOVE_COMPONENT),
+        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT, Transformer.REMOVE_COMPONENT, Transformer.UPDATE_ENTITY),
         CLUSTER_BLOCK("vswe.stevesfactory.blocks.BlockCableCluster", Transformer.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", Transformer.ITEM_SETTING_LOAD),
         COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", Transformer.ITEM_SEARCH),
