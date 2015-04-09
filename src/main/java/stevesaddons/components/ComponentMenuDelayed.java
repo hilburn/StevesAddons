@@ -80,6 +80,7 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
     public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup)
     {
         super.readFromNBT(nbtTagCompound, version, pickup);
+        if (this.isVisible() && this.counter >= 0) StevesHooks.registerTicker(getParent(), this);
     }
 
     @Override

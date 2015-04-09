@@ -7,7 +7,6 @@ import stevesaddons.asm.StevesHooks;
 import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.interfaces.ContainerManager;
 import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
@@ -21,8 +20,8 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
     protected TextBoxNumberList textBoxes = new TextBoxNumberList();
 
     private static final String NBT_DELAY = "Delay";
-    private static final String NBT_COUNTDOWN = "Countdown";
-    private int countdown;
+    private static final String NBT_COUNTDOWN = "Counter";
+    protected int counter;
 
     public ComponentMenuTriggered(FlowComponent parent) {
         super(parent);
@@ -57,11 +56,11 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         if(val < getMin()) {
             val = getMin();
         }
-        dw.writeData(val, 32);
+        dw.writeData(val, 31);
     }
 
     public void readData(DataReader dr) {
-        this.setDelay(dr.readData(32));
+        this.setDelay(dr.readData(31));
     }
 
     public void copyFrom(ComponentMenu menu) {
@@ -73,7 +72,7 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         if(newDataTriggered.getDelay() != this.getDelay()) {
             copyFrom(newData);
             DataWriter dw = this.getWriterForClientComponentPacket(container);
-            writeData(dw);
+            dw.writeData(getDelay(), 31);
             PacketHandler.sendDataToListeningClients(container, dw);
         }
     }
@@ -88,12 +87,12 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
 
     public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup) {
         this.setDelay(nbtTagCompound.getInteger(NBT_DELAY));
-        countdown = nbtTagCompound.getInteger(NBT_COUNTDOWN);
+        counter = nbtTagCompound.getInteger(NBT_COUNTDOWN);
     }
 
     public void writeToNBT(NBTTagCompound nbtTagCompound, boolean pickup) {
         nbtTagCompound.setInteger(NBT_DELAY, this.getDelay());
-        nbtTagCompound.setInteger(NBT_COUNTDOWN, this.countdown);
+        nbtTagCompound.setInteger(NBT_COUNTDOWN, this.counter);
     }
 
     public int getMin()
@@ -105,14 +104,14 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
     {
         if (isVisible())
         {
-            countdown = 0;
+            counter = 0;
             StevesHooks.registerTicker(getParent(), this);
         }
     }
 
     public void tick()
     {
-        if (isVisible() && ++countdown >= getDelay())
+        if (isVisible() && ++counter >= getDelay())
         {
             act();
         }
@@ -121,7 +120,12 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
     protected void act()
     {
         getParent().getManager().activateTrigger(getParent(), getConnectionSets());
-        countdown = 0;
+        resetCounter();
+    }
+
+    protected void resetCounter()
+    {
+        counter = 0;
     }
 
     protected abstract EnumSet<ConnectionOption> getConnectionSets();
