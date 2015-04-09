@@ -28,7 +28,8 @@ gui.sfm.RfConditionInfo=Set the trigger level in the text box, and trigger above
 gui.sfm.RfConditionError=Invalid trigger level
 gui.sfm.Below=Trigger low
 
-gui.sfm.DelayMenu=Delayed Trigger
+gui.sfm.DelayMenu=Delayed Output
+gui.sfm.DelayInfo
 
 stevesaddons.waila.labelled=Label: %s
 stevesaddons.idsucompat.isEmpty=Empty

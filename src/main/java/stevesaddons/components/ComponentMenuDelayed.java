@@ -1,14 +1,13 @@
 package stevesaddons.components;
 
+import net.minecraft.nbt.NBTTagCompound;
 import stevesaddons.asm.StevesHooks;
 import stevesaddons.helpers.StevesEnum;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.components.ConnectionOption;
-import vswe.stevesfactory.components.ConnectionSet;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.components.TextBoxNumber;
 import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
 
@@ -78,6 +77,12 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup)
+    {
+        super.readFromNBT(nbtTagCompound, version, pickup);
+    }
+
+    @Override
     protected EnumSet<ConnectionOption> getConnectionSets()
     {
         return delayed;
@@ -100,6 +105,12 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
     {
         super.act();
         StevesHooks.unregisterTrigger(getParent(), this);
+    }
+
+    @Override
+    protected void resetCounter()
+    {
+        counter = -1;
     }
 
     @Override
