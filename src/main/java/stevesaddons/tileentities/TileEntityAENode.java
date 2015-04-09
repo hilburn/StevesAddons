@@ -121,9 +121,14 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         @Override
         public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
         {
-            FluidStack stack = AEHelper.getItrFluids(getNode()).next().getFluidStack();
-            stack.amount = Math.min(maxDrain, stack.amount);
-            return drain(from, stack, doDrain);
+            Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(getNode());
+            if (itr.hasNext())
+            {
+                FluidStack stack = itr.next().getFluidStack();
+                stack.amount = Math.min(maxDrain, stack.amount);
+                return drain(from, stack, doDrain);
+            }
+            return null;
         }
 
         @Override
