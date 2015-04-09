@@ -115,13 +115,16 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
         {
             IAEFluidStack drain = AEHelper.extract(getNode(), resource, TileEntityAENode.this, doDrain);
-            return drain.getFluidStack();
+            return drain == null ? null : drain.getFluidStack();
         }
 
         @Override
         public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
         {
-            FluidStack stack = AEHelper.getItrFluids(getNode()).next().getFluidStack();
+            Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(getNode());
+            if (itr == null) return null;
+            itr.hasNext();
+            FluidStack stack = itr.next().getFluidStack();
             stack.amount = Math.min(maxDrain, stack.amount);
             return drain(from, stack, doDrain);
         }
@@ -143,6 +146,7 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         {
             List<FluidTankInfo> tankInfo = new ArrayList<FluidTankInfo>();
             Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(getNode());
+            if (itr == null) return new FluidTankInfo[0];
             while (itr.hasNext())
             {
                 FluidStack stack = itr.next().getFluidStack();
@@ -243,6 +247,7 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
     public void addItemsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, List<ItemBufferElement> itemBuffer, CommandExecutorRF commandExecutorRF)
     {
         Iterator<IAEItemStack> itr = AEHelper.getItrItems(this.getNode());
+        if (itr == null) return;
         while (itr.hasNext())
         {
             IAEItemStack stack = itr.next();
@@ -281,6 +286,7 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
     public void addFluidsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, List<LiquidBufferElement> liquidBuffer, CommandExecutorRF commandExecutorRF)
     {
         Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(this.getNode());
+        if (itr == null) return;
         while (itr.hasNext())
         {
             IAEFluidStack stack = itr.next();
