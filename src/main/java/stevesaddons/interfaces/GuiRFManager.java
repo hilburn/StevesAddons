@@ -414,7 +414,7 @@ public class GuiRFManager extends GuiManager
             itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), itemstack, x + this.guiLeft, y + this.guiTop, "");
         } catch (Exception var9)
         {
-            if (itemstack.getItemDamage() != 0)
+            if (itemstack != null && itemstack.getItem() != null && itemstack.getItemDamage() != 0)
             {
                 ItemStack newStack = itemstack.copy();
                 newStack.setItemDamage(0);
