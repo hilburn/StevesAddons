@@ -38,6 +38,7 @@ public class StevesEnum
     public static final Localization BELOW = addLocalization("BELOW");
     public static final Localization DELAY = addLocalization("DELAY_MENU");
     public static final Localization DELAY_INFO = addLocalization("DELAY_INFO");
+    public static final Localization DELAY_ERROR = addLocalization("DELAY_ERROR");
     public static final ConnectionBlockType RF_PROVIDER = addConnectionBlockType("RF_PROVIDER", TYPE_RF_INPUT, IEnergyProvider.class, false);
     public static final ConnectionBlockType RF_RECEIVER = addConnectionBlockType("RF_RECEIVER", TYPE_RF_OUTPUT, IEnergyReceiver.class, false);
     public static final ConnectionBlockType RF_CONNECTION = addConnectionBlockType("RF_CONNECTION", TYPE_RF, IEnergyConnection.class, false);
@@ -49,7 +50,8 @@ public class StevesEnum
     public static final ClusterMethodRegistration RECEIVE_ENERGY = addClusterMethod("RECEIVE_ENERGY");
     public static final ConnectionOption DELAYED_OUTPUT = addConnectionMethod("DELAYED_OUTPUT", DELAY, ConnectionOption.ConnectionType.OUTPUT);
     public static final ConnectionSet DELAYED = addConnectionSet("DELAY", DELAY, new ConnectionOption[]{ConnectionOption.STANDARD_INPUT, DELAYED_OUTPUT});
-    
+
+
     public static Localization addLocalization(String key)
     {
         return EnumHelper.addEnum(localizationClasses, Localization.class, key.toUpperCase().replaceAll(" ", "_"));

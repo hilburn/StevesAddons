@@ -12,6 +12,7 @@ import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
 
 import java.util.EnumSet;
+import java.util.List;
 
 public class ComponentMenuDelayed extends ComponentMenuTriggered
 {
@@ -35,22 +36,14 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
             public void onNumberChanged()
             {
                 DataWriter dw = getWriterForServerComponentPacket();
-                int val = getDelay();
-                if(val < getMin()) {
-                    val = getMin();
-                }
-                dw.writeData(val, 31);
+                dw.writeData(getDelay(), 31);
                 PacketHandler.sendDataToServer(dw);
             }
         });
         this.textBoxes.addTextBox(this.intervalTicks = new TextBoxNumber(TEXT_BOX_X + intervalSeconds.getWidth() + TEXT_MARGIN_X, TEXT_BOX_Y, 2, true) {
             public void onNumberChanged() {
                 DataWriter dw = getWriterForServerComponentPacket();
-                int val = getDelay();
-                if(val < getMin()) {
-                    val = getMin();
-                }
-                dw.writeData(val, 31);
+                dw.writeData(getDelay(), 31);
                 PacketHandler.sendDataToServer(dw);
             }
 
@@ -92,9 +85,27 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
     }
 
     @Override
+    public void addErrors(List<String> errors)
+    {
+        if (getDelay() < 5 && isVisible())
+        {
+            errors.add(StevesEnum.DELAY_ERROR.toString());
+        }
+    }
+
+    @Override
     protected EnumSet<ConnectionOption> getConnectionSets()
     {
         return delayed;
+    }
+
+    @Override
+    public void setCountdown()
+    {
+        if (getDelay() >= 5)
+        {
+            super.setCountdown();
+        }
     }
 
     @Override
@@ -120,11 +131,5 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
     protected void resetCounter()
     {
         counter = -1;
-    }
-
-    @Override
-    public int getMin()
-    {
-        return 5;
     }
 }
