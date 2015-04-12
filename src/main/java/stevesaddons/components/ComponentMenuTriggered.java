@@ -7,6 +7,7 @@ import stevesaddons.asm.StevesHooks;
 import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.interfaces.ContainerManager;
 import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
@@ -56,11 +57,11 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         if(val < getMin()) {
             val = getMin();
         }
-        dw.writeData(val, 31);
+        dw.writeData(val, DataBitHelper.MENU_INTERVAL);
     }
 
     public void readData(DataReader dr) {
-        this.setDelay(dr.readData(31));
+        this.setDelay(dr.readData(DataBitHelper.MENU_INTERVAL));
     }
 
     public void copyFrom(ComponentMenu menu) {
@@ -72,7 +73,7 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         if(newDataTriggered.getDelay() != this.getDelay()) {
             copyFrom(newData);
             DataWriter dw = this.getWriterForClientComponentPacket(container);
-            dw.writeData(getDelay(), 31);
+            dw.writeData(getDelay(), DataBitHelper.MENU_INTERVAL);
             PacketHandler.sendDataToListeningClients(container, dw);
         }
     }
