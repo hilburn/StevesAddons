@@ -577,8 +577,8 @@ public class CommandExecutorRF extends CommandExecutor
         {
             IEnergyProvider cell = (IEnergyProvider)anInputStorage.getTile();
             if (cell == null) continue;
-            if (cell instanceof TileEntityRFNode)
-                ((TileEntityRFNode)cell).setInputSides(validSides.toArray(new Integer[validSides.size()]));
+//            if (cell instanceof TileEntityRFNode)
+//                ((TileEntityRFNode)cell).setInputSides(validSides.toArray(new Integer[validSides.size()]));
             for (int side : validSides)
             {
                 ForgeDirection dir = ForgeDirection.getOrientation(side);
@@ -617,8 +617,8 @@ public class CommandExecutorRF extends CommandExecutor
         {
             IEnergyReceiver cell = (IEnergyReceiver)holder.getTile();
             if (cell == null) continue;
-            if (cell instanceof TileEntityRFNode)
-                ((TileEntityRFNode)cell).setOutputSides(validSides.toArray(new Integer[validSides.size()]));
+//            if (cell instanceof TileEntityRFNode)
+//                ((TileEntityRFNode)cell).setOutputSides(validSides.toArray(new Integer[validSides.size()]));
             for (int side : validSides)
             {
                 int maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(side), Integer.MAX_VALUE, true);

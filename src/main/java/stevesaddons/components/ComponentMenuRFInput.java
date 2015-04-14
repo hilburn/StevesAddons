@@ -1,12 +1,12 @@
 package stevesaddons.components;
 
 import stevesaddons.helpers.StevesEnum;
-import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.FlowComponent;
+import vswe.stevesfactory.network.DataReader;
 
 import java.util.List;
 
-public class ComponentMenuRFInput extends ComponentMenuContainer
+public class ComponentMenuRFInput extends ComponentMenuRF
 {
     public ComponentMenuRFInput(FlowComponent parent)
     {
@@ -25,6 +25,14 @@ public class ComponentMenuRFInput extends ComponentMenuContainer
         {
             errors.add(StevesEnum.NO_RF_ERROR.toString());
         }
+    }
+
+    @Override
+    public void readNetworkComponent(DataReader dr)
+    {
+        super.readNetworkComponent(dr);
+        if (!getParent().getManager().getWorldObj().isRemote)
+            updateConnectedNodes();
     }
 
     protected void initRadioButtons()

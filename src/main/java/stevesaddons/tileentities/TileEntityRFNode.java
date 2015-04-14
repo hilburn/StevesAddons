@@ -6,11 +6,17 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import stevesaddons.components.ComponentMenuRF;
+import stevesaddons.components.ComponentMenuRFInput;
+import stevesaddons.components.ComponentMenuRFOutput;
+import stevesaddons.components.ComponentMenuTargetRF;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.MessageHelper;
 import stevesaddons.network.message.RFNodeUpdateMessage;
 import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.components.ComponentMenu;
+import vswe.stevesfactory.components.FlowComponent;
 
 import java.util.*;
 
@@ -20,6 +26,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     private boolean[] outputSides = new boolean[6];
     private boolean[] oldSides = new boolean[12];
     Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
+    private Set<FlowComponent> components = new HashSet<FlowComponent>();
     private static final String MANAGERS = "Managers";
     private static final String INPUTS = "Inputs";
     private static final String OUTPUTS = "Outputs";
@@ -39,10 +46,13 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     private boolean checkUpdate()
     {
         if (worldObj.isRemote) return false;
-        updated = false;
         for (int i = 0; i < 6; i++)
         {
-            if (inputSides[i] != oldSides[i] || outputSides[i] != oldSides[i + 6]) return true;
+            if (inputSides[i] != oldSides[i] || outputSides[i] != oldSides[i + 6])
+            {
+                updated = false;
+                return true;
+            }
         }
         return false;
     }
@@ -57,6 +67,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
                 oldSides[i] = inputSides[i];
                 oldSides[i + 6] = outputSides[i];
             }
+            updated = true;
         }
     }
 
@@ -164,12 +175,17 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     public void added(TileEntityManager tileEntityManager)
     {
         managers.add(tileEntityManager);
+        for (FlowComponent component : tileEntityManager.getFlowItems()) update(component);
     }
 
     @Override
     public void removed(TileEntityManager tileEntityManager)
     {
         managers.remove(tileEntityManager);
+        for (Iterator<FlowComponent> itr = components.iterator(); itr.hasNext(); )
+        {
+            if (itr.next().getManager() == tileEntityManager) itr.remove();
+        }
     }
 
     @Override
@@ -238,5 +254,41 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     {
         writeToNBT(new NBTTagCompound());
         return MessageHandler.INSTANCE.getPacketFrom(new RFNodeUpdateMessage(this));
+    }
+
+    public void update(FlowComponent component)
+    {
+        ComponentMenu menu = component.getMenus().get(0);
+        if (menu instanceof ComponentMenuRFInput || menu instanceof ComponentMenuRFOutput)
+        {
+            if (((ComponentMenuRF)menu).isSelected(this))
+            {
+                if (!components.contains(component)) components.add(component);
+            } else
+            {
+                if (components.contains(component)) components.remove(component);
+            }
+            updateConnections();
+        }
+    }
+
+    private void updateConnections()
+    {
+        resetArrays();
+        for (FlowComponent component : components)
+        {
+            boolean[] array = getSides(component.getMenus().get(0) instanceof ComponentMenuRFInput);
+            ComponentMenuTargetRF target = (ComponentMenuTargetRF)component.getMenus().get(1);
+            for (int i = 0; i < 6; i++)
+            {
+                if (target.isActive(i)) array[i] = true;
+            }
+        }
+        if (checkUpdate()) sendUpdatePacket();
+    }
+
+    private boolean[] getSides(boolean input)
+    {
+        return input ? inputSides : outputSides;
     }
 }
