@@ -45,29 +45,28 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
 
     private boolean checkUpdate()
     {
-        if (worldObj.isRemote) return false;
-        for (int i = 0; i < 6; i++)
-        {
-            if (inputSides[i] != oldSides[i] || outputSides[i] != oldSides[i + 6])
-            {
-                updated = false;
-                return true;
-            }
-        }
-        return false;
+//        if (worldObj.isRemote) return false;
+//        updated = false;
+//        for (int i = 0; i < 6; i++)
+//        {
+//            if (inputSides[i] != oldSides[i] || outputSides[i] != oldSides[i + 6])  return true;
+//        }
+//        return false;
+        return true;
     }
 
     private void sendUpdatePacket()
     {
-        if (worldObj != null && !worldObj.isRemote)
+        if (worldObj != null && worldObj.isRemote)
         {
-            MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
+//            MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
             for (int i = 0; i < 6; i++)
             {
                 oldSides[i] = inputSides[i];
                 oldSides[i + 6] = outputSides[i];
             }
             updated = true;
+            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         }
     }
 
@@ -263,12 +262,19 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
         {
             if (((ComponentMenuRF)menu).isSelected(this))
             {
-                if (!components.contains(component)) components.add(component);
+                if (!components.contains(component))
+                {
+                    components.add(component);
+                    updateConnections();
+                }
             } else
             {
-                if (components.contains(component)) components.remove(component);
+                if (components.contains(component))
+                {
+                    components.remove(component);
+                    updateConnections();
+                }
             }
-            updateConnections();
         }
     }
 
@@ -284,7 +290,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
                 if (target.isActive(i)) array[i] = true;
             }
         }
-        if (checkUpdate()) sendUpdatePacket();
+        sendUpdatePacket();
     }
 
     private boolean[] getSides(boolean input)

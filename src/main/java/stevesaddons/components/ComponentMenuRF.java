@@ -21,7 +21,7 @@ public abstract class ComponentMenuRF extends ComponentMenuContainer
     {
         for (ConnectionBlock block : getParent().getManager().getConnectedInventories())
         {
-            if (block.getTileEntity() == node) return true;
+            if (block.getTileEntity() == node) return getSelectedInventories().contains(block.getId());
         }
         return false;
     }

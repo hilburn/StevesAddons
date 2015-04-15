@@ -106,4 +106,15 @@ public class ComponentMenuTargetRF extends ComponentMenuTarget
     {
 
     }
+
+    @Override
+    public void readNetworkComponent(DataReader dr)
+    {
+        super.readNetworkComponent(dr);
+        ComponentMenu menu = getParent().getMenus().get(0);
+        if (menu instanceof ComponentMenuRF)
+        {
+            ((ComponentMenuRF)menu).updateConnectedNodes();
+        }
+    }
 }
