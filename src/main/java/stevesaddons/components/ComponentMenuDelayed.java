@@ -165,10 +165,9 @@ public class ComponentMenuDelayed extends ComponentMenuTriggered
     }
 
     @Override
-    protected void act()
+    public boolean remove()
     {
-        super.act();
-        StevesHooks.unregisterTrigger(getParent(), this);
+        return counter < 0;
     }
 
     @Override

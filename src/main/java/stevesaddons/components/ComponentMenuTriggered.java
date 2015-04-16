@@ -118,6 +118,11 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         }
     }
 
+    public boolean remove()
+    {
+        return false;
+    }
+
     protected void act()
     {
         getParent().getManager().activateTrigger(getParent(), getConnectionSets());

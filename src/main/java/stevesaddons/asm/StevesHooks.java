@@ -301,17 +301,13 @@ public class StevesHooks
                 if (toTrigger.isVisible())
                 {
                     toTrigger.tick();
+                    if (toTrigger.remove()) itr.remove();
                 }else
                 {
                     itr.remove();
                 }
             }
         }
-    }
-
-    public static void unregisterTrigger(FlowComponent parent, ComponentMenuTriggered menu)
-    {
-        getRegistry(menu).get(parent.getManager()).remove(parent);
     }
 
     private static Multimap<TileEntityManager, FlowComponent> getRegistry(ComponentMenuTriggered menu)
