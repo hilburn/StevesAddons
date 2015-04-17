@@ -24,83 +24,36 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
 {
     private boolean[] inputSides = new boolean[6];
     private boolean[] outputSides = new boolean[6];
-    private boolean[] oldSides = new boolean[12];
-    Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
+    private Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
     private Set<FlowComponent> components = new HashSet<FlowComponent>();
-    private static final String MANAGERS = "Managers";
     private static final String INPUTS = "Inputs";
     private static final String OUTPUTS = "Outputs";
-    private static final String X = "x";
-    private static final String Y = "y";
-    private static final String Z = "z";
-    private List<WorldCoordinate> addManagers = new ArrayList<WorldCoordinate>();
     private boolean updated;
 
     @Override
     public void updateEntity()
     {
         super.updateEntity();
-        if (!this.isPartOfCluster() && updated && checkUpdate()) sendUpdatePacket();
-    }
-
-    private boolean checkUpdate()
-    {
-//        if (worldObj.isRemote) return false;
-//        updated = false;
-//        for (int i = 0; i < 6; i++)
-//        {
-//            if (inputSides[i] != oldSides[i] || outputSides[i] != oldSides[i + 6])  return true;
-//        }
-//        return false;
-        return true;
+        if (!this.isPartOfCluster() && updated) sendUpdatePacket();
     }
 
     private void sendUpdatePacket()
     {
-        if (worldObj != null && worldObj.isRemote)
+        if (worldObj != null && !worldObj.isRemote)
         {
-//            MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
-            for (int i = 0; i < 6; i++)
-            {
-                oldSides[i] = inputSides[i];
-                oldSides[i + 6] = outputSides[i];
-            }
-            updated = true;
-            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
+            updated = false;
         }
     }
 
     @Override
     public void writeContentToNBT(NBTTagCompound tagCompound)
     {
-        NBTTagList managers = new NBTTagList();
-        for (TileEntityManager manager : this.managers)
-        {
-            NBTTagCompound thisManager = new NBTTagCompound();
-            thisManager.setInteger(X, manager.xCoord);
-            thisManager.setInteger(Y, manager.yCoord);
-            thisManager.setInteger(Z, manager.zCoord);
-            managers.appendTag(thisManager);
-        }
-        tagCompound.setTag(MANAGERS, managers);
-        tagCompound.setByte(INPUTS, MessageHelper.booleanToByte(inputSides));
-        tagCompound.setByte(OUTPUTS, MessageHelper.booleanToByte(outputSides));
     }
 
     @Override
     public void readContentFromNBT(NBTTagCompound tagCompound)
     {
-        NBTTagList managers = tagCompound.getTagList(MANAGERS, 10);
-        for (int i = 0; i < managers.tagCount(); i++)
-        {
-            NBTTagCompound manager = managers.getCompoundTagAt(i);
-            int x = manager.getInteger(X);
-            int y = manager.getInteger(Y);
-            int z = manager.getInteger(Z);
-            this.addManagers.add(new WorldCoordinate(x, y, z));
-        }
-        inputSides = MessageHelper.byteToBooleanArray(tagCompound.getByte(INPUTS));
-        outputSides = MessageHelper.byteToBooleanArray(tagCompound.getByte(OUTPUTS));
         updated = true;
     }
 
@@ -258,7 +211,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     public void update(FlowComponent component)
     {
         ComponentMenu menu = component.getMenus().get(0);
-        if (menu instanceof ComponentMenuRFInput || menu instanceof ComponentMenuRFOutput)
+        if (menu instanceof ComponentMenuRF)
         {
             if (((ComponentMenuRF)menu).isSelected(this))
             {
@@ -280,17 +233,17 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
 
     private void updateConnections()
     {
-        resetArrays();
         for (FlowComponent component : components)
         {
             boolean[] array = getSides(component.getMenus().get(0) instanceof ComponentMenuRFInput);
             ComponentMenuTargetRF target = (ComponentMenuTargetRF)component.getMenus().get(1);
             for (int i = 0; i < 6; i++)
             {
-                if (target.isActive(i)) array[i] = true;
+                boolean active = target.isActive(i);
+                if (active != array[i]) updated = true;
+                array[i] = active;
             }
         }
-        sendUpdatePacket();
     }
 
     private boolean[] getSides(boolean input)

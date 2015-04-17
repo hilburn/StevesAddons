@@ -6,10 +6,6 @@ import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.FlowComponent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public abstract class ComponentMenuRF extends ComponentMenuContainer
 {
     public ComponentMenuRF(FlowComponent parent, ConnectionBlockType validType)
@@ -28,13 +24,13 @@ public abstract class ComponentMenuRF extends ComponentMenuContainer
 
     public void updateConnectedNodes()
     {
-        List<ConnectionBlock> connections = getParent().getManager().getConnectedInventories();
-        Map<Integer, ConnectionBlock> connectionBlocks = new HashMap<Integer, ConnectionBlock>();
-        for (ConnectionBlock connection:connections) connectionBlocks.put(connection.getId(), connection);
-        for (int i : getSelectedInventories())
+        if (!getParent().getManager().getWorldObj().isRemote)
         {
-            ConnectionBlock block = connectionBlocks.get(i);
-            if (block.getTileEntity() instanceof TileEntityRFNode) ((TileEntityRFNode)block.getTileEntity()).update(getParent());
+            for (ConnectionBlock connection : getParent().getManager().getConnectedInventories())
+            {
+                if (connection.getTileEntity() instanceof TileEntityRFNode)
+                    ((TileEntityRFNode)connection.getTileEntity()).update(getParent());
+            }
         }
     }
 }

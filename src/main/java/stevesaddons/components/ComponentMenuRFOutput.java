@@ -31,8 +31,7 @@ public class ComponentMenuRFOutput extends ComponentMenuRF
     public void readNetworkComponent(DataReader dr)
     {
         super.readNetworkComponent(dr);
-        if (!getParent().getManager().getWorldObj().isRemote)
-            updateConnectedNodes();
+        updateConnectedNodes();
     }
 
     protected void initRadioButtons()

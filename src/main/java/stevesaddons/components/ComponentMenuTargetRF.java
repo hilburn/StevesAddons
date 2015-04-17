@@ -111,10 +111,13 @@ public class ComponentMenuTargetRF extends ComponentMenuTarget
     public void readNetworkComponent(DataReader dr)
     {
         super.readNetworkComponent(dr);
-        ComponentMenu menu = getParent().getMenus().get(0);
-        if (menu instanceof ComponentMenuRF)
+        if (!getParent().getManager().getWorldObj().isRemote)
         {
-            ((ComponentMenuRF)menu).updateConnectedNodes();
+            ComponentMenu menu = getParent().getMenus().get(0);
+            if (menu instanceof ComponentMenuRF)
+            {
+                ((ComponentMenuRF)menu).updateConnectedNodes();
+            }
         }
     }
 }
