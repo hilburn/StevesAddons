@@ -4,7 +4,6 @@ import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import stevesaddons.components.ComponentMenuRF;
 import stevesaddons.components.ComponentMenuRFInput;
@@ -20,98 +19,84 @@ import java.util.*;
 
 public class TileEntityRFNode extends TileEntityClusterElement implements IEnergyProvider, IEnergyReceiver, ISystemListener
 {
+    public static final int MAX_BUFFER = 96000;
     private boolean[] inputSides = new boolean[6];
     private boolean[] outputSides = new boolean[6];
-//    private Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
+    private Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
     private Set<FlowComponent> components = new HashSet<FlowComponent>();
-    private static final String INPUTS = "Inputs";
-    private static final String OUTPUTS = "Outputs";
-    private boolean updated;
+    private static final String STORED = "Stored";
+    private boolean updated = true;
+    private int stored;
 
     @Override
     public void updateEntity()
     {
         super.updateEntity();
-        if (!this.isPartOfCluster() && updated) sendUpdatePacket();
+        if (!worldObj.isRemote)
+        {
+            if (!managers.isEmpty())
+            {
+                for (TileEntityManager manager : managers)
+                    for (FlowComponent component : manager.getFlowItems()) update(component);
+                managers.clear();
+            }
+            if (!this.isPartOfCluster() && updated) sendUpdatePacket();
+        }
     }
 
     private void sendUpdatePacket()
     {
-        if (worldObj != null && !worldObj.isRemote)
-        {
-            MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
-            updated = false;
-        }
+        MessageHandler.INSTANCE.sendToAll(new RFNodeUpdateMessage(this));
+        updated = false;
     }
 
     @Override
     public void writeContentToNBT(NBTTagCompound tagCompound)
     {
+        tagCompound.setInteger(STORED, stored);
     }
 
     @Override
     public void readContentFromNBT(NBTTagCompound tagCompound)
     {
+        stored = tagCompound.getInteger(STORED);
     }
 
 
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
     {
-        int toReceive = maxReceive;
-        for (int i = 0; i < 6; i++)
+        if (inputSides[from.ordinal()])
         {
-            if (outputSides[i])
-            {
-                TileEntity te = getTileEntityOnSide(i);
-                if (te != null && te instanceof IEnergyReceiver && !(te instanceof TileEntityRFNode))
-                {
-                    toReceive -= ((IEnergyReceiver)te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toReceive, simulate);
-                    if (toReceive == 0) break;
-                }
-            }
+            int toReceive = Math.min(maxReceive, MAX_BUFFER - stored);
+            if (!simulate) stored += toReceive;
+            return toReceive;
         }
-        return maxReceive - toReceive;
-    }
-
-    private TileEntity getTileEntityOnSide(int side)
-    {
-        ForgeDirection dir = ForgeDirection.getOrientation(side);
-        int x = xCoord + dir.offsetX;
-        int y = yCoord + dir.offsetY;
-        int z = zCoord + dir.offsetZ;
-        return worldObj.getTileEntity(x, y, z);
+        return 0;
     }
 
     @Override
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
     {
-        int toExtract = maxExtract;
-        for (int i = 0; i < 6; i++)
+        if (outputSides[from.ordinal()])
         {
-            if (inputSides[i])
-            {
-                TileEntity te = getTileEntityOnSide(i);
-                if (te != null && te instanceof IEnergyProvider && !(te instanceof TileEntityRFNode))
-                {
-                    toExtract -= ((IEnergyProvider)te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
-                    if (toExtract == 0) break;
-                }
-            }
+            int toExtract = Math.min(maxExtract, stored);
+            if (!simulate) stored -= toExtract;
+            return toExtract;
         }
-        return maxExtract - toExtract;
+        return 0;
     }
 
     @Override
     public int getEnergyStored(ForgeDirection from)
     {
-        return 10000;
+        return stored;
     }
 
     @Override
     public int getMaxEnergyStored(ForgeDirection from)
     {
-        return 20000;
+        return MAX_BUFFER;
     }
 
     @Override
@@ -123,8 +108,7 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     @Override
     public void added(TileEntityManager tileEntityManager)
     {
-//        managers.add(tileEntityManager);
-        for (FlowComponent component : tileEntityManager.getFlowItems()) update(component);
+        managers.add(tileEntityManager);
     }
 
     @Override
@@ -205,15 +189,23 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
 
     private void updateConnections()
     {
-        for (FlowComponent component : components)
+        if (components.isEmpty())
         {
-            boolean[] array = getSides(component.getMenus().get(0) instanceof ComponentMenuRFInput);
-            ComponentMenuTargetRF target = (ComponentMenuTargetRF)component.getMenus().get(1);
-            for (int i = 0; i < 6; i++)
+            this.updated = true;
+            this.inputSides = new boolean[6];
+            this.outputSides = new boolean[6];
+        }else
+        {
+            for (FlowComponent component : components)
             {
-                boolean active = target.isActive(i);
-                if (active != array[i]) updated = true;
-                array[i] = active;
+                boolean[] array = getSides(component.getMenus().get(0) instanceof ComponentMenuRFInput);
+                ComponentMenuTargetRF target = (ComponentMenuTargetRF)component.getMenus().get(1);
+                for (int i = 0; i < 6; i++)
+                {
+                    boolean active = target.isActive(i);
+                    if (active != array[i]) updated = true;
+                    array[i] = active;
+                }
             }
         }
     }
