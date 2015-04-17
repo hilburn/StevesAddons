@@ -649,10 +649,10 @@ public class CommandExecutorRF extends CommandExecutor
             if (maxReceive == 0) itr.remove();
         }
         int inserted = validOutputs.size();
-        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext(); inserted--)
+        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext() && !rfBuffer.isEmpty(); inserted--)
         {
             IEnergyReceiver cell = itr.next();
-            int maxReceive = ((int)bufferSize) / (inserted);
+            int maxReceive = (int)(bufferSize / inserted);
             for (int side : directions)
             {
                 int insert = cell.receiveEnergy(ForgeDirection.getOrientation(side), maxReceive, false);
@@ -665,7 +665,7 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
         }
-        if (bufferSize > 0 && validOutputs.size() > 0) insertRF(directions, validOutputs, bufferSize);
+        if (bufferSize > 0 && validOutputs.size() > 0 && !rfBuffer.isEmpty()) insertRF(directions, validOutputs, bufferSize);
     }
 
     private void removeRF(int amount)
