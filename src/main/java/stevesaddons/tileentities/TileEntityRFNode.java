@@ -1,18 +1,16 @@
 package stevesaddons.tileentities;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import stevesaddons.components.ComponentMenuRF;
 import stevesaddons.components.ComponentMenuRFInput;
-import stevesaddons.components.ComponentMenuRFOutput;
 import stevesaddons.components.ComponentMenuTargetRF;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.network.MessageHandler;
-import stevesaddons.network.MessageHelper;
 import stevesaddons.network.message.RFNodeUpdateMessage;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.components.ComponentMenu;
@@ -20,11 +18,11 @@ import vswe.stevesfactory.components.FlowComponent;
 
 import java.util.*;
 
-public class TileEntityRFNode extends TileEntityClusterElement implements IEnergyHandler, ISystemListener
+public class TileEntityRFNode extends TileEntityClusterElement implements IEnergyProvider, IEnergyReceiver, ISystemListener
 {
     private boolean[] inputSides = new boolean[6];
     private boolean[] outputSides = new boolean[6];
-    private Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
+//    private Set<TileEntityManager> managers = new HashSet<TileEntityManager>();
     private Set<FlowComponent> components = new HashSet<FlowComponent>();
     private static final String INPUTS = "Inputs";
     private static final String OUTPUTS = "Outputs";
@@ -54,7 +52,6 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     @Override
     public void readContentFromNBT(NBTTagCompound tagCompound)
     {
-        updated = true;
     }
 
 
@@ -67,9 +64,9 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
             if (outputSides[i])
             {
                 TileEntity te = getTileEntityOnSide(i);
-                if (te != null && te instanceof IEnergyHandler)
+                if (te != null && te instanceof IEnergyReceiver && !(te instanceof TileEntityRFNode))
                 {
-                    toReceive -= ((IEnergyHandler)te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toReceive, simulate);
+                    toReceive -= ((IEnergyReceiver)te).receiveEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toReceive, simulate);
                     if (toReceive == 0) break;
                 }
             }
@@ -95,9 +92,9 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
             if (inputSides[i])
             {
                 TileEntity te = getTileEntityOnSide(i);
-                if (te != null && te instanceof IEnergyHandler)
+                if (te != null && te instanceof IEnergyProvider && !(te instanceof TileEntityRFNode))
                 {
-                    toExtract -= ((IEnergyHandler)te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
+                    toExtract -= ((IEnergyProvider)te).extractEnergy(ForgeDirection.getOrientation(ForgeDirection.OPPOSITES[i]), toExtract, simulate);
                     if (toExtract == 0) break;
                 }
             }
@@ -126,14 +123,14 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     @Override
     public void added(TileEntityManager tileEntityManager)
     {
-        managers.add(tileEntityManager);
+//        managers.add(tileEntityManager);
         for (FlowComponent component : tileEntityManager.getFlowItems()) update(component);
     }
 
     @Override
     public void removed(TileEntityManager tileEntityManager)
     {
-        managers.remove(tileEntityManager);
+//        managers.remove(tileEntityManager);
         for (Iterator<FlowComponent> itr = components.iterator(); itr.hasNext(); )
         {
             if (itr.next().getManager() == tileEntityManager) itr.remove();
@@ -154,31 +151,6 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
     public boolean isOutput(int side)
     {
         return outputSides[side];
-    }
-
-    public void setInputSides(Integer[] sides)
-    {
-        if (!updated) resetArrays();
-        for (int side : sides)
-        {
-            inputSides[side] = true;
-        }
-    }
-
-    private void resetArrays()
-    {
-        inputSides = new boolean[6];
-        outputSides = new boolean[6];
-        updated = true;
-    }
-
-    public void setOutputSides(Integer[] sides)
-    {
-        if (!updated) resetArrays();
-        for (int side : sides)
-        {
-            outputSides[side] = true;
-        }
     }
 
     public void setOutputSides(boolean[] outputSides)
