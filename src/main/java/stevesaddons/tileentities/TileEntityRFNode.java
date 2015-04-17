@@ -4,6 +4,7 @@ import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import stevesaddons.components.ComponentMenuRF;
 import stevesaddons.components.ComponentMenuRFInput;
@@ -41,7 +42,27 @@ public class TileEntityRFNode extends TileEntityClusterElement implements IEnerg
                 managers.clear();
             }
             if (!this.isPartOfCluster() && updated) sendUpdatePacket();
+            for (int i = 0; i<inputSides.length; i++)
+            {
+                ForgeDirection dir = ForgeDirection.getOrientation(i);
+                TileEntity te = getTileEntity(dir);
+                if (inputSides[i] && te instanceof IEnergyProvider)
+                {
+                    int amount = ((IEnergyProvider)te).extractEnergy(dir.getOpposite(), MAX_BUFFER - stored, false);
+                    this.receiveEnergy(dir, amount, false);
+                }
+                if (outputSides[i] && te instanceof IEnergyReceiver)
+                {
+                    int amount = ((IEnergyReceiver)te).receiveEnergy(dir.getOpposite(), stored, false);
+                    this.receiveEnergy(dir, amount, false);
+                }
+            }
         }
+    }
+
+    private TileEntity getTileEntity(ForgeDirection dir)
+    {
+        return worldObj.getTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
     }
 
     private void sendUpdatePacket()
