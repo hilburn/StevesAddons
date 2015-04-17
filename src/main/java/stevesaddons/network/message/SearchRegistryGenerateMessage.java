@@ -23,7 +23,7 @@ public class SearchRegistryGenerateMessage implements IMessage, IMessageHandler<
     @Override
     public IMessage onMessage(SearchRegistryGenerateMessage message, MessageContext ctx)
     {
-        if (ctx.side == Side.CLIENT)
+        if (ctx.side == Side.CLIENT && SearchItems.searchEntries.isEmpty())
         {
             long time = System.currentTimeMillis();
             SearchItems.setItems();

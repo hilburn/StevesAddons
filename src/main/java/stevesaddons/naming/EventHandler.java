@@ -22,7 +22,10 @@ public class EventHandler
     public void playerLogIn(PlayerEvent.PlayerLoggedInEvent event)
     {
         if (event.player instanceof EntityPlayerMP)
+        {
             NameRegistry.syncNameData((EntityPlayerMP)event.player);
+            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(), (EntityPlayerMP)event.player);
+        }
     }
 
     @SubscribeEvent
@@ -53,13 +56,6 @@ public class EventHandler
         NameData nameData = NameRegistry.getWorldData(event.world.provider.dimensionId, false);
         if (nameData != null)
             event.world.perWorldStorage.setData(NameData.KEY, nameData);
-    }
-
-    @SubscribeEvent
-    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        if (event.player instanceof EntityPlayerMP)
-            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(), (EntityPlayerMP)event.player);
     }
 
     @SubscribeEvent
