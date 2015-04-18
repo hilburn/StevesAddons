@@ -33,12 +33,17 @@ public class NameRegistry
     public static void saveName(World world, int x, int y, int z, String name)
     {
         BlockCoord coord = new BlockCoord(x, y, z, name);
-        if (!instance.nameMapping.containsKey(world.provider.dimensionId))
-            instance.nameMapping.put(world.provider.dimensionId, new NameData());
-        NameData data = instance.nameMapping.get(world.provider.dimensionId);
-        data.markDirty();
-        //if (world.isRemote) MessageHandler.INSTANCE.sendToServer(new NameDataUpdateMessage(world.provider.dimensionId, coord));
-        MessageHandler.INSTANCE.sendToAll(new NameDataUpdateMessage(world.provider.dimensionId, coord));
+        if (world.isRemote)
+        {
+            MessageHandler.INSTANCE.sendToServer(new NameDataUpdateMessage(world.provider.dimensionId, coord));
+        }else
+        {
+            if (!instance.nameMapping.containsKey(world.provider.dimensionId))
+                instance.nameMapping.put(world.provider.dimensionId, new NameData());
+            NameData data = instance.nameMapping.get(world.provider.dimensionId);
+            data.markDirty();
+            MessageHandler.INSTANCE.sendToAll(new NameDataUpdateMessage(world.provider.dimensionId, coord));
+        }
     }
 
     public static void saveName(NameDataUpdateMessage message)

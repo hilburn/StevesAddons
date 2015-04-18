@@ -13,9 +13,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 import stevesaddons.StevesAddons;
+import stevesaddons.naming.NameRegistry;
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
 import stevesaddons.registry.ItemRegistry;
@@ -43,6 +46,31 @@ public class ItemLabeler extends Item
             player.openGui(StevesAddons.INSTANCE, 0, world, player.chunkCoordX, player.chunkCoordY, player.chunkCoordZ);
         }
         return super.onItemRightClick(stack, world, player);
+    }
+
+    @Override
+    public boolean onBlockStartBreak(ItemStack stack, int x, int y, int z, EntityPlayer player)
+    {
+        if (isValidTile(player.getEntityWorld(), x, y, z))
+        {
+            if (player.getEntityWorld().isRemote)
+            {
+                String label = ItemLabeler.getLabel(stack);
+                if (label.isEmpty())
+                {
+                    if (NameRegistry.removeName(player.getEntityWorld(), x, y, z))
+                    {
+                        player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
+                    }
+                } else
+                {
+                    NameRegistry.saveName(player.getEntityWorld(), x, y, z, label);
+                    player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public static boolean isValidTile(World world, int x, int y, int z)

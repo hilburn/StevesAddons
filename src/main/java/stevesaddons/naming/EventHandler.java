@@ -2,8 +2,10 @@ package stevesaddons.naming;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -12,9 +14,11 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import stevesaddons.items.ItemLabeler;
+import stevesaddons.items.ItemSFMDrive;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.SearchRegistryGenerateMessage;
 import stevesaddons.registry.ItemRegistry;
+import vswe.stevesfactory.blocks.TileEntityManager;
 
 public class EventHandler
 {
@@ -62,33 +66,48 @@ public class EventHandler
     public void playerInteract(PlayerInteractEvent event)
     {
         ItemStack stack = event.entityPlayer.getCurrentEquippedItem();
-        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && isLabeler(stack))
+        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && stack != null)
         {
             World world = event.world;
             int x = event.x;
             int y = event.y;
             int z = event.z;
-            if (ItemLabeler.isValidTile(world, x, y, z))
+            EntityPlayer player = event.entityPlayer;
+            if (stack.getItem() == ItemRegistry.labeler)
             {
-                String label = ItemLabeler.getLabel(stack);
-                if (label.isEmpty())
+                if (ItemLabeler.isValidTile(world, x, y, z))
                 {
-                    if (NameRegistry.removeName(world, x, y, z))
+                    String label = ItemLabeler.getLabel(stack);
+                    if (label.isEmpty())
                     {
-                        event.entityPlayer.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
+                        if (NameRegistry.removeName(world, x, y, z))
+                        {
+                            player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
+                        }
+                    } else
+                    {
+                        NameRegistry.saveName(world, x, y, z, label);
+                        player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
                     }
-                } else
-                {
-                    NameRegistry.saveName(world, x, y, z, label);
-                    event.entityPlayer.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
+                    event.setCanceled(true);
                 }
-                event.setCanceled(true);
+            }
+            else if (stack.getItem() == ItemRegistry.duplicator && player.isSneaking())
+            {
+                TileEntity te = world.getTileEntity(x, y, z);
+                if (te instanceof TileEntityManager)
+                {
+                    world.removeTileEntity(x, y, z);
+                    TileEntityManager manager = new TileEntityManager();
+                    if (stack.hasTagCompound() && ItemSFMDrive.validateNBT(stack))
+                    {
+                        manager.readFromNBT(stack.getTagCompound());
+                        stack.setTagCompound(null);
+                    }
+                    world.setTileEntity(x, y, z, manager);
+                    event.setCanceled(true);
+                }
             }
         }
-    }
-
-    private static boolean isLabeler(ItemStack stack)
-    {
-        return stack != null && stack.getItem() == ItemRegistry.labeler;
     }
 }
