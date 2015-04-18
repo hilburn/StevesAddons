@@ -32,6 +32,8 @@ public class CommandExecutorRF extends CommandExecutor
 {
     private TileEntityManager manager;
     private List<RFBufferElement> rfBuffer;
+    private List<CraftingBufferFluidElement> craftingBufferHigh;
+    private List<CraftingBufferFluidElement> craftingBufferLow;
     private List<Integer> usedCommands;
     public static final int MAX_FLUID_TRANSFER = 10000000;
 
@@ -40,14 +42,14 @@ public class CommandExecutorRF extends CommandExecutor
         super(manager);
         this.manager = manager;
         this.itemBuffer = new ArrayList<ItemBufferElement>();
-        this.craftingBufferHigh = new ArrayList<CraftingBufferElement>();
-        this.craftingBufferLow = new ArrayList<CraftingBufferElement>();
+        this.craftingBufferHigh = new ArrayList<CraftingBufferFluidElement>();
+        this.craftingBufferLow = new ArrayList<CraftingBufferFluidElement>();
         this.rfBuffer = new ArrayList<RFBufferElement>();
         this.liquidBuffer = new ArrayList<LiquidBufferElement>();
         this.usedCommands = new ArrayList<Integer>();
     }
 
-    private CommandExecutorRF(TileEntityManager manager, List<ItemBufferElement> itemBufferSplit, List<CraftingBufferElement> craftingBufferHighSplit, List<CraftingBufferElement> craftingBufferLowSplit, List<LiquidBufferElement> liquidBufferSplit, List<RFBufferElement> rfBuffer, List<Integer> usedCommandCopy)
+    private CommandExecutorRF(TileEntityManager manager, List<ItemBufferElement> itemBufferSplit, List<CraftingBufferFluidElement> craftingBufferHighSplit, List<CraftingBufferFluidElement> craftingBufferLowSplit, List<LiquidBufferElement> liquidBufferSplit, List<RFBufferElement> rfBuffer, List<Integer> usedCommandCopy)
     {
         super(manager);
         this.manager = manager;
@@ -209,7 +211,7 @@ public class CommandExecutorRF extends CommandExecutor
                         this.executeChildCommands(command, EnumSet.of(ConnectionOption.STANDARD_OUTPUT));
                         return;
                     case 12:
-                        CraftingBufferElement element = new CraftingBufferElement(this, (ComponentMenuCrafting)command.getMenus().get(0), (ComponentMenuContainerScrap)command.getMenus().get(2));
+                        CraftingBufferFluidElement element = new CraftingBufferFluidElement(this, (ComponentMenuCrafting)command.getMenus().get(0), (ComponentMenuContainerScrap)command.getMenus().get(2));
                         if (((ComponentMenuCraftingPriority)command.getMenus().get(1)).shouldPrioritizeCrafting())
                         {
                             this.craftingBufferHigh.add(element);
@@ -1020,18 +1022,17 @@ public class CommandExecutorRF extends CommandExecutor
                 outputCounters.clear();
             }
 
-            for (CraftingBufferElement craftingBufferElement : craftingBufferHigh)
+            for (CraftingBufferFluidElement craftingBufferElement : craftingBufferHigh)
             {
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
             }
-
 
             for (ItemBufferElement itemBufferElement : itemBuffer)
             {
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, itemBufferElement);
             }
 
-            for (CraftingBufferElement craftingBufferElement : craftingBufferLow)
+            for (CraftingBufferFluidElement craftingBufferElement : craftingBufferLow)
             {
                 this.insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
             }
@@ -1447,7 +1448,7 @@ public class CommandExecutorRF extends CommandExecutor
                         var17.add(usedCommand);
                     }
 
-                    CommandExecutorRF var20 = new CommandExecutorRF(this.manager, itemBufferSplit, new ArrayList<CraftingBufferElement>(this.craftingBufferHigh), new ArrayList<CraftingBufferElement>(this.craftingBufferLow), liquidBufferSplit, rfBuffer, var17);
+                    CommandExecutorRF var20 = new CommandExecutorRF(this.manager, itemBufferSplit, new ArrayList<CraftingBufferFluidElement>(this.craftingBufferHigh), new ArrayList<CraftingBufferFluidElement>(this.craftingBufferLow), liquidBufferSplit, rfBuffer, var17);
                     var20.executeCommand(this.manager.getFlowItems().get(connection.getComponentId()), connection.getConnectionId());
                     ++var14;
                 }

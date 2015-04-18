@@ -55,7 +55,7 @@ public class NameRegistry
 
     public static boolean removeName(World world, int x, int y, int z)
     {
-        BlockCoord coord = new BlockCoord(x, y, z);
+        BlockCoord coord = new BlockCoord(x, y, z, "");
         if (!instance.nameMapping.containsKey(world.provider.dimensionId)) return false;
         NameData data = instance.nameMapping.get(world.provider.dimensionId);
         if (!data.names.containsKey(coord)) return false;
