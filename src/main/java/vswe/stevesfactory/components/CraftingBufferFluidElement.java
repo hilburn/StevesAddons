@@ -310,6 +310,7 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
                                 fluidElement.amountToFind -= maxAmount;
                                 if (remove)
                                 {
+                                    tank.reduceAmount(maxAmount);
                                     FluidStack toRemove = fluidElement.fluid;
                                     toRemove.amount = maxAmount;
                                     tank.getTank().drain(tank.getSide(), maxAmount, true);

@@ -1151,12 +1151,12 @@ public class CommandExecutorRF extends CommandExecutor
         itemBufferElement.releaseSubElements();
     }
 
-    private void insertLiquids(ComponentMenu componentMenu, List<SlotInventoryHolder> cells)
+    private void insertLiquids(ComponentMenu componentMenu, List<SlotInventoryHolder> tanks)
     {
         ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         ArrayList<OutputLiquidCounter> outputCounters = new ArrayList<OutputLiquidCounter>();
 
-        for (SlotInventoryHolder tankHolder : cells)
+        for (SlotInventoryHolder tankHolder : tanks)
         {
             if (!tankHolder.isShared())
             {
@@ -1189,7 +1189,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                         if (outputLiquidCounter == null)
                         {
-                            outputLiquidCounter = new OutputLiquidCounter(this.liquidBuffer, cells, tankHolder, setting, menuItem.useWhiteList());
+                            outputLiquidCounter = new OutputLiquidCounter(this.liquidBuffer, tanks, tankHolder, setting, menuItem.useWhiteList());
                             outputCounters.add(outputLiquidCounter);
                         }
 
