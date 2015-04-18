@@ -291,36 +291,40 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
                 }
             }
 
-            for (LiquidBufferElement liquidBufferElement : this.executor.liquidBuffer)
+            if (fluids.size() > 0)
             {
-                Iterator<StackTankHolder> itr = liquidBufferElement.getHolders().iterator();
-                while (itr.hasNext())
+                for (LiquidBufferElement liquidBufferElement : this.executor.liquidBuffer)
                 {
-                    StackTankHolder tank = itr.next();
-                    for (Iterator<FluidElement> fluidItr = fluids.iterator(); fluidItr.hasNext();)
+                    if (fluids.isEmpty()) break;
+                    Iterator<StackTankHolder> itr = liquidBufferElement.getHolders().iterator();
+                    while (itr.hasNext())
                     {
-                        FluidElement fluidElement = fluidItr.next();
-                        int maxAmount = liquidBufferElement.retrieveItemCount(fluidElement.amountToFind);
-                        if (tank.getFluidStack().isFluidEqual(fluidElement.fluid))
+                        StackTankHolder tank = itr.next();
+                        for (Iterator<FluidElement> fluidItr = fluids.iterator(); fluidItr.hasNext(); )
                         {
-                            maxAmount = Math.min(maxAmount, tank.getSizeLeft());
-                            fluidElement.amountToFind -= maxAmount;
-                            if (remove)
+                            FluidElement fluidElement = fluidItr.next();
+                            int maxAmount = liquidBufferElement.retrieveItemCount(fluidElement.amountToFind);
+                            if (tank.getFluidStack().isFluidEqual(fluidElement.fluid))
                             {
-                                FluidStack toRemove = fluidElement.fluid;
-                                toRemove.amount = maxAmount;
-                                tank.getTank().drain(tank.getSide(), maxAmount, true);
-                            }
-                            if (fluidElement.amountToFind == 0)
-                            {
-                                fluidItr.remove();
-                                for (int i : fluidElement.slots)
-                                    foundItems.put(i, fluidElement.bucket);
-                                break;
+                                maxAmount = Math.min(maxAmount, tank.getSizeLeft());
+                                fluidElement.amountToFind -= maxAmount;
+                                if (remove)
+                                {
+                                    FluidStack toRemove = fluidElement.fluid;
+                                    toRemove.amount = maxAmount;
+                                    tank.getTank().drain(tank.getSide(), maxAmount, true);
+                                }
+                                if (fluidElement.amountToFind == 0)
+                                {
+                                    fluidItr.remove();
+                                    for (int i : fluidElement.slots)
+                                        foundItems.put(i, fluidElement.bucket);
+                                    break;
+                                }
                             }
                         }
+                        if (tank.getSizeLeft() == 0) itr.remove();
                     }
-                    if (tank.getSizeLeft() == 0) itr.remove();
                 }
             }
         }
