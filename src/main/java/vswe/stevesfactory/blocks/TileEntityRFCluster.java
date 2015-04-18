@@ -10,7 +10,6 @@ import java.util.List;
 
 public class TileEntityRFCluster extends TileEntityCluster implements IEnergyHandler
 {
-
     private List getRegistrations(ClusterMethodRegistration clusterMethodRegistration)
     {
         return new ArrayList(); //This gets ASMed out when the access transformers take place
@@ -18,7 +17,7 @@ public class TileEntityRFCluster extends TileEntityCluster implements IEnergyHan
 
     private TileEntityRFNode getTileEntity(Object i)
     {
-        return null; //This return value gets ASMed in when the access transformers take place
+        return new TileEntityRFNode(); //This return value gets ASMed in when the access transformers take place
     }
 
     @Override
@@ -46,13 +45,21 @@ public class TileEntityRFCluster extends TileEntityCluster implements IEnergyHan
     @Override
     public int getEnergyStored(ForgeDirection from)
     {
-        return 10000;
+        for (Object i : getRegistrations(StevesEnum.CONNECT_ENERGY))
+        {
+             return getTileEntity(i).getEnergyStored(from);
+        }
+        return -1;
     }
 
     @Override
     public int getMaxEnergyStored(ForgeDirection from)
     {
-        return 20000;
+        for (Object i : getRegistrations(StevesEnum.CONNECT_ENERGY))
+        {
+            return getTileEntity(i).getMaxEnergyStored(from);
+        }
+        return -1;
     }
 
     @Override

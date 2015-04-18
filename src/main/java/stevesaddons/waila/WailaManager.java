@@ -14,6 +14,8 @@ public class WailaManager
 {
     public static void callbackRegister(IWailaRegistrar register)
     {
+        register.registerBodyProvider(new RFDataFixer(), TileEntityRFCluster.class);
+
         WailaLabelProvider labelProvider = new WailaLabelProvider();
         register.registerBodyProvider(labelProvider, IInventory.class);
         register.registerBodyProvider(labelProvider, IFluidHandler.class);
