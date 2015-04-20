@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CommandPastebin extends CommandDuplicator
 {
@@ -67,7 +70,9 @@ public class CommandPastebin extends CommandDuplicator
                     stripBaseNBT(tagCompound);
                     tagCompound.setString("Author", sender.getCommandSenderName());
                     httpPost.put("api_paste_code", tagCompound.toString());
-                    String inputLine = httpPost.getContents();
+                    ExecutorService service = Executors.newSingleThreadExecutor();
+                    Future<String> line = service.submit(httpPost);
+                    String inputLine = line.get();
                     sender.addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", inputLine)));
                     if (!sender.mcServer.isDedicatedServer())
                     {
@@ -89,7 +94,9 @@ public class CommandPastebin extends CommandDuplicator
                 name = name.replaceAll("http:\\/\\/pastebin.com\\/(.*)", "$1");
                 name = name.replaceAll("pastebin.com\\/(.*)", "$1");
                 HttpPost httpPost = new HttpPost("http://pastebin.com/raw.php?i=" + URLEncoder.encode(name, "UTF-8"));
-                NBTBase nbtBase = JsonToNBT.func_150315_a(httpPost.getContents());
+                ExecutorService service = Executors.newSingleThreadExecutor();
+                Future<String> post = service.submit(httpPost);
+                NBTBase nbtBase = JsonToNBT.func_150315_a(post.get());
                 if (nbtBase instanceof NBTTagCompound)
                 {
                     NBTTagCompound tagCompound = (NBTTagCompound)nbtBase;
