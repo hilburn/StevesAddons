@@ -36,7 +36,7 @@ public class CommandPastebin extends CommandDuplicator
             {
                 if (ItemSFMDrive.validateNBT(duplicator) && duplicator.hasTagCompound())
                 {
-                    (new Thread(new Threaded.Put(duplicator, sender, arguments))).start();
+                    new Thread(new Threaded.Put(duplicator, sender, arguments)).start();
                 } else
                 {
                     throw new CommandException("stevesaddons.command.nothingToSave");
@@ -47,7 +47,7 @@ public class CommandPastebin extends CommandDuplicator
                 {
                     throw new WrongUsageException("stevesaddons.command." + getCommandName() + ".syntax");
                 }
-                (new Thread(new Threaded.Set(duplicator, sender, arguments))).start();
+                new Thread(new Threaded.Set(duplicator, sender, arguments)).start();
             } else
             {
                 throw new WrongUsageException("stevesaddons.command." + getCommandName() + ".syntax");
