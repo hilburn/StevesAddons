@@ -43,15 +43,11 @@ public class Threaded
     {
         private EntityPlayerMP sender;
         private ItemStack duplicator;
-        private HttpPost httpPost;
         private String name;
 
         public Set(ItemStack duplicator, EntityPlayerMP sender, String[] arguments) throws UnsupportedEncodingException
         {
             name = arguments[2];
-            name = name.replaceAll("http:\\/\\/pastebin.com\\/(.*)", "$1");
-            name = name.replaceAll("pastebin.com\\/(.*)", "$1");
-            httpPost = new HttpPost("http://pastebin.com/raw.php?i=" + URLEncoder.encode(name, "UTF-8"));
             this.sender = sender;
             this.duplicator = duplicator;
         }
@@ -59,21 +55,35 @@ public class Threaded
         @Override
         public void run()
         {
+            name = name.replaceAll("http:\\/\\/pastebin.com\\/(.*)", "$1");
+            name = name.replaceAll("pastebin.com\\/(.*)", "$1");
+            HttpPost httpPost;
+            try
+            {
+                httpPost = new HttpPost("http://pastebin.com/raw.php?i=" + URLEncoder.encode(name, "UTF-8"));
+            } catch (UnsupportedEncodingException e)
+            {
+                e.printStackTrace();
+                return;
+            }
             ExecutorService service = Executors.newSingleThreadExecutor();
             Future<String> post = service.submit(httpPost);
-            NBTBase nbtBase = null;
+            NBTBase nbtBase;
             try
             {
                 nbtBase = JsonToNBT.func_150315_a(post.get());
             } catch (NBTException e)
             {
                 e.printStackTrace();
+                return;
             } catch (InterruptedException e)
             {
                 e.printStackTrace();
+                return;
             } catch (ExecutionException e)
             {
                 e.printStackTrace();
+                return;
             }
             if (nbtBase instanceof NBTTagCompound)
             {
@@ -89,11 +99,20 @@ public class Threaded
     public static class Put implements Runnable
     {
         private EntityPlayerMP sender;
-        private HttpPost httpPost;
+        private ItemStack duplicator;
+        private String[] arguments;
 
         public Put(ItemStack duplicator, EntityPlayerMP sender, String[] arguments) throws UnsupportedEncodingException
         {
-            httpPost = new HttpPost("http://pastebin.com/api/api_post.php");
+            this.duplicator = duplicator;
+            this.sender = sender;
+            this.arguments = arguments;
+        }
+
+        @Override
+        public void run()
+        {
+            HttpPost httpPost = new HttpPost("http://pastebin.com/api/api_post.php");
             httpPost.put("api_option", "paste");
             httpPost.put("api_paste_private", "1");
             httpPost.put("api_dev_key", apiKey);
@@ -105,25 +124,20 @@ public class Threaded
             CommandDuplicator.stripBaseNBT(tagCompound);
             tagCompound.setString("Author", sender.getCommandSenderName());
             httpPost.put("api_paste_code", tagCompound.toString());
-            this.sender = sender;
-        }
-
-        @Override
-        public void run()
-        {
-
             ExecutorService service = Executors.newSingleThreadExecutor();
             Future<String> line = service.submit(httpPost);
-            String inputLine = null;
+            String inputLine;
             try
             {
                 inputLine = line.get();
             } catch (InterruptedException e)
             {
                 e.printStackTrace();
+                return;
             } catch (ExecutionException e)
             {
                 e.printStackTrace();
+                return;
             }
             sender.addChatComponentMessage(new ChatComponentText(LocalizationHelper.translateFormatted("stevesaddons.command.savedTo", inputLine)));
             if (!sender.mcServer.isDedicatedServer())
