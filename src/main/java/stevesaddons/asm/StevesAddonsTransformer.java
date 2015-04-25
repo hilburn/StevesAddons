@@ -173,7 +173,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                 },
         PUBLIC_TE("te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;", TransformType.FIELD, TransformType.MAKE_PUBLIC),
         PUBLIC_PAIR("Pair"),
-        REMOVE_COMPONENT("removeFlowComponent", "(I)V")
+        REMOVE_COMPONENT("removeFlowComponent", "(ILjava/util/List;)V")
                 {
                     @Override
                     protected InsnList modifyInstructions(InsnList list)
@@ -181,7 +181,8 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         list.clear();
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new VarInsnNode(ILOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "removeFlowComponent", "(Lvswe/stevesfactory/blocks/TileEntityManager;I)V", false));
+                        list.add(new VarInsnNode(ALOAD, 2));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "removeFlowComponent", "(Lvswe/stevesfactory/blocks/TileEntityManager;ILjava/util/List;)V", false));
                         list.add(new InsnNode(RETURN));
                         return list;
                     }

@@ -178,26 +178,40 @@ public class StevesHooks
         return string;
     }
 
-    public static void removeFlowComponent(TileEntityManager manager, int idToRemove)
+    public static void removeFlowComponent(TileEntityManager manager, int idToRemove, List<FlowComponent> components)
     {
-        for (int id : getIdsToRemove(idToRemove, manager.getFlowItems()))
+        boolean isManagerList = manager.getFlowItems() == components;
+        List<Integer> ids = getIdsToRemove(idToRemove, components);
+        for (int id : ids)
         {
-            manager.removeFlowComponent(id, manager.getFlowItems());
-            if (!manager.getWorldObj().isRemote)
-            {
-                manager.getRemovedIds().add(id);
-            } else
-            {
-                for (int i = 0; i < manager.getZLevelRenderingList().size(); ++i)
-                {
-                    if ((manager.getZLevelRenderingList().get(i)).getId() == id)
-                    {
-                        manager.getZLevelRenderingList().remove(i);
-                        break;
-                    }
+            for(int i = components.size() - 1; i >= 0; --i) {
+                FlowComponent component = components.get(i);
+                if(i == id) {
+                    component.setParent(null);
+                    components.remove(i);
+                } else {
+                    component.updateConnectionIdsAtRemoval(id);
                 }
             }
-            manager.updateVariables();
+
+            if(manager.getSelectedComponent() != null && manager.getSelectedComponent().getId() == id) {
+                manager.setSelectedComponent(null);
+            }
+
+            for(int i = id; i < components.size(); ++i) {
+                components.get(i).decreaseId();
+            }
+        }
+
+        if (isManagerList && manager.getWorldObj().isRemote)
+        {
+            for (Iterator<FlowComponent> itr = manager.getZLevelRenderingList().iterator(); itr.hasNext();)
+            {
+                if (ids.contains(itr.next().getId()))
+                {
+                    itr.remove();
+                }
+            }
         }
     }
 
