@@ -214,6 +214,7 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
         for (Setting setting : this.craftingMenu.getSettings()) settings.add((CraftingSetting)setting);
 
         HashMap<Integer, ItemStack> foundItems = new HashMap<Integer, ItemStack>();
+        Set<ItemStack> usedStacks = new HashSet<ItemStack>();
 
         for (ItemBufferElement itemBufferElement : this.executor.itemBuffer)
         {
@@ -224,6 +225,7 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
             {
                 IItemBufferSubElement itemBufferSubElement = (IItemBufferSubElement)iterator.next();
                 ItemStack itemstack = itemBufferSubElement.getItemStack();
+                if (usedStacks.contains(itemstack)) continue;
                 int subCount = Math.min(count, itemBufferSubElement.getSizeLeft());
 
                 for (int i = 0; i < 9; ++i)
@@ -234,12 +236,12 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
                         if (!setting.isValid())
                         {
                             foundItems.put(i, DUMMY_ITEM);
-                            break;
-                        } if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack))
+                        } else if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack))
                         {
                             foundItems.put(i, itemstack.copy());
                             if (this.craftingMenu.getDummy().isItemValidForRecipe(this.recipe, this.craftingMenu.getResultItem(), foundItems, this.useAdvancedDetection()))
                             {
+                                usedStacks.add(itemstack);
                                 --subCount;
                                 --count;
                                 if (remove)
