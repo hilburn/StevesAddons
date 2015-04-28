@@ -158,7 +158,7 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
     {
         for (IInventory inventory : this.inventories)
         {
-            inventory.markDirty();
+            if (inventory != null) inventory.markDirty();
         }
         this.inventories.clear();
     }
