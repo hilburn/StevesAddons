@@ -6,6 +6,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import java.util.Map;
 
 @IFMLLoadingPlugin.TransformerExclusions({"stevesaddons.asm."})
+@IFMLLoadingPlugin.MCVersion(value = "1.7.10")
 public class LoadingPlugin implements IFMLLoadingPlugin
 {
     public static boolean runtimeDeobfEnabled = FMLForgePlugin.RUNTIME_DEOBF;

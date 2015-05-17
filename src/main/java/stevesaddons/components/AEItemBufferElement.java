@@ -29,7 +29,7 @@ public class AEItemBufferElement extends SlotStackInventoryHolder
 
     @Override
     public IInventory getInventory() {
-        return null;
+        return Null.NULL_INVENTORY;
     }
 
     @Override

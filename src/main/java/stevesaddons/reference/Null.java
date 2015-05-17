@@ -12,7 +12,7 @@ public class Null
         @Override
         public int getSizeInventory()
         {
-            return 0;
+            return 1;
         }
 
         @Override

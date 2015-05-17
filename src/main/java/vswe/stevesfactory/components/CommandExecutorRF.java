@@ -436,7 +436,7 @@ public class CommandExecutorRF extends CommandExecutor
             ConnectionBlock connection = inventories.get(selected);
             if (connection.isOfType(requestType) && connection.isOfAnyType(variableType) && !connection.getTileEntity().isInvalid() && !containsTe(ret, connection.getTileEntity()))
             {
-                ret.add(new SlotInventoryHolder(selected, connection.getTileEntity(), menuContainer.getOption()));
+                ret.add(new AdvancedSlotInventoryHolder(selected, connection.getTileEntity(), menuContainer.getOption()));
             }
         }
     }
@@ -1043,7 +1043,7 @@ public class CommandExecutorRF extends CommandExecutor
     {
         itemBufferElement.prepareSubElements();
 
-        IInventory inventory = inventoryHolder.getTile() instanceof IHiddenInventory? Null.NULL_INVENTORY :inventoryHolder.getInventory();
+        IInventory inventory = inventoryHolder.getInventory();
         IItemBufferSubElement subElement;
         while ((subElement = itemBufferElement.getSubElement()) != null)
         {
@@ -1163,7 +1163,7 @@ public class CommandExecutorRF extends CommandExecutor
                 outputCounters.clear();
             }
 
-            IFluidHandler tank = tankHolder.getTile() instanceof IHiddenTank? ((IHiddenTank)tankHolder.getTile()).getTank() : tankHolder.getTank();
+            IFluidHandler tank = tankHolder.getTank();
 
             for (LiquidBufferElement liquidBufferElement : this.liquidBuffer)
             {

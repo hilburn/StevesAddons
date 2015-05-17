@@ -1,5 +1,6 @@
 package stevesaddons.commands;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -73,6 +74,6 @@ public class CommandPastebin extends CommandDuplicator
     @Override
     public boolean isVisible(ICommandSender sender)
     {
-        return usernameWhitelist.contains(sender.getCommandSenderName()) || Minecraft.getMinecraft().isIntegratedServerRunning();
+        return usernameWhitelist.contains(sender.getCommandSenderName()) || !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
     }
 }
