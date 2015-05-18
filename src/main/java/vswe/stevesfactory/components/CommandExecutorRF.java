@@ -1013,7 +1013,7 @@ public class CommandExecutorRF extends CommandExecutor
     private void insertItems(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories)
     {
         ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
-        ArrayList<OutputItemCounter> outputCounters = new ArrayList<OutputItemCounter>();
+        ArrayList<AdvancedOutputItemCounter> outputCounters = new ArrayList<AdvancedOutputItemCounter>();
 
         for (SlotInventoryHolder inventoryHolder : inventories)
         {
@@ -1039,7 +1039,7 @@ public class CommandExecutorRF extends CommandExecutor
         }
     }
 
-    private void insertItemsFromInputBufferElement(ComponentMenuStuff menuItem, List<SlotInventoryHolder> inventories, List<OutputItemCounter> outputCounters, SlotInventoryHolder inventoryHolder, IItemBufferElement itemBufferElement)
+    private void insertItemsFromInputBufferElement(ComponentMenuStuff menuItem, List<SlotInventoryHolder> inventories, List<AdvancedOutputItemCounter> outputCounters, SlotInventoryHolder inventoryHolder, IItemBufferElement itemBufferElement)
     {
         itemBufferElement.prepareSubElements();
 
@@ -1051,9 +1051,9 @@ public class CommandExecutorRF extends CommandExecutor
             Setting setting = this.isItemValid(menuItem.getSettings(), itemStack);
             if (menuItem.useWhiteList() != (setting == null) || setting != null && setting.isLimitedByAmount())
             {
-                OutputItemCounter outputItemCounter = null;
+                AdvancedOutputItemCounter outputItemCounter = null;
 
-                for (OutputItemCounter slot : outputCounters)
+                for (AdvancedOutputItemCounter slot : outputCounters)
                 {
                     if (slot.areSettingsSame(setting))
                     {
@@ -1064,7 +1064,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                 if (outputItemCounter == null)
                 {
-                    outputItemCounter = new OutputItemCounter(this.itemBuffer, inventories, inventory, setting, menuItem.useWhiteList());
+                    outputItemCounter = new AdvancedOutputItemCounter(this.itemBuffer, inventories, inventory, setting, menuItem.useWhiteList());
                     outputCounters.add(outputItemCounter);
                 }
 

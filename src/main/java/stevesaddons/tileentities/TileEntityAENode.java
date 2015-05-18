@@ -291,6 +291,22 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         }
     }
 
+    @Override
+    public int getExistingStackSize(ItemSetting setting)
+    {
+        int amount = 0;
+        Iterator<IAEItemStack> itr = AEHelper.getItrItems(getNode());
+        if (itr != null)
+        {
+            while (itr.hasNext())
+            {
+                IAEItemStack stack = itr.next();
+                if (setting.isEqualForCommandExecutor(stack.getItemStack())) amount += stack.getStackSize();
+            }
+        }
+        return amount;
+    }
+
     private void addAEItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting, IAEItemStack stack, List<ItemBufferElement> itemBuffer)
     {
         if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())

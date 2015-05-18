@@ -16,4 +16,6 @@ public interface IHiddenInventory
     void addItemsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, List<ItemBufferElement> itemBuffer, CommandExecutorRF commandExecutorRF);
 
     void isItemValid(Collection<Setting> settings, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap);
+
+    int getExistingStackSize(ItemSetting setting);
 }
