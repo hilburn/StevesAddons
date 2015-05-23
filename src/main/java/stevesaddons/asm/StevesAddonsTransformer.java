@@ -173,7 +173,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                 },
         PUBLIC_TE("te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;", TransformType.FIELD, TransformType.MAKE_PUBLIC),
         PUBLIC_PAIR("Pair"),
-        REMOVE_COMPONENT("removeFlowComponent", "(ILjava/util/List;)V")
+        REMOVE_FLOW_COMPONENT("removeFlowComponent", "(ILjava/util/List;)V")
                 {
                     @Override
                     protected InsnList modifyInstructions(InsnList list)
@@ -330,6 +330,26 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                                 break;
                             }
                             node = node.getNext();
+                        }
+                        return list;
+                    }
+                },
+        REMOVE_COMPONENT("removeFlowComponent", "(I)V")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getLast();
+                        JumpInsnNode jump = null;
+                        while (node != null)
+                        {
+                            if (node.getOpcode() == GOTO) jump = (JumpInsnNode)node;
+                            else if (node.getOpcode() == IFNE)
+                            {
+                                ((JumpInsnNode)node).label = jump.label;
+                                break;
+                            }
+                            node = node.getPrevious();
                         }
                         return list;
                     }
@@ -533,7 +553,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 
     private enum ClassName
     {
-        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT, Transformer.REMOVE_COMPONENT, Transformer.UPDATE_ENTITY),
+        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT, Transformer.REMOVE_FLOW_COMPONENT, Transformer.UPDATE_ENTITY, Transformer.REMOVE_COMPONENT),
         CLUSTER_BLOCK("vswe.stevesfactory.blocks.BlockCableCluster", Transformer.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", Transformer.ITEM_SETTING_LOAD),
         COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", Transformer.ITEM_SEARCH),

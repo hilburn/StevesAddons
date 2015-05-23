@@ -182,12 +182,14 @@ public class StevesHooks
     {
         boolean isManagerList = manager.getFlowItems() == components;
         List<Integer> ids = getIdsToRemove(idToRemove, components);
+        List<FlowComponent> removed = new ArrayList<FlowComponent>();
         for (int id : ids)
         {
             for(int i = components.size() - 1; i >= 0; --i) {
                 FlowComponent component = components.get(i);
                 if(i == id) {
                     component.setParent(null);
+                    removed.add(component);
                     components.remove(i);
                 } else {
                     component.updateConnectionIdsAtRemoval(id);
@@ -205,13 +207,15 @@ public class StevesHooks
 
         if (isManagerList && manager.getWorldObj().isRemote)
         {
-            for (Iterator<FlowComponent> itr = manager.getZLevelRenderingList().iterator(); itr.hasNext();)
-            {
-                if (ids.contains(itr.next().getId()))
-                {
-                    itr.remove();
-                }
-            }
+            for (FlowComponent remove : removed)
+                manager.getZLevelRenderingList().remove(remove);
+//            for (Iterator<FlowComponent> itr = manager.getZLevelRenderingList().iterator(); itr.hasNext();)
+//            {
+//                if (removed.contains(itr.next()))
+//                {
+//                    itr.remove();
+//                }
+//            }
         }
     }
 
