@@ -44,7 +44,7 @@ public class StevesEnum
     public static final Localization DELAY_IGNORE = addLocalization("DELAY_IGNORE");
     public static final ConnectionBlockType RF_PROVIDER = addConnectionBlockType("RF_PROVIDER", TYPE_RF_INPUT, IEnergyProvider.class, false);
     public static final ConnectionBlockType RF_RECEIVER = addConnectionBlockType("RF_RECEIVER", TYPE_RF_OUTPUT, IEnergyReceiver.class, false);
-    public static final ConnectionBlockType RF_CONNECTION = addConnectionBlockType("RF_CONNECTION", TYPE_RF, IEnergyConnection.class, false);
+    public static final ConnectionBlockType RF_CONNECTION = addConnectionBlockType("RF_CONNECTION", TYPE_RF, IEnergyConnection.class, true);
     public static final ComponentType RF_INPUT = addComponentType("RF_INPUT", 17, RF_INPUT_SHORT, RF_INPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, ComponentMenuRFInput.class, ComponentMenuTargetRF.class, ComponentMenuResult.class);
     public static final ComponentType RF_OUTPUT = addComponentType("RF_OUTPUT", 18, RF_OUTPUT_SHORT, RF_OUTPUT_LONG, new ConnectionSet[]{ConnectionSet.STANDARD}, ComponentMenuRFOutput.class, ComponentMenuTargetRF.class, ComponentMenuResult.class);
     public static final ComponentType RF_CONDITION = addComponentType("RF_CONDITION", 19, RF_CONDITION_SHORT, RF_CONDITION_LONG, new ConnectionSet[]{ConnectionSet.STANDARD_CONDITION}, ComponentMenuRFStorage.class, ComponentMenuTargetRF.class, ComponentMenuRFCondition.class, ComponentMenuResult.class);

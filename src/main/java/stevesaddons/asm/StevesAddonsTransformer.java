@@ -553,7 +553,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 
     private enum ClassName
     {
-        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT, Transformer.REMOVE_FLOW_COMPONENT, Transformer.UPDATE_ENTITY, Transformer.REMOVE_COMPONENT),
+        TE_MANAGER("vswe.stevesfactory.blocks.TileEntityManager", Transformer.ACTIVATE_TRIGGER, Transformer.GET_GUI, Transformer.MANAGER_INIT, Transformer.UPDATE_ENTITY),
         CLUSTER_BLOCK("vswe.stevesfactory.blocks.BlockCableCluster", Transformer.CREATE_TE),
         ITEM_SETTING_LOAD("vswe.stevesfactory.components.ItemSetting", Transformer.ITEM_SETTING_LOAD),
         COMPONENT_MENU_ITEM("vswe.stevesfactory.components.ComponentMenuItem", Transformer.ITEM_SEARCH),
