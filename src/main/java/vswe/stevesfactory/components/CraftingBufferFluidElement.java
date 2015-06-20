@@ -8,6 +8,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import stevesaddons.api.IHiddenInventory;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
@@ -94,32 +95,51 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
 
         for (SlotInventoryHolder inventoryHolder : inventories)
         {
-            IInventory inventory = inventoryHolder.getInventory();
-
-            for (int i = 0; i < inventory.getSizeInventory(); ++i)
+            if (inventoryHolder.getTile() instanceof IHiddenInventory)
             {
-                if (inventory.isItemValidForSlot(i, itemStack))
+                IHiddenInventory hidden = (IHiddenInventory) inventoryHolder.getTile();
+                int moveCount = Math.min(hidden.getInsertable(itemStack), itemStack.stackSize);
+                if (moveCount > 0)
                 {
-                    ItemStack stack = inventory.getStackInSlot(i);
-                    if (stack == null || stack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, stack) && itemStack.isStackable())
+                    ItemStack toInsert = itemStack.copy();
+                    toInsert.stackSize = moveCount;
+                    hidden.insertItemStack(toInsert);
+                    itemStack.stackSize -= moveCount;
+                    if (itemStack.stackSize == 0)
                     {
-                        int itemCountInSlot = stack == null ? 0 : stack.stackSize;
-                        int stackSize = Math.min(itemStack.stackSize, Math.min(inventory.getInventoryStackLimit(), itemStack.getMaxStackSize()) - itemCountInSlot);
-                        if (stackSize > 0)
-                        {
-                            if (stack == null)
-                            {
-                                stack = itemStack.copy();
-                                stack.stackSize = 0;
-                                inventory.setInventorySlotContents(i, stack);
-                            }
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                IInventory inventory = inventoryHolder.getInventory();
 
-                            stack.stackSize += stackSize;
-                            itemStack.stackSize -= stackSize;
-                            inventory.markDirty();
-                            if (itemStack.stackSize == 0)
+                for (int i = 0; i < inventory.getSizeInventory(); ++i)
+                {
+                    if (inventory.isItemValidForSlot(i, itemStack))
+                    {
+                        ItemStack stack = inventory.getStackInSlot(i);
+                        if (stack == null || stack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, stack) && itemStack.isStackable())
+                        {
+                            int itemCountInSlot = stack == null ? 0 : stack.stackSize;
+                            int stackSize = Math.min(itemStack.stackSize, Math.min(inventory.getInventoryStackLimit(), itemStack.getMaxStackSize()) - itemCountInSlot);
+                            if (stackSize > 0)
                             {
-                                return;
+                                if (stack == null)
+                                {
+                                    stack = itemStack.copy();
+                                    stack.stackSize = 0;
+                                    inventory.setInventorySlotContents(i, stack);
+                                }
+
+                                stack.stackSize += stackSize;
+                                itemStack.stackSize -= stackSize;
+                                inventory.markDirty();
+                                if (itemStack.stackSize == 0)
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
