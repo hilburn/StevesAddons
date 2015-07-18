@@ -96,6 +96,15 @@ minecraft {
 }
 
 processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.info'
+        expand 'version':"${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}", 'mcversion':config.version.minecraft
+    }
+
+    from(sourceSets.main.resources.srcDirs) { exclude '**/*.info' }
 }
 
 allprojects {
@@ -106,7 +115,7 @@ allprojects {
             attributes 'FMLCorePlugin': 'stevesaddons.asm.LoadingPlugin'
             attributes 'FMLCorePluginContainsFMLMod': 'true'
         }
-        dependsOn ":copyBuildXml"
+//        dependsOn ":copyBuildXml"
         destinationDir = file (rootProject.getRootDir().getPath() + '/output')
     }
 
@@ -124,9 +133,9 @@ allprojects {
     }
 }
 
-task copyBuildXml(type: Copy) {
-    from 'build.properties'
-    into 'output'
-}
-
-build.dependsOn "copyBuildXml"
+//task copyBuildXml(type: Copy) {
+//    from 'build.properties'
+//    into 'output'
+//}
+//
+//build.dependsOn "copyBuildXml"

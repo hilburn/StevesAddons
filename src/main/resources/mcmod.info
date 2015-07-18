@@ -1,0 +1,16 @@
+[
+    {
+      "modid": "StevesAddons",
+      "name": "Steve's Addons",
+      "description": "Adds extra things to improve SFM",
+      "version": "${version}",
+      "mcversion": "${mcversion}",
+      "url": "https://github.com/hilburn/StevesAddons",
+      "updateUrl": "http://minecraft.curseforge.com/mc-mods/226067-steves-addons",
+      "authors": ["hilburn"],
+      "credits": "Authored by hilburn, as an addon to VSWE's SFM",
+      "logoFile": "",
+      "screenshots": [],
+      "dependencies": ["StevesFactoryManager"]
+    }
+]
