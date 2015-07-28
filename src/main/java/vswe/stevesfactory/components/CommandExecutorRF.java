@@ -682,14 +682,14 @@ public class CommandExecutorRF extends CommandExecutor
         if (amount > 0 && remove > 0 && rfBuffer.size() > 0) removeRF(amount);
     }
 
-    private boolean isSlotValid(IInventory inventory, ItemStack item, SlotSideTarget slot, boolean isInput, boolean isIO)
+    private boolean isSlotValid(IInventory inventory, ItemStack item, SlotSideTarget slot, boolean isInput)
     {
         if (item == null)
         {
             return false;
         } else
         {
-            if (isIO && inventory instanceof ISidedInventory)
+            if (inventory instanceof ISidedInventory)
             {
                 boolean hasValidSide = false;
 
@@ -714,6 +714,29 @@ public class CommandExecutorRF extends CommandExecutor
                 }
             }
             return isInput || inventory.isItemValidForSlot(slot.getSlot(), item);
+        }
+    }
+
+    private boolean isSlotValid(IInventory inventory, ItemStack item, SlotSideTarget slot)
+    {
+        if (item == null)
+        {
+            return false;
+        } else
+        {
+            if (inventory instanceof ISidedInventory)
+            {
+                for (int side : slot.getSides())
+                {
+                    if (((ISidedInventory)inventory).canExtractItem(slot.getSlot(), item, side) || ((ISidedInventory)inventory).canInsertItem(slot.getSlot(), item, side))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            return true;
         }
     }
 
@@ -763,7 +786,7 @@ public class CommandExecutorRF extends CommandExecutor
                     {
                         slot = itr.next();
                         ItemStack itemStack = inventory.getInventory().getStackInSlot(slot.getSlot());
-                        if (this.isSlotValid(inventory.getInventory(), itemStack, slot, true, true))
+                        if (this.isSlotValid(inventory.getInventory(), itemStack, slot, true))
                         {
                             setting = this.isItemValid(((ComponentMenuStuff)componentMenu).getSettings(), itemStack);
                             this.addItemToBuffer(menuItem, inventory, setting, itemStack, slot);
@@ -1100,7 +1123,7 @@ public class CommandExecutorRF extends CommandExecutor
 
                     for (SlotSideTarget slot : inventoryHolder.getValidSlots().values())
                     {
-                        if (this.isSlotValid(inventory, itemStack, slot, false, true))
+                        if (this.isSlotValid(inventory, itemStack, slot, false))
                         {
                             ItemStack itemInSlot = inventory.getStackInSlot(slot.getSlot());
                             boolean newItem = itemInSlot == null;
@@ -1290,7 +1313,7 @@ public class CommandExecutorRF extends CommandExecutor
             for (SlotSideTarget slot : inventoryHolder.getValidSlots().values())
             {
                 ItemStack itemStack = inventoryHolder.getInventory().getStackInSlot(slot.getSlot());
-                if (this.isSlotValid(inventoryHolder.getInventory(), itemStack, slot, false, false))
+                if (this.isSlotValid(inventoryHolder.getInventory(), itemStack, slot))
                 {
                     if (inventoryHolder.getInventory() instanceof IDeepStorageUnit)
                         itemStack = ((IDeepStorageUnit)inventoryHolder.getInventory()).getStoredItemType();
