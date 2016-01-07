@@ -353,6 +353,23 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         }
                         return list;
                     }
+                },
+        ADD_RETURN("onKeyStroke", "(Lvswe/stevesfactory/interfaces/GuiManager;CI)Z")
+                {
+                    @Override
+                    protected InsnList modifyInstructions(InsnList list)
+                    {
+                        AbstractInsnNode node = list.getFirst();
+                        while (!(node.getOpcode() == GOTO && node.getPrevious().getOpcode() == INVOKEVIRTUAL))
+                        {
+                            node = node.getNext();
+                        }
+
+                        list.insertBefore(node, new InsnNode(ICONST_1));
+                        list.insertBefore(node, new InsnNode(IRETURN));
+                        list.remove(node);
+                        return list;
+                    }
                 };
 
         protected String name;
@@ -566,7 +583,8 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         CONTAINER_TYPES("vswe.stevesfactory.components.ComponentMenuContainerTypes", Transformer.WRITE_TO_NBT, Transformer.READ_FROM_NBT),
         DATA_BIT_HELPER("vswe.stevesfactory.network.DataBitHelper", Transformer.BIT_HELPER_INIT),
         CONNECTION_BLOCK_TYPE("vswe.stevesfactory.blocks.ConnectionBlockType", Transformer.IS_INSTANCE),
-        COMPONENT_MENU_INTERVAL("vswe.stevesfactory.components.ComponentMenuInterval", Transformer.IS_VISIBLE);
+        COMPONENT_MENU_INTERVAL("vswe.stevesfactory.components.ComponentMenuInterval", Transformer.IS_VISIBLE),
+        TEXT_BOX_LIST("vswe.stevesfactory.components.TextBoxNumberList", Transformer.ADD_RETURN);
 
         private String name;
         private Transformer[] transformers;
