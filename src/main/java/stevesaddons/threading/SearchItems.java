@@ -64,6 +64,7 @@ public class SearchItems implements Runnable
 
     public static void setItems()
     {
+        searchEntries.clear();
         List<ItemStack> stacks = new ArrayList<ItemStack>();
         for (Object anItemRegistry : Item.itemRegistry)
         {

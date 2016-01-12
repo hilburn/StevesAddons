@@ -2,33 +2,22 @@ package stevesaddons;
 
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraftforge.common.DimensionManager;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import stevesaddons.asm.StevesHooks;
-import stevesaddons.helpers.Config;
-import stevesaddons.helpers.StevesEnum;
-import stevesaddons.interfaces.GuiHandler;
-import stevesaddons.naming.EventHandler;
-import stevesaddons.naming.NameData;
-import stevesaddons.naming.NameRegistry;
-import stevesaddons.network.MessageHandler;
-import stevesaddons.proxy.CommonProxy;
-import stevesaddons.recipes.ClusterUncraftingRecipe;
+
 import stevesaddons.reference.Metadata;
 import stevesaddons.reference.Reference;
-import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.CommandRegistry;
-import stevesaddons.registry.ItemRegistry;
-import vswe.stevesfactory.blocks.TileEntityManager;
+import stevesaddons.threading.ThreadSafeHandler;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
+
 
 @Mod(modid = Reference.ID, name = Reference.NAME, version = Reference.VERSION_FULL, dependencies = "required-after:StevesFactoryManager")
 public class StevesAddons
@@ -39,75 +28,26 @@ public class StevesAddons
     @Mod.Metadata(Reference.ID)
     public static ModMetadata metadata;
 
-    @SidedProxy(clientSide = "stevesaddons.proxy.ClientProxy", serverSide = "stevesaddons.proxy.CommonProxy")
-    public static CommonProxy PROXY;
-
-    public static GuiHandler guiHandler = new GuiHandler();
     public static Logger log = LogManager.getLogger(Reference.ID);
+
+    @NetworkCheckHandler
+    public final boolean networkCheck(Map<String, String> remoteVersions, Side side)
+    {
+        return side.isClient() || (side.isServer() && !remoteVersions.containsKey(Reference.ID));
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         metadata = Metadata.init(metadata);
-        Config.init(event.getSuggestedConfigurationFile());
-        ItemRegistry.registerItems();
-        BlockRegistry.registerBlocks();
-        MessageHandler.init();
-        NetworkRegistry.INSTANCE.registerGuiHandler(StevesAddons.INSTANCE, guiHandler);
+        MinecraftForge.EVENT_BUS.register(new ThreadSafeHandler());
+        FMLCommonHandler.instance().bus().register(this);
+        ClientCommandHandler.instance.registerCommand(new CommandRegistry());
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent e)
+    @SubscribeEvent
+    public void playerLogIn(FMLNetworkEvent.ClientConnectedToServerEvent event)
     {
-        ItemRegistry.registerRecipes();
-        BlockRegistry.registerRecipes();
-        ClusterUncraftingRecipe uncrafting = new ClusterUncraftingRecipe();
-        GameRegistry.addRecipe(uncrafting);
-        FMLCommonHandler.instance().bus().register(uncrafting);
-        EventHandler handler = new EventHandler();
-        FMLCommonHandler.instance().bus().register(handler);
-        MinecraftForge.EVENT_BUS.register(handler);
-        PROXY.initHandlers();
-        if (Config.wailaIntegration)
-        {
-            FMLInterModComms.sendMessage("Waila", "register", "stevesaddons.waila.WailaManager.callbackRegister");
-        }
-    }
-
-    @Mod.EventHandler
-    @SuppressWarnings(value = "unchecked")
-    public void postInit(FMLPostInitializationEvent e)
-    {
-        if (Loader.isModLoaded("JABBA"))
-        {
-            try
-            {
-                Class dolly = Class.forName("mcp.mobius.betterbarrels.common.items.dolly.ItemBarrelMover");
-                Field classExtensions = dolly.getDeclaredField("classExtensions");
-                Field classExtensionsNames = dolly.getDeclaredField("classExtensionsNames");
-                Field classMap = dolly.getDeclaredField("classMap");
-                classExtensions.setAccessible(true);
-                classExtensionsNames.setAccessible(true);
-                classMap.setAccessible(true);
-                ArrayList<Class> extensions = (ArrayList<Class>)classExtensions.get(null);
-                ArrayList<String> extensionsNames = (ArrayList<String>)classExtensionsNames.get(null);
-                HashMap<String, Class> map = (HashMap<String, Class>)classMap.get(null);
-                extensions.add(TileEntityManager.class);
-                extensionsNames.add(TileEntityManager.class.getSimpleName());
-                map.put(TileEntityManager.class.getSimpleName(), TileEntityManager.class);
-            } catch (Exception ignore)
-            {
-            }
-        }
-        StevesEnum.applyEnumHacks();
-    }
-
-    @Mod.EventHandler
-    public void serverStart(FMLServerStartingEvent event)
-    {
-        NameRegistry.setNameData(new HashMap<Integer, NameData>());
-        event.registerServerCommand(CommandRegistry.instance);
-        File file = new File(DimensionManager.getCurrentSaveRootDirectory().getPath() + File.separator + "managers");
-        if (!file.exists()) file.mkdirs();
+        FMLCommonHandler.instance().bus().register(new EventHandler());
     }
 }
