@@ -34,7 +34,7 @@ public class WailaLabelProvider implements IWailaDataProvider
     }
 
     @Override
-    @SuppressWarnings(value = "unchecked")
+    @SuppressWarnings("unchecked")
     public List<String> getWailaBody(ItemStack itemStack, List<String> list, IWailaDataAccessor iWailaDataAccessor, IWailaConfigHandler iWailaConfigHandler)
     {
         ITaggedList tagged = (ITaggedList)list;
@@ -45,17 +45,6 @@ public class WailaLabelProvider implements IWailaDataProvider
             if (label != null)
             {
                 tagged.add(StatCollector.translateToLocalFormatted(LABELLED, label), LABELLED);
-//                int size = tagged.size();
-//                if (size > 1)
-//                {
-//                    for (Iterator<String> itr = tagged.iterator(); itr.hasNext() && size > 1; size--)
-//                    {
-//                        String val = itr.next();
-//                        Set<String> tags = tagged.getTags(val);
-//                        itr.remove();
-//                        tagged.add(val, tags);
-//                    }
-//                }
             }
         }
         return list;
