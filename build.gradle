@@ -48,9 +48,13 @@ repositories {
     }
 
     maven {
-        name "FireBall API Depot"
-        url "http://dl.tsr.me/artifactory/libs-release-local"
-    }
+        name "Mods"
+        url "http://downloads.gtnewhorizons.com/Mods_for_Jenkins/"
+    }		
+	maven {
+		name = "gt"
+		url = "https://gregtech.overminddl1.com/"
+	}	
     ivy {
 	name 'FMP'
 	artifactPattern "http://files.minecraftforge.net/[module]/[module]-dev-[revision].[ext]"
