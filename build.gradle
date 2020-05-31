@@ -90,7 +90,7 @@ processResources {
 }
 
 allprojects {
-    version = "${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}-Client"
+    version = "${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
 
     jar {
         manifest {
