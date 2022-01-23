@@ -12,7 +12,8 @@ import java.util.regex.Pattern;
 
 public class SearchItems implements Runnable
 {
-    public static List<SearchEntry> searchEntries = new ArrayList<SearchEntry>();
+    public static volatile List<SearchEntry> searchEntries = new ArrayList<>();
+    public static boolean buildIndexEagerly = false;
 
     private String search;
     private ScrollController controller;
@@ -44,6 +45,8 @@ public class SearchItems implements Runnable
             }
         } else
         {
+            if (searchEntries.isEmpty())
+                setItems();
             if (!showAll)
             {
                 Pattern pattern = Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE);
@@ -62,9 +65,11 @@ public class SearchItems implements Runnable
         ThreadSafeHandler.handle.put(controller, stackList);
     }
 
-    public static void setItems()
+    public static synchronized void setItems()
     {
+        if (!searchEntries.isEmpty()) return;
         List<ItemStack> stacks = new ArrayList<ItemStack>();
+        List<SearchEntry> searchEntries = new ArrayList<>();
         for (Object anItemRegistry : Item.itemRegistry)
         {
             try
@@ -98,6 +103,7 @@ public class SearchItems implements Runnable
             {
             }
         }
+        SearchItems.searchEntries = searchEntries;
     }
 
     public static class SearchEntry
