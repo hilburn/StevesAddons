@@ -1020,7 +1020,7 @@ public class CommandExecutorRF extends CommandExecutor
         ComponentMenuStuff menuItem = (ComponentMenuStuff)componentMenu;
         if (fluidStack != null)
         {
-            int fluidId = fluidStack.fluidID;
+            int fluidId = fluidStack.getFluidID();
 
             for (Setting setting : menuItem.getSettings())
             {

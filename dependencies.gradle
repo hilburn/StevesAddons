@@ -1,0 +1,18 @@
+// NOTE: Using explicit tags now instead of master-SNAPSHOT. (READ: Don't use master-SNAPSHOT anymore!!!)
+// That means if you are depending on a change in a dependency, you need to tag the dependency
+// and update the pinned tag here.  This _should_ allow for more reproducible historical builds, while
+// also being more explicit about what is depended on.
+
+dependencies {
+    compile("com.github.GTNewHorizons:NotEnoughItems:2.1.22-GTNH:dev")
+    compile("com.github.GTNewHorizons:CodeChickenCore:1.1.3:dev")
+    compile("com.github.GTNewHorizons:CodeChickenLib:1.1.5.1:dev")
+    compile("com.github.GTNewHorizons:Waila:1.5.18:dev")
+    compile("com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-70-GTNH:dev") {
+        transitive = false
+    }
+    compile("com.github.GTNewHorizons:ExtraCells2:2.5.4:dev") {
+        transitive = false
+    }
+    compile fileTree(dir: 'lib', include: '*.jar') // before someone fixes SFM as well this will make do
+}
