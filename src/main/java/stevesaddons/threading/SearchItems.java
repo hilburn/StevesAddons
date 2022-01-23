@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 public class SearchItems implements Runnable
 {
     public static volatile List<SearchEntry> searchEntries = new ArrayList<>();
-    public static boolean buildIndexEagerly = false;
 
     private String search;
     private ScrollController controller;

@@ -6,6 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import stevesaddons.StevesAddons;
+import stevesaddons.helpers.Config;
 import stevesaddons.threading.SearchItems;
 
 public class SearchRegistryGenerateMessage implements IMessage, IMessageHandler<SearchRegistryGenerateMessage, IMessage>
@@ -23,7 +24,7 @@ public class SearchRegistryGenerateMessage implements IMessage, IMessageHandler<
     @Override
     public IMessage onMessage(SearchRegistryGenerateMessage message, MessageContext ctx)
     {
-        if (ctx.side == Side.CLIENT && SearchItems.searchEntries.isEmpty() && SearchItems.buildIndexEagerly)
+        if (ctx.side == Side.CLIENT && SearchItems.searchEntries.isEmpty() && Config.buildIndexEagerly)
         {
             long time = System.currentTimeMillis();
             SearchItems.setItems();

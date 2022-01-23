@@ -13,6 +13,7 @@ public class Config
 {
     public static boolean wailaIntegration = true;
     public static boolean aeIntegration = Loader.isModLoaded("appliedenergistics2");
+    public static boolean buildIndexEagerly;
 
     public static void init(File file)
     {
@@ -22,7 +23,7 @@ public class Config
         whitelist.comment = "Add player names permitted to use Pastebin";
         CommandPastebin.usernameWhitelist.addAll(Arrays.asList(whitelist.getStringList()));
 
-        SearchItems.buildIndexEagerly = config.getBoolean("build_index_eagerly", "General", false, "Whether react to server's hint at building item search index eagerly on log in. When enabled, can drastically slow down log in. When disabled, can cause drastic lag on first search usage");
+        buildIndexEagerly = config.getBoolean("build_index_eagerly", "General", false, "Whether react to server's hint at building item search index eagerly on log in. When enabled, can drastically slow down log in. When disabled, can cause drastic lag on first search usage");
 
         Property waila = config.get("General", "waila_integration", wailaIntegration);
         waila.comment = "Show labels in WAILA tags";
