@@ -16,7 +16,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 {
     private enum TransformType
     {
-        METHOD, FIELD, INNER_CLASS, MODIFY, MAKE_PUBLIC, DELETE
+        METHOD, FIELD, INNER_CLASS, MODIFY, MAKE_PUBLIC, DELETE, HOOK_REPLACE
     }
 
     private enum Transformer
@@ -115,18 +115,8 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return list;
                     }
                 },
-        ITEM_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
+        ITEM_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;", TransformType.METHOD, TransformType.HOOK_REPLACE)
                 {
-                    @Override
-                    protected void methodTransform(ClassNode node) {
-                        MethodNode mn = getMethod(node);
-                        if (mn != null) {
-                            mn.tryCatchBlocks.clear();
-                            mn.localVariables.clear();
-                            mn.instructions = modifyInstructions(mn.instructions);
-                            complete();
-                        }
-                    }
 
                     @Override
                     protected InsnList modifyInstructions(InsnList list)
@@ -184,7 +174,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                 },
         PUBLIC_TE("te", "Lvswe/stevesfactory/blocks/TileEntityClusterElement;", TransformType.FIELD, TransformType.MAKE_PUBLIC),
         PUBLIC_PAIR("Pair"),
-        REMOVE_FLOW_COMPONENT("removeFlowComponent", "(ILjava/util/List;)V")
+        REMOVE_FLOW_COMPONENT("removeFlowComponent", "(ILjava/util/List;)V", TransformType.METHOD, TransformType.HOOK_REPLACE)
                 {
                     @Override
                     protected InsnList modifyInstructions(InsnList list)
@@ -196,18 +186,6 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         list.add(new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "removeFlowComponent", "(Lvswe/stevesfactory/blocks/TileEntityManager;ILjava/util/List;)V", false));
                         list.add(new InsnNode(RETURN));
                         return list;
-                    }
-
-                    @Override
-                    protected void methodTransform(ClassNode node)
-                    {
-                        MethodNode methodNode = getMethod(node);
-                        if (methodNode != null)
-                        {
-                            methodNode.instructions = modifyInstructions(methodNode.instructions);
-                            methodNode.localVariables = null;
-                            complete();
-                        }
                     }
                 },
         LOAD_DEFAULT("loadDefault", "()V")
@@ -293,7 +271,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return list;
                     }
                 },
-        IS_INSTANCE("isInstance", "(Lnet/minecraft/tileentity/TileEntity;)Z")
+        IS_INSTANCE("isInstance", "(Lnet/minecraft/tileentity/TileEntity;)Z", TransformType.METHOD, TransformType.HOOK_REPLACE)
                 {
                     @Override
                     protected InsnList modifyInstructions(InsnList list)
@@ -307,7 +285,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                         return list;
                     }
                 },
-        IS_VISIBLE("isVisible", "()Z")
+        IS_VISIBLE("isVisible", "()Z", TransformType.METHOD, TransformType.MODIFY, true)
                 {
                     @Override
                     public void transform(ClassNode node)
@@ -366,10 +344,11 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                     }
                 };
 
-        protected String name;
-        protected String args;
-        protected TransformType type;
-        protected TransformType action;
+        protected final String name;
+        protected final String args;
+        protected final TransformType type;
+        protected final TransformType action;
+        protected final boolean computeFrames;
 
         Transformer(String name)
         {
@@ -381,12 +360,17 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
             this(name, args, TransformType.METHOD, TransformType.MODIFY);
         }
 
-        Transformer(String name, String args, TransformType type, TransformType action)
+        Transformer(String name, String args, TransformType type, TransformType action) {
+            this(name, args, type, action, false);
+        }
+
+        Transformer(String name, String args, TransformType type, TransformType action, boolean computeFrames)
         {
             this.name = name;
             this.args = args;
             this.type = type;
             this.action = action;
+            this.computeFrames = computeFrames;
         }
 
         protected InsnList modifyInstructions(InsnList list)
@@ -423,6 +407,10 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
             {
                 switch (action)
                 {
+                    case HOOK_REPLACE:
+                        clearList(methodNode.localVariables);
+                        clearList(methodNode.tryCatchBlocks);
+                        clearList(methodNode.invisibleLocalVariableAnnotations);
                     case MODIFY:
                         methodNode.instructions = modifyInstructions(methodNode.instructions);
                         break;
@@ -434,6 +422,11 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
                 }
                 complete();
             }
+        }
+
+        private static void clearList(List<?> list) {
+            if (list != null)
+                list.clear();
         }
 
         private void fieldTransform(ClassNode node)
@@ -606,12 +599,15 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
 
             StevesAddons.log.log(Level.INFO, "Applying Transformer" + (transformers.length > 1 ? "s " : " ") + "to " + getName());
 
+            boolean computeFrames = false;
+
             for (Transformer transformer : getTransformers())
             {
                 transformer.transform(classNode);
+                computeFrames = computeFrames || transformer.computeFrames;
             }
 
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            ClassWriter writer = new ClassWriter(computeFrames ? ClassWriter.COMPUTE_FRAMES : ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             return writer.toByteArray();
         }
