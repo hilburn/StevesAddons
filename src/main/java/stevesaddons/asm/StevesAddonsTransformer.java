@@ -118,14 +118,25 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes
         ITEM_SEARCH("updateSearch", "(Ljava/lang/String;Z)Ljava/util/List;")
                 {
                     @Override
+                    protected void methodTransform(ClassNode node) {
+                        MethodNode mn = getMethod(node);
+                        if (mn != null) {
+                            mn.tryCatchBlocks.clear();
+                            mn.localVariables.clear();
+                            mn.instructions = modifyInstructions(mn.instructions);
+                            complete();
+                        }
+                    }
+
+                    @Override
                     protected InsnList modifyInstructions(InsnList list)
                     {
-                        AbstractInsnNode first = list.getFirst();
-                        list.insertBefore(first, new VarInsnNode(ALOAD, 0));
-                        list.insertBefore(first, new VarInsnNode(ALOAD, 1));
-                        list.insertBefore(first, new VarInsnNode(ILOAD, 2));
-                        list.insertBefore(first, new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "updateItemSearch", "(Lvswe/stevesfactory/components/ComponentMenuItem;Ljava/lang/String;Z)Ljava/util/List;", false));
-                        list.insertBefore(first, new InsnNode(ARETURN));
+                        list.clear();
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new VarInsnNode(ALOAD, 1));
+                        list.add(new VarInsnNode(ILOAD, 2));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "stevesaddons/asm/StevesHooks", "updateItemSearch", "(Lvswe/stevesfactory/components/ComponentMenuItem;Ljava/lang/String;Z)Ljava/util/List;", false));
+                        list.add(new InsnNode(ARETURN));
                         return list;
                     }
                 },

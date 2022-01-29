@@ -5,9 +5,9 @@ import net.minecraft.nbt.NBTTagCompound;
 public class TileEntityRFManager extends TileEntityManager
 {
     @Override
-    public void func_145841_b(NBTTagCompound tagCompound)
+    public void writeToNBT(NBTTagCompound tagCompound)
     {
-        super.func_145841_b(tagCompound);
+        super.writeToNBT(tagCompound);
         tagCompound.setString("id", "TileEntityMachineManagerName");
     }
 }
