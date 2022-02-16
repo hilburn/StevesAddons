@@ -4,7 +4,7 @@ public class Reference
 {
 
     // User friendly version of our mods name.
-    public static final String NAME = "Steve\'s Addons";
+    public static final String NAME = "Steve's Addons";
 
     // Internal mod name used for reference purposes and resource gathering.
     public static final String ID = "GRADLETOKEN_MODID";
