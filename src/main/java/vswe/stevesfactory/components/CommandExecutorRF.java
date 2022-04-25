@@ -842,6 +842,7 @@ public class CommandExecutorRF extends CommandExecutor
             else
             {
                 IFluidHandler tank = slotHolder.getTank();
+                if (tank == null) continue;
                 for (int side = 0; side < ComponentMenuTarget.directions.length; ++side)
                 {
                     if (menuTarget.isActive(side))
@@ -850,7 +851,9 @@ public class CommandExecutorRF extends CommandExecutor
                         {
                             boolean target = true;
 
-                            for (FluidTankInfo fluidTankInfo : tank.getTankInfo(ComponentMenuTarget.directions[side]))
+                            FluidTankInfo[] infos = tank.getTankInfo(ComponentMenuTarget.directions[side]);
+                            if (infos == null) continue;
+                            for (FluidTankInfo fluidTankInfo : infos)
                             {
                                 if (fluidTankInfo.fluid != null && fluidTankInfo.fluid.amount > 0)
                                 {
