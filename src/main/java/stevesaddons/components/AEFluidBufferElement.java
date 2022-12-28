@@ -8,18 +8,16 @@ import stevesaddons.helpers.AEHelper;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.components.StackTankHolder;
 
-public class AEFluidBufferElement extends StackTankHolder
-{
+public class AEFluidBufferElement extends StackTankHolder {
     private IAEFluidStack fluid;
     private TileEntityAENode node;
     private int sizeLeft;
 
-    public AEFluidBufferElement(IAEFluidStack fluid, TileEntityAENode node)
-    {
+    public AEFluidBufferElement(IAEFluidStack fluid, TileEntityAENode node) {
         super(null, null, null);
         this.fluid = fluid;
         this.node = node;
-        this.sizeLeft = (int)fluid.getStackSize();
+        this.sizeLeft = (int) fluid.getStackSize();
     }
 
     @Override
@@ -44,7 +42,7 @@ public class AEFluidBufferElement extends StackTankHolder
 
     @Override
     public int getSizeLeft() {
-        return (int)Math.min(this.fluid.getStackSize(), this.sizeLeft);
+        return (int) Math.min(this.fluid.getStackSize(), this.sizeLeft);
     }
 
     @Override
@@ -52,9 +50,9 @@ public class AEFluidBufferElement extends StackTankHolder
         AEFluidBufferElement element = new AEFluidBufferElement(this.fluid, this.node);
         int oldAmount = this.getSizeLeft();
         int amount = oldAmount / elementAmount;
-        if(!fair) {
+        if (!fair) {
             int amountLeft = oldAmount % elementAmount;
-            if(id < amountLeft) {
+            if (id < amountLeft) {
                 ++amount;
             }
         }

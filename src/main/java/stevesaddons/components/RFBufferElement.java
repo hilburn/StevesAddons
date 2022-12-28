@@ -1,74 +1,61 @@
 package stevesaddons.components;
 
-import vswe.stevesfactory.components.FlowComponent;
-import vswe.stevesfactory.components.SlotInventoryHolder;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import vswe.stevesfactory.components.FlowComponent;
+import vswe.stevesfactory.components.SlotInventoryHolder;
 
-public class RFBufferElement
-{
+public class RFBufferElement {
 
     private FlowComponent component;
     private SlotInventoryHolder inventoryHolder;
     private List<EnergyFacingHolder> holders;
     private Iterator<EnergyFacingHolder> iterator;
 
-    public RFBufferElement(FlowComponent owner, SlotInventoryHolder inventoryHolder, EnergyFacingHolder target)
-    {
+    public RFBufferElement(FlowComponent owner, SlotInventoryHolder inventoryHolder, EnergyFacingHolder target) {
         this(owner, inventoryHolder);
         this.addTarget(target);
     }
 
-    private RFBufferElement(FlowComponent owner, SlotInventoryHolder inventoryHolder)
-    {
+    private RFBufferElement(FlowComponent owner, SlotInventoryHolder inventoryHolder) {
         this.component = owner;
         this.inventoryHolder = inventoryHolder;
         this.holders = new ArrayList();
     }
 
-    private void addTarget(EnergyFacingHolder energyHolder)
-    {
+    private void addTarget(EnergyFacingHolder energyHolder) {
         this.holders.add(energyHolder);
     }
 
-    public List<EnergyFacingHolder> getSubElements()
-    {
+    public List<EnergyFacingHolder> getSubElements() {
         return holders;
     }
 
-    public EnergyFacingHolder getSubElement()
-    {
+    public EnergyFacingHolder getSubElement() {
         return this.iterator.hasNext() ? this.iterator.next() : null;
     }
 
-    public void removeSubElement()
-    {
+    public void removeSubElement() {
         this.iterator.remove();
     }
 
-    public void releaseSubElements()
-    {
+    public void releaseSubElements() {
         this.iterator = null;
     }
 
-    public int getMaxExtract()
-    {
+    public int getMaxExtract() {
         int result = 0;
-        for (EnergyFacingHolder holder : holders)
-        {
+        for (EnergyFacingHolder holder : holders) {
             result += holder.extract(Integer.MAX_VALUE, true);
         }
         return result;
     }
 
-    public int removeRF(int amount)
-    {
+    public int removeRF(int amount) {
         int removeEach = amount / holders.size();
         int result = amount;
-        for (Iterator<EnergyFacingHolder> itr = holders.iterator(); itr.hasNext(); )
-        {
+        for (Iterator<EnergyFacingHolder> itr = holders.iterator(); itr.hasNext(); ) {
             EnergyFacingHolder holder = itr.next();
             int removed = holder.extract(removeEach, false);
             if (removed < removeEach) itr.remove();

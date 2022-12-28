@@ -10,10 +10,8 @@ import stevesaddons.reference.Reference;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.blocks.ModBlocks;
 
-public class BlockCableAE extends BlockContainer
-{
-    public BlockCableAE()
-    {
+public class BlockCableAE extends BlockContainer {
+    public BlockCableAE() {
         super(Material.glass);
         this.setCreativeTab(ModBlocks.creativeTab);
         this.setStepSound(soundTypeGlass);
@@ -22,14 +20,12 @@ public class BlockCableAE extends BlockContainer
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta)
-    {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileEntityAENode();
     }
 
     @Override
-    public void registerBlockIcons(IIconRegister ir)
-    {
+    public void registerBlockIcons(IIconRegister ir) {
         this.blockIcon = ir.registerIcon(Reference.ID + ":" + Names.CABLE_AE);
     }
 }

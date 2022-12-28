@@ -4,6 +4,11 @@ import codechicken.nei.VisiblityData;
 import codechicken.nei.api.INEIGuiHandler;
 import codechicken.nei.api.TaggedInventoryArea;
 import cpw.mods.fml.common.Optional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,20 +21,11 @@ import stevesaddons.items.ItemLabeler;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.LabelSyncMessage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.regex.Pattern;
-
 @Optional.Interface(iface = "codechicken.nei.api.INEIGuiHandler", modid = "NotEnoughItems")
-public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, INEIGuiHandler
-{
-    private static Comparator<GuiTextEntry> ALPHABETICAL_ORDER = new Comparator<GuiTextEntry>()
-    {
+public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, INEIGuiHandler {
+    private static Comparator<GuiTextEntry> ALPHABETICAL_ORDER = new Comparator<GuiTextEntry>() {
         @Override
-        public int compare(GuiTextEntry o1, GuiTextEntry o2)
-        {
+        public int compare(GuiTextEntry o1, GuiTextEntry o2) {
             if (o1.isEditing) return 1;
             int res = String.CASE_INSENSITIVE_ORDER.compare(o1.getText(), o2.getText());
             return res == 0 ? o1.getText().compareTo(o2.getText()) : res;
@@ -55,11 +51,9 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
     public int mouseY = 0;
     private int xSize, ySize, guiLeft, guiTop;
 
-    public GuiLabeler(ItemStack stack, EntityPlayer player)
-    {
+    public GuiLabeler(ItemStack stack, EntityPlayer player) {
         this.stack = stack;
-        for (String string : ItemLabeler.getSavedStrings(stack))
-        {
+        for (String string : ItemLabeler.getSavedStrings(stack)) {
             strings.add(getGuiTextEntry(string));
         }
         this.xSize = GUI_WIDTH;
@@ -72,28 +66,24 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
         this.player = player;
     }
 
-    public static GuiTextEntry getGuiTextEntry(String string)
-    {
+    public static GuiTextEntry getGuiTextEntry(String string) {
         return new GuiTextEntry(string, ENTRY_HEIGHT, SCROLL_X_MAX - SCROLL_X);
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
     }
 
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
-    {
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
         this.drawDefaultBackground();
         this.drawGuiContainerBackgroundLayer(p_73863_3_, p_73863_1_, p_73863_2_);
     }
 
-    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_)
-    {
+    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
         GL11.glPushMatrix();
         int x = this.guiLeft;
         int y = this.guiTop;
@@ -112,17 +102,14 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
         GL11.glPopMatrix();
     }
 
-    private int getListViewSize()
-    {
+    private int getListViewSize() {
         return (SCROLL_Y_MAX - SCROLL_Y) / ENTRY_HEIGHT;
     }
 
-    private void drawDisplayStrings()
-    {
+    private void drawDisplayStrings() {
         int i = 0;
         int startIndex = Math.round((displayStrings.size() - getListViewSize()) * scrollBar.getScrollValue());
-        for (GuiTextEntry entry : displayStrings)
-        {
+        for (GuiTextEntry entry : displayStrings) {
             entry.setY(SCROLL_Y + (i - startIndex) * ENTRY_HEIGHT);
             entry.isVisible = !(entry.y < SCROLL_Y || entry.y + entry.height > SCROLL_Y_MAX);
             entry.draw();
@@ -131,16 +118,12 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
     }
 
     @Override
-    protected void keyTyped(char character, int keyCode)
-    {
+    protected void keyTyped(char character, int keyCode) {
         boolean reset = false;
-        if (keyCode == 1)
-        {
+        if (keyCode == 1) {
             this.mc.thePlayer.closeScreen();
-        } else if (keyCode == 28)
-        {
-            if (!isEditing() && isNewEntry(searchBar.getText()))
-            {
+        } else if (keyCode == 28) {
+            if (!isEditing() && isNewEntry(searchBar.getText())) {
                 strings.add(getGuiTextEntry(searchBar.getText()));
                 Collections.sort(strings, ALPHABETICAL_ORDER);
             }
@@ -148,17 +131,13 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
         }
         searchBar.keyTyped(character, keyCode);
         if (isEditing()) this.selected.setText(searchBar.getText());
-        if (reset)
-        {
+        if (reset) {
             searchBar.setText("");
             searchBar.fixCursorPos();
-            if (this.selected != null)
-            {
-                if (this.selected.getText().isEmpty())
-                {
+            if (this.selected != null) {
+                if (this.selected.getText().isEmpty()) {
                     strings.remove(selected);
-                } else
-                {
+                } else {
                     this.selected.isEditing = false;
                     this.selected.isSelected = false;
                 }
@@ -170,40 +149,33 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
         scrollBar.setYPos(0);
     }
 
-    private boolean isEditing()
-    {
+    private boolean isEditing() {
         return this.selected != null && this.selected.isEditing;
     }
 
-    private boolean isNewEntry(String string)
-    {
+    private boolean isNewEntry(String string) {
         if (string.isEmpty()) return false;
-        for (GuiTextEntry entry : displayStrings)
-        {
+        for (GuiTextEntry entry : displayStrings) {
             if (string.equals(entry.getText())) return false;
         }
         return true;
     }
 
-    public static void bindTexture(ResourceLocation resource)
-    {
+    public static void bindTexture(ResourceLocation resource) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(resource);
     }
 
-    public List<GuiTextEntry> getSearchedStrings()
-    {
+    public List<GuiTextEntry> getSearchedStrings() {
         List<GuiTextEntry> result = new ArrayList<GuiTextEntry>();
         Pattern pattern = Pattern.compile(Pattern.quote(searchBar.getText()), Pattern.CASE_INSENSITIVE);
-        for (GuiTextEntry entry : strings)
-        {
+        for (GuiTextEntry entry : strings) {
             if (pattern.matcher(entry.getText()).find()) result.add(entry);
         }
         return result;
     }
 
     @Override
-    public void onGuiClosed()
-    {
+    public void onGuiClosed() {
         List<String> save = new ArrayList<String>();
         for (GuiTextEntry entry : strings) if (!save.contains(entry.getText())) save.add(entry.getText());
         searchBar.close();
@@ -213,24 +185,20 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
     }
 
     @Override
-    public void handleMouseInput()
-    {
+    public void handleMouseInput() {
         super.handleMouseInput();
         int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
         mouseX = i - (width - xSize) / 2;
         mouseY = j - (height - ySize) / 2;
-        if (isScrollBarActive())
-        {
+        if (isScrollBarActive()) {
             scrollBar.handleMouseInput();
         }
-        if (Mouse.getEventButtonState() && !(mouseX < SCROLL_X || mouseX > SCROLL_X_MAX || mouseY < SCROLL_Y || mouseY > SCROLL_Y_MAX))
-        {
-            for (GuiTextEntry entry : displayStrings)
-            {
+        if (Mouse.getEventButtonState()
+                && !(mouseX < SCROLL_X || mouseX > SCROLL_X_MAX || mouseY < SCROLL_Y || mouseY > SCROLL_Y_MAX)) {
+            for (GuiTextEntry entry : displayStrings) {
                 entry.handleMouseInput(mouseX, mouseY);
-                if (entry.isSelected)
-                {
+                if (entry.isSelected) {
                     selected = entry;
                     searchBar.setText(entry.getText());
                     searchBar.fixCursorPos();
@@ -241,73 +209,65 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
     }
 
     @Override
-    public boolean isScrollBarActive()
-    {
+    public boolean isScrollBarActive() {
         return displayStrings.size() > getListViewSize();
     }
 
     @Override
-    public int getScreenWidth()
-    {
+    public int getScreenWidth() {
         return width;
     }
 
     @Override
-    public int getScreenHeight()
-    {
+    public int getScreenHeight() {
         return height;
     }
 
     @Override
-    public int getGuiWidth()
-    {
+    public int getGuiWidth() {
         return xSize;
     }
 
     @Override
-    public int getGuiHeight()
-    {
+    public int getGuiHeight() {
         return ySize;
     }
 
     @Override
-    public int getScrollAmount()
-    {
+    public int getScrollAmount() {
         return 5;
     }
 
     @Override
     @Optional.Method(modid = "NotEnoughItems")
-    public VisiblityData modifyVisiblity(GuiContainer guiContainer, VisiblityData visiblityData)
-    {
+    public VisiblityData modifyVisiblity(GuiContainer guiContainer, VisiblityData visiblityData) {
         return null;
     }
 
     @Override
     @Optional.Method(modid = "NotEnoughItems")
-    public Iterable<Integer> getItemSpawnSlots(GuiContainer gui, ItemStack item)
-    {
+    public Iterable<Integer> getItemSpawnSlots(GuiContainer gui, ItemStack item) {
         return null;
     }
 
     @Override
     @Optional.Method(modid = "NotEnoughItems")
-    public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h)
-    {
-        return !(x + w < this.guiLeft || x > this.guiLeft + this.width || y + h < this.guiTop || y > this.guiTop + this.height);
+    public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h) {
+        return !(x + w < this.guiLeft
+                || x > this.guiLeft + this.width
+                || y + h < this.guiTop
+                || y > this.guiTop + this.height);
     }
 
     @Override
     @Optional.Method(modid = "NotEnoughItems")
-    public List<TaggedInventoryArea> getInventoryAreas(GuiContainer gui)
-    {
+    public List<TaggedInventoryArea> getInventoryAreas(GuiContainer gui) {
         return null;
     }
 
     @Override
     @Optional.Method(modid = "NotEnoughItems")
-    public boolean handleDragNDrop(GuiContainer gui, int mouseX, int mouseY, ItemStack draggedStack, int button)
-    {
+    public boolean handleDragNDrop(GuiContainer gui, int mouseX, int mouseY, ItemStack draggedStack, int button) {
         return false;
     }
 }

@@ -9,23 +9,17 @@ import stevesaddons.StevesAddons;
 import stevesaddons.helpers.Config;
 import stevesaddons.threading.SearchItems;
 
-public class SearchRegistryGenerateMessage implements IMessage, IMessageHandler<SearchRegistryGenerateMessage, IMessage>
-{
+public class SearchRegistryGenerateMessage
+        implements IMessage, IMessageHandler<SearchRegistryGenerateMessage, IMessage> {
     @Override
-    public void fromBytes(ByteBuf buf)
-    {
-    }
+    public void fromBytes(ByteBuf buf) {}
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-    }
+    public void toBytes(ByteBuf buf) {}
 
     @Override
-    public IMessage onMessage(SearchRegistryGenerateMessage message, MessageContext ctx)
-    {
-        if (ctx.side == Side.CLIENT && SearchItems.searchEntries.isEmpty() && Config.buildIndexEagerly)
-        {
+    public IMessage onMessage(SearchRegistryGenerateMessage message, MessageContext ctx) {
+        if (ctx.side == Side.CLIENT && SearchItems.searchEntries.isEmpty() && Config.buildIndexEagerly) {
             long time = System.currentTimeMillis();
             SearchItems.setItems();
             StevesAddons.log.info("Search database generated in " + (System.currentTimeMillis() - time) + "ms");

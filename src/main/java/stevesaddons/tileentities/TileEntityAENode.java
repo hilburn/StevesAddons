@@ -10,6 +10,7 @@ import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Optional;
+import java.util.*;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -26,102 +27,77 @@ import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
 import vswe.stevesfactory.components.*;
 
-import java.util.*;
-
 @Optional.Interface(iface = "stevesaddons.api.IHiddenTank", modid = "extracells")
-public class TileEntityAENode extends TileEntityClusterElement implements IGridHost, IActionHost, IHiddenInventory, IHiddenTank
-{
-    private class GridBlock implements IGridBlock
-    {
+public class TileEntityAENode extends TileEntityClusterElement
+        implements IGridHost, IActionHost, IHiddenInventory, IHiddenTank {
+    private class GridBlock implements IGridBlock {
         @Override
-        public double getIdlePowerUsage()
-        {
+        public double getIdlePowerUsage() {
             return 10;
         }
 
         @Override
-        public EnumSet<GridFlags> getFlags()
-        {
+        public EnumSet<GridFlags> getFlags() {
             return EnumSet.of(GridFlags.REQUIRE_CHANNEL);
         }
 
         @Override
-        public boolean isWorldAccessible()
-        {
+        public boolean isWorldAccessible() {
             return true;
         }
 
         @Override
-        public DimensionalCoord getLocation()
-        {
+        public DimensionalCoord getLocation() {
             return new DimensionalCoord(TileEntityAENode.this);
         }
 
         @Override
-        public AEColor getGridColor()
-        {
+        public AEColor getGridColor() {
             return AEColor.Transparent;
         }
 
         @Override
-        public void onGridNotification(GridNotification gridNotification)
-        {
-
-        }
+        public void onGridNotification(GridNotification gridNotification) {}
 
         @Override
-        public void setNetworkStatus(IGrid iGrid, int i)
-        {
-
-        }
+        public void setNetworkStatus(IGrid iGrid, int i) {}
 
         @Override
-        public EnumSet<ForgeDirection> getConnectableSides()
-        {
+        public EnumSet<ForgeDirection> getConnectableSides() {
             return EnumSet.allOf(ForgeDirection.class);
         }
 
         @Override
-        public IGridHost getMachine()
-        {
+        public IGridHost getMachine() {
             return TileEntityAENode.this;
         }
 
         @Override
-        public void gridChanged()
-        {
-
-        }
+        public void gridChanged() {}
 
         @Override
-        public ItemStack getMachineRepresentation()
-        {
+        public ItemStack getMachineRepresentation() {
             return new ItemStack(BlockRegistry.cableAENode);
         }
     }
 
-    private class AEFakeTank implements IFluidHandler
-    {
+    private class AEFakeTank implements IFluidHandler {
         @Override
-        public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
-        {
+        public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
             IAEFluidStack toAdd = AEHelper.insert(getNode(), resource, TileEntityAENode.this, doFill);
-            return toAdd == null ? resource.amount : resource.amount - (int)toAdd.getStackSize();
+            return toAdd == null ? resource.amount : resource.amount - (int) toAdd.getStackSize();
         }
 
         @Override
-        public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
-        {
+        public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
             IAEFluidStack drain = AEHelper.extract(getNode(), resource, TileEntityAENode.this, doDrain);
             return drain == null ? null : drain.getFluidStack();
         }
 
         @Override
-        public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
-        {
+        public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
             Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(getNode());
-            if (itr != null && itr.hasNext())
-            {
+            if (itr != null && itr.hasNext()) {
                 FluidStack stack = itr.next().getFluidStack();
                 stack.amount = Math.min(maxDrain, stack.amount);
                 return drain(from, stack, doDrain);
@@ -130,25 +106,21 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         }
 
         @Override
-        public boolean canFill(ForgeDirection from, Fluid fluid)
-        {
+        public boolean canFill(ForgeDirection from, Fluid fluid) {
             return AEHelper.insert(getNode(), new FluidStack(fluid, 1), TileEntityAENode.this, true) != null;
         }
 
         @Override
-        public boolean canDrain(ForgeDirection from, Fluid fluid)
-        {
-            return AEHelper.find(getNode(), new FluidStack(fluid, 1))!=null;
+        public boolean canDrain(ForgeDirection from, Fluid fluid) {
+            return AEHelper.find(getNode(), new FluidStack(fluid, 1)) != null;
         }
 
         @Override
-        public FluidTankInfo[] getTankInfo(ForgeDirection from)
-        {
+        public FluidTankInfo[] getTankInfo(ForgeDirection from) {
             List<FluidTankInfo> tankInfo = new ArrayList<FluidTankInfo>();
             Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(getNode());
             if (itr == null) return new FluidTankInfo[0];
-            while (itr.hasNext())
-            {
+            while (itr.hasNext()) {
                 FluidStack stack = itr.next().getFluidStack();
                 tankInfo.add(new FluidTankInfo(stack, stack.amount));
             }
@@ -161,30 +133,27 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
     private IFluidHandler tank;
     private boolean isReady;
 
-    public TileEntityAENode()
-    {
+    public TileEntityAENode() {
         this.gridBlock = new GridBlock();
         this.tank = new AEFakeTank();
     }
 
     @Override
-    public void updateEntity()
-    {
+    public void updateEntity() {
         super.updateEntity();
         this.isReady = true;
         getNode();
     }
 
     @Override
-    public boolean canUpdate()
-    {
+    public boolean canUpdate() {
         return !this.isReady;
     }
 
-    public IGridNode getNode()
-    {
-        if( this.gridNode == null && FMLCommonHandler.instance().getEffectiveSide().isServer() && this.isReady)
-        {
+    public IGridNode getNode() {
+        if (this.gridNode == null
+                && FMLCommonHandler.instance().getEffectiveSide().isServer()
+                && this.isReady) {
             this.gridNode = AEApi.instance().createGridNode(this.gridBlock);
             this.gridNode.updateState();
         }
@@ -193,80 +162,70 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
     }
 
     @Override
-    public IGridNode getActionableNode()
-    {
+    public IGridNode getActionableNode() {
         return getNode();
     }
 
     @Override
-    protected EnumSet<ClusterMethodRegistration> getRegistrations()
-    {
+    protected EnumSet<ClusterMethodRegistration> getRegistrations() {
         return null;
     }
 
     @Override
-    public IGridNode getGridNode(ForgeDirection forgeDirection)
-    {
+    public IGridNode getGridNode(ForgeDirection forgeDirection) {
         return getNode();
     }
 
     @Override
-    public AECableType getCableConnectionType(ForgeDirection forgeDirection)
-    {
+    public AECableType getCableConnectionType(ForgeDirection forgeDirection) {
         return AECableType.SMART;
     }
 
     @Override
-    public void securityBreak()
-    {
+    public void securityBreak() {
         this.worldObj.func_147480_a(this.xCoord, this.yCoord, this.zCoord, true);
     }
 
     @Override
-    public void invalidate()
-    {
+    public void invalidate() {
         super.invalidate();
-        if (this.gridNode != null)
-        {
+        if (this.gridNode != null) {
             this.gridNode.destroy();
             this.gridNode = null;
         }
     }
 
     @Override
-    public void onChunkUnload()
-    {
+    public void onChunkUnload() {
         super.onChunkUnload();
-        if (this.gridNode != null)
-        {
+        if (this.gridNode != null) {
             this.gridNode.destroy();
             this.gridNode = null;
         }
     }
 
     @Override
-    public int getInsertable(ItemStack stack)
-    {
+    public int getInsertable(ItemStack stack) {
         ItemStack insertable = AEHelper.getInsertable(getNode(), stack, this);
-        return insertable == null? 0 : insertable.stackSize;
+        return insertable == null ? 0 : insertable.stackSize;
     }
 
     @Override
-    public void insertItemStack(ItemStack stack)
-    {
+    public void insertItemStack(ItemStack stack) {
         AEHelper.insert(getNode(), stack, this, false);
     }
 
     @Override
-    public void addItemsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, List<ItemBufferElement> itemBuffer, CommandExecutorRF commandExecutorRF)
-    {
+    public void addItemsToBuffer(
+            ComponentMenuStuff menuItem,
+            SlotInventoryHolder inventory,
+            List<ItemBufferElement> itemBuffer,
+            CommandExecutorRF commandExecutorRF) {
         Iterator<IAEItemStack> itr = AEHelper.getItrItems(this.getNode());
         if (itr == null) return;
-        while (itr.hasNext())
-        {
+        while (itr.hasNext()) {
             IAEItemStack stack = itr.next();
-            if (stack != null)
-            {
+            if (stack != null) {
                 Setting setting = commandExecutorRF.isItemValid(menuItem.getSettings(), stack.getItemStack());
                 addAEItemToBuffer(menuItem, inventory, setting, stack, itemBuffer);
             }
@@ -274,17 +233,15 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
     }
 
     @Override
-    public void isItemValid(Collection<Setting> settings, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap)
-    {
-        for (Setting setting : settings)
-        {
+    public void isItemValid(
+            Collection<Setting> settings, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
+        for (Setting setting : settings) {
             ItemStack stack = AEHelper.find(getNode(), ((ItemSetting) setting).getItem());
-            if (stack != null)
-            {
+            if (stack != null) {
                 ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());
-                if (conditionSettingChecker == null)
-                {
-                    conditionSettingCheckerMap.put(setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
+                if (conditionSettingChecker == null) {
+                    conditionSettingCheckerMap.put(
+                            setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
                 }
                 conditionSettingChecker.addCount(stack.stackSize);
             }
@@ -292,14 +249,11 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
     }
 
     @Override
-    public int getExistingStackSize(ItemSetting setting)
-    {
+    public int getExistingStackSize(ItemSetting setting) {
         int amount = 0;
         Iterator<IAEItemStack> itr = AEHelper.getItrItems(getNode());
-        if (itr != null)
-        {
-            while (itr.hasNext())
-            {
+        if (itr != null) {
+            while (itr.hasNext()) {
                 IAEItemStack stack = itr.next();
                 if (setting.isEqualForCommandExecutor(stack.getItemStack())) amount += stack.getStackSize();
             }
@@ -307,72 +261,72 @@ public class TileEntityAENode extends TileEntityClusterElement implements IGridH
         return amount;
     }
 
-    private void addAEItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting, IAEItemStack stack, List<ItemBufferElement> itemBuffer)
-    {
-        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())
-        {
+    private void addAEItemToBuffer(
+            ComponentMenuStuff menuItem,
+            SlotInventoryHolder inventory,
+            Setting setting,
+            IAEItemStack stack,
+            List<ItemBufferElement> itemBuffer) {
+        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount()) {
             FlowComponent owner = menuItem.getParent();
-            SlotStackInventoryHolder target =  new AEItemBufferElement(stack, this);
+            SlotStackInventoryHolder target = new AEItemBufferElement(stack, this);
             boolean added = false;
 
-            for (ItemBufferElement itemBufferElement : itemBuffer)
-            {
-                if (itemBufferElement.addTarget(owner, setting, inventory, target))
-                {
+            for (ItemBufferElement itemBufferElement : itemBuffer) {
+                if (itemBufferElement.addTarget(owner, setting, inventory, target)) {
                     added = true;
                     break;
                 }
             }
-            if (!added)
-            {
+            if (!added) {
                 itemBuffer.add(new ItemBufferElement(owner, setting, inventory, menuItem.useWhiteList(), target));
             }
         }
     }
 
     @Override
-    public void addFluidsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, List<LiquidBufferElement> liquidBuffer, CommandExecutorRF commandExecutorRF)
-    {
+    public void addFluidsToBuffer(
+            ComponentMenuStuff menuItem,
+            SlotInventoryHolder tank,
+            List<LiquidBufferElement> liquidBuffer,
+            CommandExecutorRF commandExecutorRF) {
         Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(this.getNode());
         if (itr == null) return;
-        while (itr.hasNext())
-        {
+        while (itr.hasNext()) {
             IAEFluidStack stack = itr.next();
-            if (stack != null)
-            {
+            if (stack != null) {
                 Setting setting = commandExecutorRF.isLiquidValid(menuItem, stack.getFluidStack());
                 addAEFluidToBuffer(menuItem, tank, setting, stack, liquidBuffer);
             }
         }
     }
 
-    private void addAEFluidToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting, IAEFluidStack stack, List<LiquidBufferElement> liquidBuffer)
-    {
-        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount())
-        {
+    private void addAEFluidToBuffer(
+            ComponentMenuStuff menuItem,
+            SlotInventoryHolder tank,
+            Setting setting,
+            IAEFluidStack stack,
+            List<LiquidBufferElement> liquidBuffer) {
+        if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount()) {
             FlowComponent owner = menuItem.getParent();
-            StackTankHolder target =  new AEFluidBufferElement(stack, (TileEntityAENode)tank.getTile());
+            StackTankHolder target = new AEFluidBufferElement(stack, (TileEntityAENode) tank.getTile());
             boolean added = false;
 
-            for (LiquidBufferElement liquidBufferElement : liquidBuffer)
-            {
-                if (liquidBufferElement.addTarget(owner, setting, tank, target))
-                {
+            for (LiquidBufferElement liquidBufferElement : liquidBuffer) {
+                if (liquidBufferElement.addTarget(owner, setting, tank, target)) {
                     added = true;
                     break;
                 }
             }
 
-            if (!added)
-            {
+            if (!added) {
                 liquidBuffer.add(new LiquidBufferElement(owner, setting, tank, menuItem.useWhiteList(), target));
             }
         }
     }
 
     @Override
-    public IFluidHandler getTank()
-    {
+    public IFluidHandler getTank() {
         return tank;
     }
 }

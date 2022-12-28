@@ -1,13 +1,10 @@
 package stevesaddons.reference;
 
 import cpw.mods.fml.common.ModMetadata;
-
 import java.util.Arrays;
 
-public class Metadata
-{
-    public static ModMetadata init(ModMetadata metadata)
-    {
+public class Metadata {
+    public static ModMetadata init(ModMetadata metadata) {
         metadata.modId = Reference.ID;
         metadata.name = Reference.NAME;
         metadata.description = "Adds extra things to improve SFM";

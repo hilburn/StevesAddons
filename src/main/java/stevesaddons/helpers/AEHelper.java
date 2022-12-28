@@ -15,15 +15,11 @@ import appeng.me.GridAccessException;
 import appeng.me.cache.P2PCache;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
+import java.util.Iterator;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import stevesaddons.tileentities.TileEntityAENode;
 
-import java.util.Iterator;
-import java.util.Set;
-
-public class AEHelper
-{
+public class AEHelper {
     /**
      * Get the full {@link IGrid}
      *
@@ -31,13 +27,10 @@ public class AEHelper
      * @return the {@link IGrid} the {@link IGridNode} is in
      * @throws GridAccessException
      */
-    public static IGrid getGrid(IGridNode node) throws GridAccessException
-    {
-        if( node == null )
-            throw new GridAccessException();
+    public static IGrid getGrid(IGridNode node) throws GridAccessException {
+        if (node == null) throw new GridAccessException();
         IGrid grid = node.getGrid();
-        if( grid == null )
-            throw new GridAccessException();
+        if (grid == null) throw new GridAccessException();
         return grid;
     }
 
@@ -48,14 +41,11 @@ public class AEHelper
      * @return the {@link ITickManager} for the {@link IGridNode}
      * @throws GridAccessException
      */
-    public static ITickManager getTick(IGridNode node) throws GridAccessException
-    {
+    public static ITickManager getTick(IGridNode node) throws GridAccessException {
         IGrid grid = getGrid(node);
-        if( grid == null )
-            throw new GridAccessException();
+        if (grid == null) throw new GridAccessException();
         ITickManager pg = grid.getCache(ITickManager.class);
-        if( pg == null )
-            throw new GridAccessException();
+        if (pg == null) throw new GridAccessException();
         return pg;
     }
 
@@ -66,16 +56,13 @@ public class AEHelper
      * @return the {@link IStorageGrid} for the {@link IGridNode}
      * @throws GridAccessException
      */
-    public static IStorageGrid getStorage(IGridNode node) throws GridAccessException
-    {
+    public static IStorageGrid getStorage(IGridNode node) throws GridAccessException {
         IGrid grid = getGrid(node);
-        if( grid == null )
-            throw new GridAccessException();
+        if (grid == null) throw new GridAccessException();
 
         IStorageGrid pg = grid.getCache(IStorageGrid.class);
 
-        if( pg == null )
-            throw new GridAccessException();
+        if (pg == null) throw new GridAccessException();
 
         return pg;
     }
@@ -87,16 +74,13 @@ public class AEHelper
      * @return the {@link P2PCache} for the {@link IGridNode}
      * @throws GridAccessException
      */
-    public static P2PCache getP2P(IGridNode node) throws GridAccessException
-    {
+    public static P2PCache getP2P(IGridNode node) throws GridAccessException {
         IGrid grid = getGrid(node);
-        if( grid == null )
-            throw new GridAccessException();
+        if (grid == null) throw new GridAccessException();
 
         P2PCache pg = grid.getCache(P2PCache.class);
 
-        if( pg == null )
-            throw new GridAccessException();
+        if (pg == null) throw new GridAccessException();
 
         return pg;
     }
@@ -108,16 +92,13 @@ public class AEHelper
      * @return the {@link ISecurityGrid} for the {@link IGridNode}
      * @throws GridAccessException
      */
-    public static ISecurityGrid getSecurity(IGridNode node) throws GridAccessException
-    {
+    public static ISecurityGrid getSecurity(IGridNode node) throws GridAccessException {
         IGrid grid = getGrid(node);
-        if( grid == null )
-            throw new GridAccessException();
+        if (grid == null) throw new GridAccessException();
 
-        ISecurityGrid sg = grid.getCache( ISecurityGrid.class );
+        ISecurityGrid sg = grid.getCache(ISecurityGrid.class);
 
-        if( sg == null )
-            throw new GridAccessException();
+        if (sg == null) throw new GridAccessException();
 
         return sg;
     }
@@ -129,16 +110,13 @@ public class AEHelper
      * @return the {@link ICraftingGrid} for the {@link IGridNode}
      * @throws GridAccessException
      */
-    public static ICraftingGrid getCrafting(IGridNode node) throws GridAccessException
-    {
+    public static ICraftingGrid getCrafting(IGridNode node) throws GridAccessException {
         IGrid grid = getGrid(node);
-        if( grid == null )
-            throw new GridAccessException();
+        if (grid == null) throw new GridAccessException();
 
-        ICraftingGrid sg = grid.getCache( ICraftingGrid.class );
+        ICraftingGrid sg = grid.getCache(ICraftingGrid.class);
 
-        if( sg == null )
-            throw new GridAccessException();
+        if (sg == null) throw new GridAccessException();
 
         return sg;
     }
@@ -150,13 +128,10 @@ public class AEHelper
      * @param stack the to insert {@link ItemStack}
      * @return true or false whether is can be inserted or not
      */
-    public static boolean canInsert(IGridNode node, ItemStack stack)
-    {
-        try
-        {
+    public static boolean canInsert(IGridNode node, ItemStack stack) {
+        try {
             return getStorage(node).getItemInventory().canAccept(AEItemStack.create(stack));
-        } catch (GridAccessException e)
-        {
+        } catch (GridAccessException e) {
             return false;
         }
     }
@@ -169,26 +144,27 @@ public class AEHelper
      * @param host the {@link IActionHost} to insert from
      * @return true if inserted
      */
-    public static IAEItemStack insert(IGridNode node, ItemStack stack, IActionHost host, boolean simulate)
-    {
-        if (canInsert(node, stack))
-        {
-            try
-            {
-                return getStorage(node).getItemInventory().injectItems(AEItemStack.create(stack),simulate? Actionable.SIMULATE : Actionable.MODULATE, new MachineSource(host));
-            } catch (GridAccessException ignored)
-            {}
+    public static IAEItemStack insert(IGridNode node, ItemStack stack, IActionHost host, boolean simulate) {
+        if (canInsert(node, stack)) {
+            try {
+                return getStorage(node)
+                        .getItemInventory()
+                        .injectItems(
+                                AEItemStack.create(stack),
+                                simulate ? Actionable.SIMULATE : Actionable.MODULATE,
+                                new MachineSource(host));
+            } catch (GridAccessException ignored) {
+            }
         }
         return null;
     }
 
-    public static ItemStack getInsertable(IGridNode node, ItemStack stack, IActionHost host)
-    {
+    public static ItemStack getInsertable(IGridNode node, ItemStack stack, IActionHost host) {
         IAEItemStack aeStack = insert(node, stack, host, true);
         if (aeStack == null) return stack;
         ItemStack result = stack.copy();
         result.stackSize -= aeStack.getStackSize();
-        if (result.stackSize<=0) return null;
+        if (result.stackSize <= 0) return null;
         return result;
     }
 
@@ -200,13 +176,13 @@ public class AEHelper
      * @param host the {@link IActionHost} to extract from
      * @return the extracted {@link ItemStack} can be null
      */
-    public static ItemStack extract(IGridNode node, ItemStack stack, IActionHost host)
-    {
-        try
-        {
-            return getStorage(node).getItemInventory().extractItems(AEItemStack.create(stack), Actionable.MODULATE, new MachineSource(host)).getItemStack();
-        } catch (GridAccessException e)
-        {
+    public static ItemStack extract(IGridNode node, ItemStack stack, IActionHost host) {
+        try {
+            return getStorage(node)
+                    .getItemInventory()
+                    .extractItems(AEItemStack.create(stack), Actionable.MODULATE, new MachineSource(host))
+                    .getItemStack();
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -219,13 +195,12 @@ public class AEHelper
      * @param host the {@link IActionHost} to extract from
      * @return the extracted {@link IAEItemStack} can be null
      */
-    public static IAEItemStack extract(IGridNode node, IAEItemStack stack, IActionHost host)
-    {
-        try
-        {
-            return getStorage(node).getItemInventory().extractItems(stack, Actionable.MODULATE, new MachineSource(host));
-        } catch (GridAccessException e)
-        {
+    public static IAEItemStack extract(IGridNode node, IAEItemStack stack, IActionHost host) {
+        try {
+            return getStorage(node)
+                    .getItemInventory()
+                    .extractItems(stack, Actionable.MODULATE, new MachineSource(host));
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -237,13 +212,10 @@ public class AEHelper
      * @param stack the to insert {@link FluidStack}
      * @return true or false whether is can be inserted or not
      */
-    public static boolean canInsert(IGridNode node, FluidStack stack)
-    {
-        try
-        {
+    public static boolean canInsert(IGridNode node, FluidStack stack) {
+        try {
             return getStorage(node).getFluidInventory().canAccept(AEFluidStack.create(stack));
-        } catch (GridAccessException e)
-        {
+        } catch (GridAccessException e) {
             return false;
         }
     }
@@ -256,15 +228,16 @@ public class AEHelper
      * @param host the {@link IActionHost} to insert from
      * @return true if inserted
      */
-    public static IAEFluidStack insert(IGridNode node, FluidStack stack, IActionHost host, boolean simulate)
-    {
-        if (canInsert(node, stack))
-        {
-            try
-            {
-                return getStorage(node).getFluidInventory().injectItems(AEFluidStack.create(stack), simulate? Actionable.SIMULATE : Actionable.MODULATE, new MachineSource(host));
-            } catch (GridAccessException ignored)
-            {
+    public static IAEFluidStack insert(IGridNode node, FluidStack stack, IActionHost host, boolean simulate) {
+        if (canInsert(node, stack)) {
+            try {
+                return getStorage(node)
+                        .getFluidInventory()
+                        .injectItems(
+                                AEFluidStack.create(stack),
+                                simulate ? Actionable.SIMULATE : Actionable.MODULATE,
+                                new MachineSource(host));
+            } catch (GridAccessException ignored) {
             }
         }
         return null;
@@ -278,13 +251,15 @@ public class AEHelper
      * @param host the {@link IActionHost} to extract from
      * @return the extracted {@link FluidStack} can be null
      */
-    public static IAEFluidStack extract(IGridNode node, FluidStack stack, IActionHost host, boolean simulate)
-    {
-        try
-        {
-            return getStorage(node).getFluidInventory().extractItems(AEFluidStack.create(stack), simulate ? Actionable.SIMULATE : Actionable.MODULATE, new MachineSource(host));
-        } catch (GridAccessException e)
-        {
+    public static IAEFluidStack extract(IGridNode node, FluidStack stack, IActionHost host, boolean simulate) {
+        try {
+            return getStorage(node)
+                    .getFluidInventory()
+                    .extractItems(
+                            AEFluidStack.create(stack),
+                            simulate ? Actionable.SIMULATE : Actionable.MODULATE,
+                            new MachineSource(host));
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -297,13 +272,12 @@ public class AEHelper
      * @param host the {@link IActionHost} to extract from
      * @return the extracted {@link IAEFluidStack} can be null
      */
-    public static IAEFluidStack extract(IGridNode node, IAEFluidStack stack, IActionHost host)
-    {
-        try
-        {
-            return getStorage(node).getFluidInventory().extractItems(stack, Actionable.MODULATE, new MachineSource(host));
-        } catch (GridAccessException e)
-        {
+    public static IAEFluidStack extract(IGridNode node, IAEFluidStack stack, IActionHost host) {
+        try {
+            return getStorage(node)
+                    .getFluidInventory()
+                    .extractItems(stack, Actionable.MODULATE, new MachineSource(host));
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -315,8 +289,7 @@ public class AEHelper
      * @param stack the {@link ItemStack} to find
      * @return
      */
-    public static ItemStack find(IGridNode node, ItemStack stack)
-    {
+    public static ItemStack find(IGridNode node, ItemStack stack) {
         IAEItemStack aeItemStack = findAEStack(node, stack);
         if (aeItemStack == null) return null;
         return aeItemStack.getItemStack();
@@ -329,13 +302,10 @@ public class AEHelper
      * @param stack the {@link ItemStack} to find
      * @return
      */
-    public static IAEItemStack findAEStack(IGridNode node, ItemStack stack)
-    {
-        try
-        {
+    public static IAEItemStack findAEStack(IGridNode node, ItemStack stack) {
+        try {
             return getStorage(node).getItemInventory().getStorageList().findPrecise(AEItemStack.create(stack));
-        } catch (GridAccessException e)
-        {
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -347,13 +317,10 @@ public class AEHelper
      * @param stack the {@link FluidStack} to find
      * @return
      */
-    public static IAEFluidStack find(IGridNode node, FluidStack stack)
-    {
-        try
-        {
+    public static IAEFluidStack find(IGridNode node, FluidStack stack) {
+        try {
             return getStorage(node).getFluidInventory().getStorageList().findPrecise(AEFluidStack.create(stack));
-        } catch (GridAccessException e)
-        {
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -364,13 +331,10 @@ public class AEHelper
      * @param node the {@link IGridNode} to get the list from
      * @return the {@link Iterator<IAEItemStack>} with all items for given {@link IGridNode}
      */
-    public static Iterator<IAEItemStack> getItrItems(IGridNode node)
-    {
-        try
-        {
+    public static Iterator<IAEItemStack> getItrItems(IGridNode node) {
+        try {
             return getStorage(node).getItemInventory().getStorageList().iterator();
-        } catch (GridAccessException e)
-        {
+        } catch (GridAccessException e) {
             return null;
         }
     }
@@ -381,13 +345,10 @@ public class AEHelper
      * @param node the {@link IGridNode} to get the list from
      * @return the {@link Iterator<IAEFluidStack>} with all fluids for given {@link IGridNode}
      */
-    public static Iterator<IAEFluidStack> getItrFluids(IGridNode node)
-    {
-        try
-        {
+    public static Iterator<IAEFluidStack> getItrFluids(IGridNode node) {
+        try {
             return getStorage(node).getFluidInventory().getStorageList().iterator();
-        } catch (GridAccessException e)
-        {
+        } catch (GridAccessException e) {
             return null;
         }
     }

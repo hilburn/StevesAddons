@@ -5,85 +5,66 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class Null
-{
-    private static class NullInventory implements IInventory
-    {
+public class Null {
+    private static class NullInventory implements IInventory {
         @Override
-        public int getSizeInventory()
-        {
+        public int getSizeInventory() {
             return 1;
         }
 
         @Override
-        public ItemStack getStackInSlot(int slot)
-        {
+        public ItemStack getStackInSlot(int slot) {
             return null;
         }
 
         @Override
-        public ItemStack decrStackSize(int slot, int amount)
-        {
+        public ItemStack decrStackSize(int slot, int amount) {
             return null;
         }
 
         @Override
-        public ItemStack getStackInSlotOnClosing(int slot)
-        {
+        public ItemStack getStackInSlotOnClosing(int slot) {
             return null;
         }
 
         @Override
-        public void setInventorySlotContents(int slot, ItemStack stack)
-        {
-
-        }
+        public void setInventorySlotContents(int slot, ItemStack stack) {}
 
         @Override
-        public String getInventoryName()
-        {
+        public String getInventoryName() {
             return null;
         }
 
         @Override
-        public boolean hasCustomInventoryName()
-        {
+        public boolean hasCustomInventoryName() {
             return false;
         }
 
         @Override
-        public int getInventoryStackLimit()
-        {
+        public int getInventoryStackLimit() {
             return Integer.MAX_VALUE;
         }
 
         @Override
-        public void markDirty()
-        {
-        }
+        public void markDirty() {}
 
         @Override
-        public boolean isUseableByPlayer(EntityPlayer player)
-        {
+        public boolean isUseableByPlayer(EntityPlayer player) {
             return false;
         }
 
         @Override
-        public void openInventory()
-        {
-        }
+        public void openInventory() {}
 
         @Override
-        public void closeInventory()
-        {
-        }
+        public void closeInventory() {}
 
         @Override
-        public boolean isItemValidForSlot(int slot, ItemStack stack)
-        {
+        public boolean isItemValidForSlot(int slot, ItemStack stack) {
             return false;
         }
     }
+
     public static IInventory NULL_INVENTORY = new NullInventory();
     public static ItemStack NULL_STACK = new ItemStack(Blocks.end_portal, 0);
 }

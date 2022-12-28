@@ -1,5 +1,9 @@
 package stevesaddons.registry;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
@@ -7,18 +11,11 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import stevesaddons.commands.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-public class CommandRegistry extends CommandBase
-{
+public class CommandRegistry extends CommandBase {
     public static Map<String, ISubCommand> commands = new LinkedHashMap<String, ISubCommand>();
     public static CommandRegistry instance = new CommandRegistry();
 
-    static
-    {
+    static {
         register(CommandHelp.instance);
         register(CommandSave.instance);
         register(CommandLoad.instance);
@@ -26,42 +23,35 @@ public class CommandRegistry extends CommandBase
         register(CommandPastebin.instance);
     }
 
-    public static void register(ISubCommand command)
-    {
+    public static void register(ISubCommand command) {
         commands.put(command.getCommandName(), command);
     }
 
     @Override
-    public String getCommandName()
-    {
+    public String getCommandName() {
         return "stevesaddons";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
-    {
+    public String getCommandUsage(ICommandSender sender) {
         return "/" + getCommandName() + " help";
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender)
-    {
+    public boolean canCommandSenderUseCommand(ICommandSender sender) {
         return true;
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
-    {
-        if (args.length < 1)
-        {
-            args = new String[]{"help"};
+    public void processCommand(ICommandSender sender, String[] args) {
+        if (args.length < 1) {
+            args = new String[] {"help"};
         }
         ISubCommand command = commands.get(args[0]);
-        if (command != null)
-        {
-            if (sender.canCommandSenderUseCommand(command.getPermissionLevel(), "stevesaddons " + command.getCommandName()) ||
-                    (sender instanceof EntityPlayerMP && command.getPermissionLevel() <= 0))
-            {
+        if (command != null) {
+            if (sender.canCommandSenderUseCommand(
+                            command.getPermissionLevel(), "stevesaddons " + command.getCommandName())
+                    || (sender instanceof EntityPlayerMP && command.getPermissionLevel() <= 0)) {
                 command.handleCommand(sender, args);
                 return;
             }
@@ -70,30 +60,24 @@ public class CommandRegistry extends CommandBase
         throw new CommandNotFoundException("stevesaddons.command.notFound");
     }
 
-    public static boolean commandExists(String name)
-    {
+    public static boolean commandExists(String name) {
         return commands.containsKey(name);
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args)
-    {
+    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
 
-        if (args.length == 1)
-        {
+        if (args.length == 1) {
             String subCommand = args[0];
             List result = new ArrayList();
-            for (ISubCommand command : commands.values())
-            {
+            for (ISubCommand command : commands.values()) {
                 if (command.isVisible(sender) && command.getCommandName().startsWith(subCommand))
                     result.add(command.getCommandName());
             }
             return result;
-        } else if (commands.containsKey(args[0]) && commands.get(args[0]).isVisible(sender))
-        {
+        } else if (commands.containsKey(args[0]) && commands.get(args[0]).isVisible(sender)) {
             return commands.get(args[0]).addTabCompletionOptions(sender, args);
         }
         return null;
     }
-
 }

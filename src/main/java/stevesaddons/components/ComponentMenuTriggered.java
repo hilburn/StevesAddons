@@ -2,6 +2,7 @@ package stevesaddons.components;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.EnumSet;
 import net.minecraft.nbt.NBTTagCompound;
 import stevesaddons.asm.StevesHooks;
 import vswe.stevesfactory.components.*;
@@ -12,11 +13,7 @@ import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
 
-import java.util.EnumSet;
-
-
-public abstract class ComponentMenuTriggered extends ComponentMenu
-{
+public abstract class ComponentMenuTriggered extends ComponentMenu {
 
     protected TextBoxNumberList textBoxes = new TextBoxNumberList();
 
@@ -34,8 +31,7 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawMouseOver(GuiManager gui, int mX, int mY) {
-    }
+    public void drawMouseOver(GuiManager gui, int mX, int mY) {}
 
     public void onClick(int mX, int mY, int button) {
         this.textBoxes.onClick(mX, mY, button);
@@ -46,15 +42,13 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         return this.textBoxes.onKeyStroke(gui, c, k);
     }
 
-    public void onDrag(int mX, int mY, boolean isMenuOpen) {
-    }
+    public void onDrag(int mX, int mY, boolean isMenuOpen) {}
 
-    public void onRelease(int mX, int mY, boolean isMenuOpen) {
-    }
+    public void onRelease(int mX, int mY, boolean isMenuOpen) {}
 
     public void writeData(DataWriter dw) {
         int val = this.getDelay();
-        if(val < getMin()) {
+        if (val < getMin()) {
             val = getMin();
         }
         dw.writeData(val, DataBitHelper.MENU_INTERVAL);
@@ -65,12 +59,12 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
     }
 
     public void copyFrom(ComponentMenu menu) {
-        this.setDelay(((ComponentMenuTriggered)menu).getDelay());
+        this.setDelay(((ComponentMenuTriggered) menu).getDelay());
     }
 
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuTriggered newDataTriggered = (ComponentMenuTriggered)newData;
-        if(newDataTriggered.getDelay() != this.getDelay()) {
+        ComponentMenuTriggered newDataTriggered = (ComponentMenuTriggered) newData;
+        if (newDataTriggered.getDelay() != this.getDelay()) {
             copyFrom(newData);
             DataWriter dw = this.getWriterForClientComponentPacket(container);
             dw.writeData(getDelay(), DataBitHelper.MENU_INTERVAL);
@@ -96,41 +90,33 @@ public abstract class ComponentMenuTriggered extends ComponentMenu
         nbtTagCompound.setInteger(NBT_COUNTDOWN, this.counter);
     }
 
-    public int getMin()
-    {
+    public int getMin() {
         return 1;
     }
 
-    public void setCountdown()
-    {
-        if (isVisible())
-        {
+    public void setCountdown() {
+        if (isVisible()) {
             counter = 0;
             StevesHooks.registerTicker(getParent(), this);
         }
     }
 
-    public void tick()
-    {
-        if (isVisible() && ++counter >= getDelay())
-        {
+    public void tick() {
+        if (isVisible() && ++counter >= getDelay()) {
             act();
         }
     }
 
-    public boolean remove()
-    {
+    public boolean remove() {
         return false;
     }
 
-    protected void act()
-    {
+    protected void act() {
         getParent().getManager().activateTrigger(getParent(), getConnectionSets());
         resetCounter();
     }
 
-    protected void resetCounter()
-    {
+    protected void resetCounter() {
         counter = 0;
     }
 

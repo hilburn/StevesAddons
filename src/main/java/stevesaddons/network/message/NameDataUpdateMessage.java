@@ -10,39 +10,32 @@ import stevesaddons.naming.BlockCoord;
 import stevesaddons.naming.NameRegistry;
 import stevesaddons.network.MessageHandler;
 
-public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameDataUpdateMessage, IMessage>
-{
+public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameDataUpdateMessage, IMessage> {
     public int dimId;
     public boolean remove;
     public BlockCoord blockCoord;
 
-    public NameDataUpdateMessage()
-    {
-    }
+    public NameDataUpdateMessage() {}
 
-    public NameDataUpdateMessage(int dim, BlockCoord coord)
-    {
+    public NameDataUpdateMessage(int dim, BlockCoord coord) {
         this.dimId = dim;
         this.blockCoord = coord;
     }
 
-    public NameDataUpdateMessage(int dim, BlockCoord coord, boolean remove)
-    {
+    public NameDataUpdateMessage(int dim, BlockCoord coord, boolean remove) {
         this(dim, coord);
         this.remove = remove;
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
-    {
+    public void fromBytes(ByteBuf buf) {
         dimId = buf.readInt();
         remove = buf.readBoolean();
         blockCoord = new BlockCoord(buf.readInt(), buf.readInt(), buf.readInt(), ByteBufUtils.readUTF8String(buf));
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
+    public void toBytes(ByteBuf buf) {
         buf.writeInt(dimId);
         buf.writeBoolean(remove);
         buf.writeInt(blockCoord.x);
@@ -52,12 +45,10 @@ public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameData
     }
 
     @Override
-    public IMessage onMessage(NameDataUpdateMessage message, MessageContext ctx)
-    {
+    public IMessage onMessage(NameDataUpdateMessage message, MessageContext ctx) {
         if (message.remove) NameRegistry.removeName(message);
         else NameRegistry.saveName(message);
-        if (ctx.side == Side.SERVER)
-        {
+        if (ctx.side == Side.SERVER) {
             MessageHandler.INSTANCE.sendToAll(message);
         }
         return null;

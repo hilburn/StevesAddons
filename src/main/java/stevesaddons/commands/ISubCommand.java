@@ -1,11 +1,9 @@
 package stevesaddons.commands;
 
+import java.util.List;
 import net.minecraft.command.ICommandSender;
 
-import java.util.List;
-
-public interface ISubCommand
-{
+public interface ISubCommand {
 
     public int getPermissionLevel();
 

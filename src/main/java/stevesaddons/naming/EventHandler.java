@@ -20,87 +20,68 @@ import stevesaddons.network.message.SearchRegistryGenerateMessage;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
-public class EventHandler
-{
+public class EventHandler {
     @SubscribeEvent
-    public void playerLogIn(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        if (event.player instanceof EntityPlayerMP)
-        {
-            NameRegistry.syncNameData((EntityPlayerMP)event.player);
-            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(), (EntityPlayerMP)event.player);
+    public void playerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.player instanceof EntityPlayerMP) {
+            NameRegistry.syncNameData((EntityPlayerMP) event.player);
+            MessageHandler.INSTANCE.sendTo(new SearchRegistryGenerateMessage(), (EntityPlayerMP) event.player);
         }
     }
 
     @SubscribeEvent
-    public void blockBreak(BlockEvent.BreakEvent event)
-    {
+    public void blockBreak(BlockEvent.BreakEvent event) {
         NameRegistry.removeName(event.world, event.x, event.y, event.z);
     }
 
     @SubscribeEvent
-    public void worldLoad(WorldEvent.Load event)
-    {
+    public void worldLoad(WorldEvent.Load event) {
         WorldSavedData data = event.world.perWorldStorage.loadData(NameData.class, NameData.KEY);
-        if (data != null)
-            NameRegistry.setWorldData(event.world.provider.dimensionId, (NameData)data);
+        if (data != null) NameRegistry.setWorldData(event.world.provider.dimensionId, (NameData) data);
     }
 
     @SubscribeEvent
-    public void worldSave(WorldEvent.Save event)
-    {
+    public void worldSave(WorldEvent.Save event) {
         NameData nameData = NameRegistry.getWorldData(event.world.provider.dimensionId, false);
-        if (nameData != null)
-            event.world.perWorldStorage.setData(NameData.KEY, nameData);
+        if (nameData != null) event.world.perWorldStorage.setData(NameData.KEY, nameData);
     }
 
     @SubscribeEvent
-    public void worldUnload(WorldEvent.Unload event)
-    {
+    public void worldUnload(WorldEvent.Unload event) {
         NameData nameData = NameRegistry.getWorldData(event.world.provider.dimensionId, false);
-        if (nameData != null)
-            event.world.perWorldStorage.setData(NameData.KEY, nameData);
+        if (nameData != null) event.world.perWorldStorage.setData(NameData.KEY, nameData);
     }
 
     @SubscribeEvent
-    public void playerInteract(PlayerInteractEvent event)
-    {
+    public void playerInteract(PlayerInteractEvent event) {
         ItemStack stack = event.entityPlayer.getCurrentEquippedItem();
-        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && stack != null)
-        {
+        if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && stack != null) {
             World world = event.world;
             int x = event.x;
             int y = event.y;
             int z = event.z;
             EntityPlayer player = event.entityPlayer;
-            if (stack.getItem() == ItemRegistry.labeler)
-            {
-                if (ItemLabeler.isValidTile(world, x, y, z))
-                {
+            if (stack.getItem() == ItemRegistry.labeler) {
+                if (ItemLabeler.isValidTile(world, x, y, z)) {
                     String label = ItemLabeler.getLabel(stack);
-                    if (label.isEmpty())
-                    {
-                        if (NameRegistry.removeName(world, x, y, z))
-                        {
-                            player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
+                    if (label.isEmpty()) {
+                        if (NameRegistry.removeName(world, x, y, z)) {
+                            player.addChatComponentMessage(
+                                    new ChatComponentText(StatCollector.translateToLocal("stevesaddons.chat.cleared")));
                         }
-                    } else
-                    {
+                    } else {
                         NameRegistry.saveName(world, x, y, z, label);
-                        player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
+                        player.addChatComponentMessage(new ChatComponentText(
+                                StatCollector.translateToLocalFormatted("stevesaddons.chat.saved", label)));
                     }
                     event.setCanceled(true);
                 }
-            }
-            else if (stack.getItem() == ItemRegistry.duplicator && player.isSneaking())
-            {
+            } else if (stack.getItem() == ItemRegistry.duplicator && player.isSneaking()) {
                 TileEntity te = world.getTileEntity(x, y, z);
-                if (te instanceof TileEntityManager)
-                {
+                if (te instanceof TileEntityManager) {
                     world.removeTileEntity(x, y, z);
                     TileEntityManager manager = new TileEntityManager();
-                    if (stack.hasTagCompound() && ItemSFMDrive.validateNBT(stack))
-                    {
+                    if (stack.hasTagCompound() && ItemSFMDrive.validateNBT(stack)) {
                         manager.readFromNBT(stack.getTagCompound());
                         stack.setTagCompound(null);
                     }

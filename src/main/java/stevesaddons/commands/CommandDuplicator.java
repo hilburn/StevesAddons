@@ -10,21 +10,17 @@ import net.minecraft.nbt.NBTTagList;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
-public abstract class CommandDuplicator implements ISubCommand
-{
+public abstract class CommandDuplicator implements ISubCommand {
     public static NBTTagCompound defaultTagCompound = new NBTTagCompound();
     public static String[] keys = {"id", "Variables", "Components", "Timer", "ProtocolVersion", "ench"};
 
-    static
-    {
+    static {
         new TileEntityManager().writeToNBT(defaultTagCompound);
         defaultTagCompound.setTag("ench", new NBTTagList());
     }
 
-    public static ItemStack getDuplicator(ICommandSender sender)
-    {
-        if (sender instanceof EntityPlayerMP)
-        {
+    public static ItemStack getDuplicator(ICommandSender sender) {
+        if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP player = CommandBase.getCommandSenderAsPlayer(sender);
             ItemStack stack = player.inventory.getCurrentItem();
             if (stack != null && stack.getItem() == ItemRegistry.duplicator) return stack;
@@ -33,36 +29,28 @@ public abstract class CommandDuplicator implements ISubCommand
     }
 
     @Override
-    public void handleCommand(ICommandSender sender, String[] arguments)
-    {
-        if (!isVisible(sender))
-        {
+    public void handleCommand(ICommandSender sender, String[] arguments) {
+        if (!isVisible(sender)) {
             throw new CommandException("stevesaddons.command.noPermission");
         }
         ItemStack duplicator = getDuplicator(sender);
-        if (duplicator != null)
-        {
+        if (duplicator != null) {
             doCommand(duplicator, CommandBase.getCommandSenderAsPlayer(sender), arguments);
-        } else
-        {
+        } else {
             throw new CommandException("stevesaddons.command.noDuplicator");
         }
     }
 
-    public static NBTTagCompound stripBaseNBT(NBTTagCompound tagCompound)
-    {
-        for (String key : keys)
-        {
+    public static NBTTagCompound stripBaseNBT(NBTTagCompound tagCompound) {
+        for (String key : keys) {
             if (tagCompound.hasKey(key) && tagCompound.getTag(key).equals(defaultTagCompound.getTag(key)))
                 tagCompound.removeTag(key);
         }
         return tagCompound;
     }
 
-    public static NBTTagCompound unstripBaseNBT(NBTTagCompound tagCompound)
-    {
-        for (String key : keys)
-        {
+    public static NBTTagCompound unstripBaseNBT(NBTTagCompound tagCompound) {
+        for (String key : keys) {
             if (!tagCompound.hasKey(key)) tagCompound.setTag(key, defaultTagCompound.getTag(key));
         }
         return tagCompound;
@@ -71,14 +59,12 @@ public abstract class CommandDuplicator implements ISubCommand
     public abstract void doCommand(ItemStack duplicator, EntityPlayerMP sender, String[] arguments);
 
     @Override
-    public int getPermissionLevel()
-    {
+    public int getPermissionLevel() {
         return 2;
     }
 
     @Override
-    public boolean isVisible(ICommandSender sender)
-    {
+    public boolean isVisible(ICommandSender sender) {
         return sender.canCommandSenderUseCommand(getPermissionLevel(), getCommandName());
     }
 }
