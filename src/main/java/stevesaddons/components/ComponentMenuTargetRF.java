@@ -1,6 +1,7 @@
 package stevesaddons.components;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.ComponentMenuTarget;
 import vswe.stevesfactory.components.FlowComponent;
@@ -18,6 +19,7 @@ public class ComponentMenuTargetRF extends ComponentMenuTarget {
     @Override
     protected Button getSecondButton() {
         return new Button(-300) {
+
             @Override
             protected String getLabel() {
                 return "";
@@ -61,8 +63,8 @@ public class ComponentMenuTargetRF extends ComponentMenuTarget {
     protected void resetAdvancedSetting(int i) {}
 
     @Override
-    protected void refreshAdvancedComponentData(
-            ContainerManager containerManager, ComponentMenu componentMenu, int i) {}
+    protected void refreshAdvancedComponentData(ContainerManager containerManager, ComponentMenu componentMenu,
+            int i) {}
 
     @Override
     protected void readAdvancedNetworkComponent(DataReader dataReader, DataTypeHeader dataTypeHeader, int i) {}

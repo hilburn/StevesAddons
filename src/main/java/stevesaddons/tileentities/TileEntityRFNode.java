@@ -1,12 +1,12 @@
 package stevesaddons.tileentities;
 
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 import java.util.*;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import stevesaddons.components.ComponentMenuRF;
 import stevesaddons.components.ComponentMenuRFInput;
 import stevesaddons.components.ComponentMenuTargetRF;
@@ -16,9 +16,12 @@ import stevesaddons.network.message.RFNodeUpdateMessage;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.FlowComponent;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 
 public class TileEntityRFNode extends TileEntityClusterElement
         implements IEnergyProvider, IEnergyReceiver, ISystemListener {
+
     public static final int MAX_BUFFER = 96000;
     private boolean[] inputSides = new boolean[6];
     private boolean[] outputSides = new boolean[6];
@@ -114,8 +117,8 @@ public class TileEntityRFNode extends TileEntityClusterElement
 
     @Override
     public void removed(TileEntityManager tileEntityManager) {
-        //        managers.remove(tileEntityManager);
-        for (Iterator<FlowComponent> itr = components.iterator(); itr.hasNext(); ) {
+        // managers.remove(tileEntityManager);
+        for (Iterator<FlowComponent> itr = components.iterator(); itr.hasNext();) {
             if (itr.next().getManager() == tileEntityManager) itr.remove();
         }
     }
@@ -180,8 +183,7 @@ public class TileEntityRFNode extends TileEntityClusterElement
         } else {
             for (FlowComponent component : components) {
                 boolean[] array = getSides(component.getMenus().get(0) instanceof ComponentMenuRFInput);
-                ComponentMenuTargetRF target =
-                        (ComponentMenuTargetRF) component.getMenus().get(1);
+                ComponentMenuTargetRF target = (ComponentMenuTargetRF) component.getMenus().get(1);
                 for (int i = 0; i < 6; i++) {
                     boolean active = target.isActive(i);
                     if (active != array[i]) updated = true;

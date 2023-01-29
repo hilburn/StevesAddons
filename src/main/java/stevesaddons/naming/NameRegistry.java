@@ -2,14 +2,17 @@ package stevesaddons.naming;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
+
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.FullDataSyncMessage;
 import stevesaddons.network.message.NameDataUpdateMessage;
 import stevesaddons.network.message.WorldDataSyncMessage;
 
 public class NameRegistry {
+
     public static NameRegistry instance = new NameRegistry();
 
     private Map<Integer, NameData> nameMapping = new HashMap<Integer, NameData>();

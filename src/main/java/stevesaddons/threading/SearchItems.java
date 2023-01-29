@@ -3,13 +3,16 @@ package stevesaddons.threading;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import vswe.stevesfactory.components.ScrollController;
 
 public class SearchItems implements Runnable {
+
     public static volatile List<SearchEntry> searchEntries = new ArrayList<>();
 
     private String search;
@@ -60,8 +63,7 @@ public class SearchItems implements Runnable {
             try {
                 Item item = (Item) anItemRegistry;
                 item.getSubItems(item, item.getCreativeTab(), stacks);
-            } catch (Exception ignore) {
-            }
+            } catch (Exception ignore) {}
         }
         for (ItemStack stack : stacks) {
             try {
@@ -76,13 +78,13 @@ public class SearchItems implements Runnable {
                     if (string != null) advSearchString += string + "\n";
                 }
                 searchEntries.add(new SearchEntry(searchString, advSearchString, stack));
-            } catch (Throwable ignore) {
-            }
+            } catch (Throwable ignore) {}
         }
         SearchItems.searchEntries = searchEntries;
     }
 
     public static class SearchEntry {
+
         private String toolTip;
         private String advToolTip;
         private ItemStack stack;

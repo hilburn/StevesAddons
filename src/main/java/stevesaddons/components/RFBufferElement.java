@@ -3,6 +3,7 @@ package stevesaddons.components;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.components.SlotInventoryHolder;
 
@@ -55,7 +56,7 @@ public class RFBufferElement {
     public int removeRF(int amount) {
         int removeEach = amount / holders.size();
         int result = amount;
-        for (Iterator<EnergyFacingHolder> itr = holders.iterator(); itr.hasNext(); ) {
+        for (Iterator<EnergyFacingHolder> itr = holders.iterator(); itr.hasNext();) {
             EnergyFacingHolder holder = itr.next();
             int removed = holder.extract(removeEach, false);
             if (removed < removeEach) itr.remove();

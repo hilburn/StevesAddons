@@ -2,10 +2,12 @@ package stevesaddons.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
+
 import stevesaddons.helpers.LocalizationHelper;
 import stevesaddons.registry.CommandRegistry;
 
@@ -34,8 +36,8 @@ public class CommandHelp implements ISubCommand {
 
         switch (arguments.length) {
             case 1:
-                StringBuilder output =
-                        new StringBuilder(LocalizationHelper.translate("stevesaddons.command.info.help.start") + " ");
+                StringBuilder output = new StringBuilder(
+                        LocalizationHelper.translate("stevesaddons.command.info.help.start") + " ");
                 List<String> commands = new ArrayList<String>();
                 for (ISubCommand command : CommandRegistry.commands.values()) {
                     if (command.isVisible(sender)) commands.add(command.getCommandName());
@@ -53,10 +55,12 @@ public class CommandHelp implements ISubCommand {
                 if (!CommandRegistry.commandExists(commandName)) {
                     throw new CommandNotFoundException("stevesaddons.command.notFound");
                 }
-                sender.addChatMessage(new ChatComponentText(
-                        LocalizationHelper.translate("stevesaddons.command.info." + commandName)));
-                sender.addChatMessage(new ChatComponentText(
-                        LocalizationHelper.translate("stevesaddons.command." + commandName + ".syntax")));
+                sender.addChatMessage(
+                        new ChatComponentText(
+                                LocalizationHelper.translate("stevesaddons.command.info." + commandName)));
+                sender.addChatMessage(
+                        new ChatComponentText(
+                                LocalizationHelper.translate("stevesaddons.command." + commandName + ".syntax")));
                 break;
             default:
                 throw new WrongUsageException("stevesaddons.command." + getCommandName() + ".syntax");
@@ -67,7 +71,7 @@ public class CommandHelp implements ISubCommand {
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
 
         if (args.length == 2) {
-            return CommandRegistry.instance.addTabCompletionOptions(sender, new String[] {args[1]});
+            return CommandRegistry.instance.addTabCompletionOptions(sender, new String[] { args[1] });
         }
         return null;
     }

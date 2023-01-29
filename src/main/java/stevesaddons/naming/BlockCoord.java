@@ -3,6 +3,7 @@ package stevesaddons.naming;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class BlockCoord {
+
     public int x, y, z;
     public String name;
 

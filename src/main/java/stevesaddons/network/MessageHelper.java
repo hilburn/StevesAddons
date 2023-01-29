@@ -1,6 +1,7 @@
 package stevesaddons.network;
 
 public class MessageHelper {
+
     public static byte booleanToByte(boolean[] array) {
         byte val = 0;
         for (boolean b : array) {

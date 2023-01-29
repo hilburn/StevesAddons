@@ -1,9 +1,7 @@
 package vswe.stevesfactory.components;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 import java.util.*;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -13,6 +11,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
@@ -25,8 +24,12 @@ import vswe.stevesfactory.blocks.TileEntityCreative;
 import vswe.stevesfactory.blocks.TileEntityManager;
 import vswe.stevesfactory.components.ComponentMenuListOrder.LoopOrder;
 import vswe.stevesfactory.components.ComponentMenuVariable.VariableMode;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 
 public class CommandExecutorRF extends CommandExecutor {
+
     private TileEntityManager manager;
     private List<RFBufferElement> rfBuffer;
     private List<CraftingBufferFluidElement> craftingBufferHigh;
@@ -45,14 +48,10 @@ public class CommandExecutorRF extends CommandExecutor {
         this.usedCommands = new ArrayList<Integer>();
     }
 
-    private CommandExecutorRF(
-            TileEntityManager manager,
-            List<ItemBufferElement> itemBufferSplit,
+    private CommandExecutorRF(TileEntityManager manager, List<ItemBufferElement> itemBufferSplit,
             List<CraftingBufferFluidElement> craftingBufferHighSplit,
-            List<CraftingBufferFluidElement> craftingBufferLowSplit,
-            List<LiquidBufferElement> liquidBufferSplit,
-            List<RFBufferElement> rfBuffer,
-            List<Integer> usedCommandCopy) {
+            List<CraftingBufferFluidElement> craftingBufferLowSplit, List<LiquidBufferElement> liquidBufferSplit,
+            List<RFBufferElement> rfBuffer, List<Integer> usedCommandCopy) {
         super(manager);
         this.manager = manager;
         this.itemBuffer = itemBufferSplit;
@@ -65,13 +64,9 @@ public class CommandExecutorRF extends CommandExecutor {
 
     public void executeTriggerCommand(FlowComponent command, EnumSet<ConnectionOption> validTriggerOutputs) {
         for (Variable variable : this.manager.getVariables()) {
-            if (variable.isValid()
-                    && (!variable.hasBeenExecuted()
-                            || ((ComponentMenuVariable) variable.getDeclaration()
-                                                    .getMenus()
-                                                    .get(0))
-                                            .getVariableMode()
-                                    == VariableMode.LOCAL)) {
+            if (variable.isValid() && (!variable.hasBeenExecuted()
+                    || ((ComponentMenuVariable) variable.getDeclaration().getMenus().get(0)).getVariableMode()
+                            == VariableMode.LOCAL)) {
                 this.executeCommand(variable.getDeclaration(), 0);
                 variable.setExecuted(true);
             }
@@ -85,7 +80,8 @@ public class CommandExecutorRF extends CommandExecutor {
             ConnectionOption option = command.getConnectionSet().getConnections()[i];
             if (connection != null && !option.isInput() && validTriggerOutputs.contains(option)) {
                 this.executeCommand(
-                        this.manager.getFlowItems().get(connection.getComponentId()), connection.getConnectionId());
+                        this.manager.getFlowItems().get(connection.getComponentId()),
+                        connection.getConnectionId());
             }
         }
     }
@@ -96,29 +92,25 @@ public class CommandExecutorRF extends CommandExecutor {
                 this.usedCommands.add(command.getId());
                 switch (command.getType().ordinal()) {
                     case 0:
-                        ComponentMenuTriggered trigger =
-                                (ComponentMenuTriggered) command.getMenus().get(6);
+                        ComponentMenuTriggered trigger = (ComponentMenuTriggered) command.getMenus().get(6);
                         trigger.setCountdown();
                         return;
                     case 1:
-                        List<SlotInventoryHolder> inputInventory =
-                                this.getInventories(command.getMenus().get(0));
+                        List<SlotInventoryHolder> inputInventory = this.getInventories(command.getMenus().get(0));
                         if (inputInventory != null) {
                             this.getValidSlots(command.getMenus().get(1), inputInventory, true);
                             this.getItems(command.getMenus().get(2), inputInventory);
                         }
                         break;
                     case 2:
-                        List<SlotInventoryHolder> outputInventory =
-                                this.getInventories(command.getMenus().get(0));
+                        List<SlotInventoryHolder> outputInventory = this.getInventories(command.getMenus().get(0));
                         if (outputInventory != null) {
                             this.getValidSlots(command.getMenus().get(1), outputInventory, true);
                             this.insertItems(command.getMenus().get(2), outputInventory);
                         }
                         break;
                     case 3:
-                        List<SlotInventoryHolder> conditionInventory =
-                                this.getInventories(command.getMenus().get(0));
+                        List<SlotInventoryHolder> conditionInventory = this.getInventories(command.getMenus().get(0));
                         if (conditionInventory != null) {
                             this.getValidSlots(command.getMenus().get(1), conditionInventory, false);
                             if (this.searchForStuff(command.getMenus().get(2), conditionInventory, false)) {
@@ -138,24 +130,21 @@ public class CommandExecutorRF extends CommandExecutor {
                         }
                         break;
                     case 5:
-                        List<SlotInventoryHolder> inputTank =
-                                this.getTanks(command.getMenus().get(0));
+                        List<SlotInventoryHolder> inputTank = this.getTanks(command.getMenus().get(0));
                         if (inputTank != null) {
                             this.getValidTanks(command.getMenus().get(1), inputTank);
                             this.getLiquids(command.getMenus().get(2), inputTank);
                         }
                         break;
                     case 6:
-                        List<SlotInventoryHolder> outputTank =
-                                this.getTanks(command.getMenus().get(0));
+                        List<SlotInventoryHolder> outputTank = this.getTanks(command.getMenus().get(0));
                         if (outputTank != null) {
                             this.getValidTanks(command.getMenus().get(1), outputTank);
                             this.insertLiquids(command.getMenus().get(2), outputTank);
                         }
                         break;
                     case 7:
-                        List<SlotInventoryHolder> conditionTank =
-                                this.getTanks(command.getMenus().get(0));
+                        List<SlotInventoryHolder> conditionTank = this.getTanks(command.getMenus().get(0));
                         if (conditionTank != null) {
                             this.getValidTanks(command.getMenus().get(1), conditionTank);
                             if (this.searchForStuff(command.getMenus().get(2), conditionTank, true)) {
@@ -169,24 +158,18 @@ public class CommandExecutorRF extends CommandExecutor {
 
                         return;
                     case 8:
-                        List<SlotInventoryHolder> emitters =
-                                this.getEmitters(command.getMenus().get(0));
+                        List<SlotInventoryHolder> emitters = this.getEmitters(command.getMenus().get(0));
                         if (emitters != null) {
                             for (SlotInventoryHolder emitter : emitters) {
-                                emitter.getEmitter()
-                                        .updateState(
-                                                (ComponentMenuRedstoneSidesEmitter)
-                                                        command.getMenus().get(1),
-                                                (ComponentMenuRedstoneOutput)
-                                                        command.getMenus().get(2),
-                                                (ComponentMenuPulse)
-                                                        command.getMenus().get(3));
+                                emitter.getEmitter().updateState(
+                                        (ComponentMenuRedstoneSidesEmitter) command.getMenus().get(1),
+                                        (ComponentMenuRedstoneOutput) command.getMenus().get(2),
+                                        (ComponentMenuPulse) command.getMenus().get(3));
                             }
                         }
                         break;
                     case 9:
-                        List<SlotInventoryHolder> nodes =
-                                this.getNodes(command.getMenus().get(0));
+                        List<SlotInventoryHolder> nodes = this.getNodes(command.getMenus().get(0));
                         if (nodes != null) {
                             if (this.evaluateRedstoneCondition(nodes, command)) {
                                 this.executeChildCommands(command, EnumSet.of(ConnectionOption.CONDITION_TRUE));
@@ -199,8 +182,7 @@ public class CommandExecutorRF extends CommandExecutor {
 
                         return;
                     case 10:
-                        List<SlotInventoryHolder> tiles =
-                                this.getTiles(command.getMenus().get(2));
+                        List<SlotInventoryHolder> tiles = this.getTiles(command.getMenus().get(2));
                         if (tiles != null) {
                             this.updateVariable(
                                     tiles,
@@ -218,8 +200,9 @@ public class CommandExecutorRF extends CommandExecutor {
                         return;
                     case 12:
                         CraftingBufferFluidElement element = new CraftingBufferFluidElement(
-                                this, (ComponentMenuCrafting) command.getMenus().get(0), (ComponentMenuContainerScrap)
-                                        command.getMenus().get(2));
+                                this,
+                                (ComponentMenuCrafting) command.getMenus().get(0),
+                                (ComponentMenuContainerScrap) command.getMenus().get(2));
                         if (((ComponentMenuCraftingPriority) command.getMenus().get(1)).shouldPrioritizeCrafting()) {
                             this.craftingBufferHigh.add(element);
                         } else {
@@ -236,13 +219,10 @@ public class CommandExecutorRF extends CommandExecutor {
                     case 14:
                         FlowComponent parent = command.getParent();
                         if (parent != null) {
-                            for (int var28 = 0;
-                                    var28 < parent.getChildrenOutputNodes().size();
-                                    ++var28) {
-                                if (command.equals(
-                                        parent.getChildrenOutputNodes().get(var28))) {
-                                    Connection var30 = parent.getConnection(
-                                            parent.getConnectionSet().getInputCount() + var28);
+                            for (int var28 = 0; var28 < parent.getChildrenOutputNodes().size(); ++var28) {
+                                if (command.equals(parent.getChildrenOutputNodes().get(var28))) {
+                                    Connection var30 = parent
+                                            .getConnection(parent.getConnectionSet().getInputCount() + var28);
                                     if (var30 != null) {
                                         this.executeCommand(
                                                 this.manager.getFlowItems().get(var30.getComponentId()),
@@ -255,21 +235,18 @@ public class CommandExecutorRF extends CommandExecutor {
                         }
                         return;
                     case 15:
-                        List<SlotInventoryHolder> camouflage =
-                                this.getCamouflage(command.getMenus().get(0));
+                        List<SlotInventoryHolder> camouflage = this.getCamouflage(command.getMenus().get(0));
                         if (camouflage != null) {
-                            ComponentMenuCamouflageShape var29 = (ComponentMenuCamouflageShape)
-                                    command.getMenus().get(1);
-                            ComponentMenuCamouflageInside var31 = (ComponentMenuCamouflageInside)
-                                    command.getMenus().get(2);
-                            ComponentMenuCamouflageSides var32 = (ComponentMenuCamouflageSides)
-                                    command.getMenus().get(3);
-                            ComponentMenuCamouflageItems items = (ComponentMenuCamouflageItems)
-                                    command.getMenus().get(4);
-                            if (items.isFirstRadioButtonSelected()
-                                    || items.getSettings().get(0).isValid()) {
-                                ItemStack itemStack = items.isFirstRadioButtonSelected()
-                                        ? null
+                            ComponentMenuCamouflageShape var29 = (ComponentMenuCamouflageShape) command.getMenus()
+                                    .get(1);
+                            ComponentMenuCamouflageInside var31 = (ComponentMenuCamouflageInside) command.getMenus()
+                                    .get(2);
+                            ComponentMenuCamouflageSides var32 = (ComponentMenuCamouflageSides) command.getMenus()
+                                    .get(3);
+                            ComponentMenuCamouflageItems items = (ComponentMenuCamouflageItems) command.getMenus()
+                                    .get(4);
+                            if (items.isFirstRadioButtonSelected() || items.getSettings().get(0).isValid()) {
+                                ItemStack itemStack = items.isFirstRadioButtonSelected() ? null
                                         : ((ItemSetting) items.getSettings().get(0)).getItem();
 
                                 for (SlotInventoryHolder slotInventoryHolder : camouflage) {
@@ -277,8 +254,7 @@ public class CommandExecutorRF extends CommandExecutor {
 
                                     for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; ++i) {
                                         if (var32.isSideRequired(i)) {
-                                            slotInventoryHolder
-                                                    .getCamouflage()
+                                            slotInventoryHolder.getCamouflage()
                                                     .setItem(itemStack, i, var31.getCurrentType());
                                         }
                                     }
@@ -287,37 +263,32 @@ public class CommandExecutorRF extends CommandExecutor {
                         }
                         break;
                     case 16:
-                        List<SlotInventoryHolder> sign =
-                                this.getSign(command.getMenus().get(0));
+                        List<SlotInventoryHolder> sign = this.getSign(command.getMenus().get(0));
                         if (sign != null) {
                             for (SlotInventoryHolder slotInventoryHolder : sign) {
-                                slotInventoryHolder.getSign().updateSign((ComponentMenuSignText)
-                                        command.getMenus().get(1));
+                                slotInventoryHolder.getSign()
+                                        .updateSign((ComponentMenuSignText) command.getMenus().get(1));
                             }
                         }
                         break;
                     case 17:
-                        List<SlotInventoryHolder> inputStorage =
-                                this.getRFInput(command.getMenus().get(0));
+                        List<SlotInventoryHolder> inputStorage = this.getRFInput(command.getMenus().get(0));
                         if (inputStorage != null) {
                             this.getInputRF(command.getMenus().get(1), inputStorage);
                         }
                         break;
                     case 18:
-                        List<SlotInventoryHolder> outputStorage =
-                                this.getRFOutput(command.getMenus().get(0));
+                        List<SlotInventoryHolder> outputStorage = this.getRFOutput(command.getMenus().get(0));
                         if (outputStorage != null) {
                             this.insertRF(command.getMenus().get(1), outputStorage);
                         }
                         break;
                     case 19:
-                        List<SlotInventoryHolder> conditionStorage =
-                                this.getRFStorage(command.getMenus().get(0));
+                        List<SlotInventoryHolder> conditionStorage = this.getRFStorage(command.getMenus().get(0));
                         if (conditionStorage != null) {
                             this.getValidRFStorage(command.getMenus().get(1), conditionStorage);
                             if (this.searchForPower(
-                                    (ComponentMenuRFCondition)
-                                            command.getMenus().get(2),
+                                    (ComponentMenuRFCondition) command.getMenus().get(2),
                                     conditionStorage)) {
                                 this.executeChildCommands(command, EnumSet.of(ConnectionOption.CONDITION_TRUE));
                             } else {
@@ -374,8 +345,8 @@ public class CommandExecutorRF extends CommandExecutor {
         return getContainers(this.manager, componentMenu, null);
     }
 
-    public static List<SlotInventoryHolder> getContainers(
-            TileEntityManager manager, ComponentMenu componentMenu, ConnectionBlockType type) {
+    public static List<SlotInventoryHolder> getContainers(TileEntityManager manager, ComponentMenu componentMenu,
+            ConnectionBlockType type) {
         if (!(componentMenu instanceof ComponentMenuContainer)) return null;
         ComponentMenuContainer menuContainer = (ComponentMenuContainer) componentMenu;
         if (menuContainer.getSelectedInventories().size() == 0) {
@@ -386,8 +357,7 @@ public class CommandExecutorRF extends CommandExecutor {
             Variable[] variables = manager.getVariables();
 
             int i;
-            label50:
-            for (i = 0; i < variables.length; ++i) {
+            label50: for (i = 0; i < variables.length; ++i) {
                 Variable selected = variables[i];
                 if (selected.isValid()) {
 
@@ -408,9 +378,7 @@ public class CommandExecutorRF extends CommandExecutor {
                                         selected1,
                                         menuContainer,
                                         type,
-                                        ((ComponentMenuContainerTypes) selected.getDeclaration()
-                                                        .getMenus()
-                                                        .get(1))
+                                        ((ComponentMenuContainerTypes) selected.getDeclaration().getMenus().get(1))
                                                 .getValidTypes());
                             }
                         }
@@ -431,21 +399,19 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private static void addContainer(
-            List<ConnectionBlock> inventories,
-            List<SlotInventoryHolder> ret,
-            int selected,
-            ComponentMenuContainer menuContainer,
-            ConnectionBlockType requestType,
+    private static void addContainer(List<ConnectionBlock> inventories, List<SlotInventoryHolder> ret, int selected,
+            ComponentMenuContainer menuContainer, ConnectionBlockType requestType,
             EnumSet<ConnectionBlockType> variableType) {
         if (selected >= 0 && selected < inventories.size()) {
             ConnectionBlock connection = inventories.get(selected);
-            if (connection.isOfType(requestType)
-                    && connection.isOfAnyType(variableType)
+            if (connection.isOfType(requestType) && connection.isOfAnyType(variableType)
                     && !connection.getTileEntity().isInvalid()
                     && !containsTe(ret, connection.getTileEntity())) {
-                ret.add(new AdvancedSlotInventoryHolder(
-                        selected, connection.getTileEntity(), menuContainer.getOption()));
+                ret.add(
+                        new AdvancedSlotInventoryHolder(
+                                selected,
+                                connection.getTileEntity(),
+                                menuContainer.getOption()));
             }
         }
     }
@@ -460,8 +426,7 @@ public class CommandExecutorRF extends CommandExecutor {
             }
 
             slotInventoryHolder = i$.next();
-        } while (slotInventoryHolder.getTile().xCoord != te.xCoord
-                || slotInventoryHolder.getTile().yCoord != te.yCoord
+        } while (slotInventoryHolder.getTile().xCoord != te.xCoord || slotInventoryHolder.getTile().yCoord != te.yCoord
                 || slotInventoryHolder.getTile().zCoord != te.zCoord
                 || !slotInventoryHolder.getTile().getClass().equals(te.getClass()));
 
@@ -485,8 +450,7 @@ public class CommandExecutorRF extends CommandExecutor {
                         } else {
                             inventoryValidSlots = new int[inventory.getSizeInventory()];
 
-                            for (start = 0; start < inventoryValidSlots.length; inventoryValidSlots[start] = start++)
-                                ;
+                            for (start = 0; start < inventoryValidSlots.length; inventoryValidSlots[start] = start++);
                         }
 
                         int end;
@@ -503,8 +467,8 @@ public class CommandExecutorRF extends CommandExecutor {
                                 if (inventoryValidSlot >= start && inventoryValidSlot <= end) {
                                     SlotSideTarget target = validSlots.get(inventoryValidSlot);
                                     if (target == null) {
-                                        validSlots.put(
-                                                inventoryValidSlot, new SlotSideTarget(inventoryValidSlot, side));
+                                        validSlots
+                                                .put(inventoryValidSlot, new SlotSideTarget(inventoryValidSlot, side));
                                     } else {
                                         target.addSide(side);
                                     }
@@ -562,15 +526,18 @@ public class CommandExecutorRF extends CommandExecutor {
         for (SlotInventoryHolder anInputStorage : inputStorage) {
             IEnergyProvider cell = (IEnergyProvider) anInputStorage.getTile();
             if (cell == null) continue;
-            //            if (cell instanceof TileEntityRFNode)
-            //                ((TileEntityRFNode)cell).setInputSides(validSides.toArray(new
+            // if (cell instanceof TileEntityRFNode)
+            // ((TileEntityRFNode)cell).setInputSides(validSides.toArray(new
             // Integer[validSides.size()]));
             for (int side : validSides) {
                 ForgeDirection dir = ForgeDirection.getOrientation(side);
                 int extractEnergy = cell.extractEnergy(dir, Integer.MAX_VALUE, true);
                 if (extractEnergy > 0) {
-                    rfBuffer.add(new RFBufferElement(
-                            componentMenu.getParent(), anInputStorage, new EnergyFacingHolder(cell, dir)));
+                    rfBuffer.add(
+                            new RFBufferElement(
+                                    componentMenu.getParent(),
+                                    anInputStorage,
+                                    new EnergyFacingHolder(cell, dir)));
                     break;
                 }
             }
@@ -596,8 +563,8 @@ public class CommandExecutorRF extends CommandExecutor {
         for (SlotInventoryHolder holder : outputStorage) {
             IEnergyReceiver cell = (IEnergyReceiver) holder.getTile();
             if (cell == null) continue;
-            //            if (cell instanceof TileEntityRFNode)
-            //                ((TileEntityRFNode)cell).setOutputSides(validSides.toArray(new
+            // if (cell instanceof TileEntityRFNode)
+            // ((TileEntityRFNode)cell).setOutputSides(validSides.toArray(new
             // Integer[validSides.size()]));
             for (int side : validSides) {
                 int maxReceive = cell.receiveEnergy(ForgeDirection.getOrientation(side), Integer.MAX_VALUE, true);
@@ -611,7 +578,7 @@ public class CommandExecutorRF extends CommandExecutor {
     }
 
     private void insertRF(Integer[] directions, List<IEnergyReceiver> validOutputs, long bufferSize) {
-        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext(); ) {
+        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext();) {
             IEnergyReceiver cell = itr.next();
             int maxReceive = 0;
             for (int side : directions) {
@@ -623,9 +590,8 @@ public class CommandExecutorRF extends CommandExecutor {
             if (maxReceive == 0) itr.remove();
         }
         int inserted = validOutputs.size();
-        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator();
-                itr.hasNext() && !rfBuffer.isEmpty();
-                inserted--) {
+        for (Iterator<IEnergyReceiver> itr = validOutputs.iterator(); itr.hasNext()
+                && !rfBuffer.isEmpty(); inserted--) {
             IEnergyReceiver cell = itr.next();
             int maxReceive = (int) (bufferSize / inserted);
             for (int side : directions) {
@@ -644,7 +610,7 @@ public class CommandExecutorRF extends CommandExecutor {
 
     private void removeRF(int amount) {
         int remove = amount / rfBuffer.size();
-        for (Iterator<RFBufferElement> itr = rfBuffer.iterator(); itr.hasNext(); ) {
+        for (Iterator<RFBufferElement> itr = rfBuffer.iterator(); itr.hasNext();) {
             int removed = itr.next().removeRF(remove);
             if (removed < remove) itr.remove();
             amount -= removed;
@@ -719,8 +685,7 @@ public class CommandExecutorRF extends CommandExecutor {
                                 ItemStack item = ((ItemSetting) setting).getItem();
                                 if (item != null) {
                                     item = item.copy();
-                                    item.stackSize = setting.isLimitedByAmount()
-                                            ? setting.getAmount()
+                                    item.stackSize = setting.isLimitedByAmount() ? setting.getAmount()
                                             : setting.getDefaultAmount();
                                     this.addItemToBuffer(menuItem, inventory, setting, item, slot);
                                 }
@@ -743,16 +708,14 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private void addItemToBuffer(
-            ComponentMenuStuff menuItem,
-            SlotInventoryHolder inventory,
-            Setting setting,
-            ItemStack itemStack,
-            SlotSideTarget slot) {
+    private void addItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting,
+            ItemStack itemStack, SlotSideTarget slot) {
         if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount()) {
             FlowComponent owner = menuItem.getParent();
-            SlotStackInventoryHolder target =
-                    new SlotStackInventoryHolder(itemStack, inventory.getInventory(), slot.getSlot());
+            SlotStackInventoryHolder target = new SlotStackInventoryHolder(
+                    itemStack,
+                    inventory.getInventory(),
+                    slot.getSlot());
             boolean added = false;
 
             for (ItemBufferElement itemBufferElement : this.itemBuffer) {
@@ -844,8 +807,8 @@ public class CommandExecutorRF extends CommandExecutor {
                     ArrayList<FluidTankInfo> tankInfos = new ArrayList<FluidTankInfo>();
 
                     for (Integer side : slot.getSides()) {
-                        FluidTankInfo[] currentTankInfos =
-                                tank.getTank().getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
+                        FluidTankInfo[] currentTankInfos = tank.getTank()
+                                .getTankInfo(ForgeDirection.VALID_DIRECTIONS[side]);
                         if (currentTankInfos != null) {
                             FluidTankInfo[] arr$ = currentTankInfos;
                             int len$ = currentTankInfos.length;
@@ -891,12 +854,14 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private void addLiquidToBuffer(
-            ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting, FluidStack fluidStack, int side) {
+    private void addLiquidToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting,
+            FluidStack fluidStack, int side) {
         if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount()) {
             FlowComponent owner = menuItem.getParent();
-            StackTankHolder target =
-                    new StackTankHolder(fluidStack, tank.getTank(), ForgeDirection.VALID_DIRECTIONS[side]);
+            StackTankHolder target = new StackTankHolder(
+                    fluidStack,
+                    tank.getTank(),
+                    ForgeDirection.VALID_DIRECTIONS[side]);
             boolean added = false;
 
             for (LiquidBufferElement liquidBufferElement : this.liquidBuffer) {
@@ -907,8 +872,12 @@ public class CommandExecutorRF extends CommandExecutor {
             }
 
             if (!added) {
-                LiquidBufferElement itemBufferElement1 =
-                        new LiquidBufferElement(owner, setting, tank, menuItem.useWhiteList(), target);
+                LiquidBufferElement itemBufferElement1 = new LiquidBufferElement(
+                        owner,
+                        setting,
+                        tank,
+                        menuItem.useWhiteList(),
+                        target);
                 this.liquidBuffer.add(itemBufferElement1);
             }
         }
@@ -953,26 +922,35 @@ public class CommandExecutorRF extends CommandExecutor {
 
             for (CraftingBufferFluidElement craftingBufferElement : craftingBufferHigh) {
                 this.insertItemsFromInputBufferElement(
-                        menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
+                        menuItem,
+                        inventories,
+                        outputCounters,
+                        inventoryHolder,
+                        craftingBufferElement);
             }
 
             for (ItemBufferElement itemBufferElement : itemBuffer) {
                 this.insertItemsFromInputBufferElement(
-                        menuItem, inventories, outputCounters, inventoryHolder, itemBufferElement);
+                        menuItem,
+                        inventories,
+                        outputCounters,
+                        inventoryHolder,
+                        itemBufferElement);
             }
 
             for (CraftingBufferFluidElement craftingBufferElement : craftingBufferLow) {
                 this.insertItemsFromInputBufferElement(
-                        menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
+                        menuItem,
+                        inventories,
+                        outputCounters,
+                        inventoryHolder,
+                        craftingBufferElement);
             }
         }
     }
 
-    private void insertItemsFromInputBufferElement(
-            ComponentMenuStuff menuItem,
-            List<SlotInventoryHolder> inventories,
-            List<AdvancedOutputItemCounter> outputCounters,
-            SlotInventoryHolder inventoryHolder,
+    private void insertItemsFromInputBufferElement(ComponentMenuStuff menuItem, List<SlotInventoryHolder> inventories,
+            List<AdvancedOutputItemCounter> outputCounters, SlotInventoryHolder inventoryHolder,
             IItemBufferElement itemBufferElement) {
         itemBufferElement.prepareSubElements();
 
@@ -993,7 +971,11 @@ public class CommandExecutorRF extends CommandExecutor {
 
                 if (outputItemCounter == null) {
                     outputItemCounter = new AdvancedOutputItemCounter(
-                            this.itemBuffer, inventories, inventory, setting, menuItem.useWhiteList());
+                            this.itemBuffer,
+                            inventories,
+                            inventory,
+                            setting,
+                            menuItem.useWhiteList());
                     outputCounters.add(outputItemCounter);
                 }
 
@@ -1025,10 +1007,9 @@ public class CommandExecutorRF extends CommandExecutor {
                         if (this.isSlotValid(inventory, itemStack, slot, false)) {
                             ItemStack itemInSlot = inventory.getStackInSlot(slot.getSlot());
                             boolean newItem = itemInSlot == null;
-                            if (newItem
-                                    || itemInSlot.isItemEqual(itemStack)
-                                            && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot)
-                                            && itemStack.isStackable()) {
+                            if (newItem || itemInSlot.isItemEqual(itemStack)
+                                    && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot)
+                                    && itemStack.isStackable()) {
                                 int itemCountInSlot = newItem ? 0 : itemInSlot.stackSize;
                                 int moveCount = Math.min(
                                         subElement.getSizeLeft(),
@@ -1084,8 +1065,7 @@ public class CommandExecutorRF extends CommandExecutor {
             IFluidHandler tank = tankHolder.getTank();
 
             for (LiquidBufferElement liquidBufferElement : this.liquidBuffer) {
-                Iterator<StackTankHolder> liquidIterator =
-                        liquidBufferElement.getHolders().iterator();
+                Iterator<StackTankHolder> liquidIterator = liquidBufferElement.getHolders().iterator();
 
                 while (liquidIterator.hasNext()) {
                     StackTankHolder holder = liquidIterator.next();
@@ -1104,7 +1084,11 @@ public class CommandExecutorRF extends CommandExecutor {
 
                         if (outputLiquidCounter == null) {
                             outputLiquidCounter = new OutputLiquidCounter(
-                                    this.liquidBuffer, tanks, tankHolder, setting, menuItem.useWhiteList());
+                                    this.liquidBuffer,
+                                    tanks,
+                                    tankHolder,
+                                    setting,
+                                    menuItem.useWhiteList());
                             outputCounters.add(outputLiquidCounter);
                         }
 
@@ -1139,15 +1123,14 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private boolean searchForStuff(
-            ComponentMenu componentMenu, List<SlotInventoryHolder> inventories, boolean useLiquids) {
+    private boolean searchForStuff(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories,
+            boolean useLiquids) {
         int i;
         if (!inventories.get(0).isShared()) {
             boolean var7 = inventories.get(0).getSharedOption() == 1;
 
             for (i = 0; i < inventories.size(); ++i) {
-                HashMap<Integer, ConditionSettingChecker> conditionSettingCheckerMap =
-                        new HashMap<Integer, ConditionSettingChecker>();
+                HashMap<Integer, ConditionSettingChecker> conditionSettingCheckerMap = new HashMap<Integer, ConditionSettingChecker>();
                 this.calculateConditionData(componentMenu, inventories.get(i), conditionSettingCheckerMap, useLiquids);
                 if (this.checkConditionResult(componentMenu, conditionSettingCheckerMap)) {
                     if (!var7) {
@@ -1170,11 +1153,8 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private void calculateConditionData(
-            ComponentMenu componentMenu,
-            SlotInventoryHolder inventoryHolder,
-            Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap,
-            boolean useLiquid) {
+    private void calculateConditionData(ComponentMenu componentMenu, SlotInventoryHolder inventoryHolder,
+            Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap, boolean useLiquid) {
         if (useLiquid) {
             this.calculateConditionDataLiquid(componentMenu, inventoryHolder, conditionSettingCheckerMap);
         } else {
@@ -1182,9 +1162,7 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private void calculateConditionDataItem(
-            ComponentMenu componentMenu,
-            SlotInventoryHolder inventoryHolder,
+    private void calculateConditionDataItem(ComponentMenu componentMenu, SlotInventoryHolder inventoryHolder,
             Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
         if (inventoryHolder.getTile() instanceof IHiddenInventory) {
             ((IHiddenInventory) inventoryHolder.getTile())
@@ -1197,11 +1175,12 @@ public class CommandExecutorRF extends CommandExecutor {
                         itemStack = ((IDeepStorageUnit) inventoryHolder.getInventory()).getStoredItemType();
                     Setting setting = this.isItemValid(((ComponentMenuStuff) componentMenu).getSettings(), itemStack);
                     if (setting != null) {
-                        ConditionSettingChecker conditionSettingChecker =
-                                conditionSettingCheckerMap.get(setting.getId());
+                        ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap
+                                .get(setting.getId());
                         if (conditionSettingChecker == null) {
                             conditionSettingCheckerMap.put(
-                                    setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
+                                    setting.getId(),
+                                    conditionSettingChecker = new ConditionSettingChecker(setting));
                         }
 
                         conditionSettingChecker.addCount(itemStack.stackSize);
@@ -1211,9 +1190,7 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private void calculateConditionDataLiquid(
-            ComponentMenu componentMenu,
-            SlotInventoryHolder tank,
+    private void calculateConditionDataLiquid(ComponentMenu componentMenu, SlotInventoryHolder tank,
             Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
 
         for (SlotSideTarget slot : tank.getValidSlots().values()) {
@@ -1239,8 +1216,8 @@ public class CommandExecutorRF extends CommandExecutor {
                                 FluidStack var18 = fluidTankInfo.fluid;
                                 Setting setting = this.isLiquidValid(componentMenu, var18);
                                 if (setting != null) {
-                                    ConditionSettingChecker conditionSettingChecker =
-                                            conditionSettingCheckerMap.get(setting.getId());
+                                    ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap
+                                            .get(setting.getId());
                                     if (conditionSettingChecker == null) {
                                         conditionSettingCheckerMap.put(
                                                 setting.getId(),
@@ -1263,8 +1240,8 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private boolean checkConditionResult(
-            ComponentMenu componentMenu, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
+    private boolean checkConditionResult(ComponentMenu componentMenu,
+            Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
         ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
         IConditionStuffMenu menuCondition = (IConditionStuffMenu) componentMenu;
 
@@ -1290,8 +1267,7 @@ public class CommandExecutorRF extends CommandExecutor {
         } else {
             int amount = componentMenu.getParent().getConnectionSet().getOutputCount();
             if (!split.useEmpty()) {
-                ConnectionOption[] usedId =
-                        componentMenu.getParent().getConnectionSet().getConnections();
+                ConnectionOption[] usedId = componentMenu.getParent().getConnectionSet().getConnections();
 
                 for (int connections = 0; connections < usedId.length; ++connections) {
                     ConnectionOption i = usedId[connections];
@@ -1302,8 +1278,7 @@ public class CommandExecutorRF extends CommandExecutor {
             }
 
             int var14 = 0;
-            ConnectionOption[] var15 =
-                    componentMenu.getParent().getConnectionSet().getConnections();
+            ConnectionOption[] var15 = componentMenu.getParent().getConnectionSet().getConnections();
 
             for (int var16 = 0; var16 < var15.length; ++var16) {
                 ConnectionOption connectionOption = var15[var16];
@@ -1340,7 +1315,8 @@ public class CommandExecutorRF extends CommandExecutor {
                             rfBuffer,
                             var17);
                     var20.executeCommand(
-                            this.manager.getFlowItems().get(connection.getComponentId()), connection.getConnectionId());
+                            this.manager.getFlowItems().get(connection.getComponentId()),
+                            connection.getConnectionId());
                     ++var14;
                 }
             }
@@ -1352,8 +1328,8 @@ public class CommandExecutorRF extends CommandExecutor {
         return TileEntityManager.redstoneCondition.isTriggerPowered(nodes, component, true);
     }
 
-    private void updateVariable(
-            List<SlotInventoryHolder> tiles, ComponentMenuVariable menuVariable, ComponentMenuListOrder menuOrder) {
+    private void updateVariable(List<SlotInventoryHolder> tiles, ComponentMenuVariable menuVariable,
+            ComponentMenuListOrder menuOrder) {
         VariableMode mode = menuVariable.getVariableMode();
         Variable variable = this.manager.getVariables()[menuVariable.getSelectedVariable()];
         if (variable.isValid()) {
@@ -1373,9 +1349,8 @@ public class CommandExecutorRF extends CommandExecutor {
             }
 
             List<ConnectionBlock> inventories1 = this.manager.getConnectedInventories();
-            EnumSet<ConnectionBlockType> validTypes1 = ((ComponentMenuContainerTypes)
-                            variable.getDeclaration().getMenus().get(1))
-                    .getValidTypes();
+            EnumSet<ConnectionBlockType> validTypes1 = ((ComponentMenuContainerTypes) variable.getDeclaration()
+                    .getMenus().get(1)).getValidTypes();
 
             for (int id : idList) {
                 if (remove) {
@@ -1387,19 +1362,15 @@ public class CommandExecutorRF extends CommandExecutor {
         }
     }
 
-    private void updateForLoop(
-            FlowComponent command,
-            ComponentMenuVariableLoop variableMenu,
-            ComponentMenuContainerTypes typesMenu,
-            ComponentMenuListOrder orderMenu) {
+    private void updateForLoop(FlowComponent command, ComponentMenuVariableLoop variableMenu,
+            ComponentMenuContainerTypes typesMenu, ComponentMenuListOrder orderMenu) {
         Variable list = variableMenu.getListVariable();
         Variable element = variableMenu.getElementVariable();
         if (list.isValid() && element.isValid()) {
             List<Integer> selection = this.applyOrder(list.getContainers(), orderMenu);
             EnumSet<ConnectionBlockType> validTypes = typesMenu.getValidTypes();
-            validTypes.addAll(((ComponentMenuContainerTypes)
-                            element.getDeclaration().getMenus().get(1))
-                    .getValidTypes());
+            validTypes
+                    .addAll(((ComponentMenuContainerTypes) element.getDeclaration().getMenus().get(1)).getValidTypes());
             List<ConnectionBlock> inventories = this.manager.getConnectedInventories();
 
             for (int selected : selection) {

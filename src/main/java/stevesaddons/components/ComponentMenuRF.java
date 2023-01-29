@@ -7,6 +7,7 @@ import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.FlowComponent;
 
 public abstract class ComponentMenuRF extends ComponentMenuContainer {
+
     public ComponentMenuRF(FlowComponent parent, ConnectionBlockType validType) {
         super(parent, validType);
     }

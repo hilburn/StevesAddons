@@ -1,12 +1,15 @@
 package stevesaddons.interfaces;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.FMLClientHandler;
+
 public class GuiVerticalScrollBar extends Gui {
+
     Minecraft mc;
     IVerticalScrollContainer container;
     int mouseX;

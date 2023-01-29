@@ -1,11 +1,13 @@
 package stevesaddons.components;
 
 import java.util.List;
+
 import stevesaddons.helpers.StevesEnum;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.network.DataReader;
 
 public class ComponentMenuRFOutput extends ComponentMenuRF {
+
     public ComponentMenuRFOutput(FlowComponent parent) {
         super(parent, StevesEnum.RF_RECEIVER);
     }

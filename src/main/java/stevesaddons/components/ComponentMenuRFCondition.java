@@ -1,9 +1,9 @@
 package stevesaddons.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import stevesaddons.helpers.StevesEnum;
 import vswe.stevesfactory.components.CheckBox;
 import vswe.stevesfactory.components.CheckBoxList;
@@ -14,8 +14,11 @@ import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ComponentMenuRFCondition extends ComponentMenu {
+
     private CheckBoxList checkBoxes = new CheckBoxList();
     private WideNumberBoxList textBoxes;
     private WideNumberBox textBox;
@@ -24,6 +27,7 @@ public class ComponentMenuRFCondition extends ComponentMenu {
     public ComponentMenuRFCondition(FlowComponent parent) {
         super(parent);
         this.checkBoxes.addCheckBox(new CheckBox(StevesEnum.BELOW, 5, 50) {
+
             public void setValue(boolean val) {
                 ComponentMenuRFCondition.this.triggerBelow = val;
             }
@@ -37,13 +41,13 @@ public class ComponentMenuRFCondition extends ComponentMenu {
             }
         });
         this.textBoxes = new WideNumberBoxList();
-        this.textBoxes.addTextBox(
-                this.textBox = new WideNumberBox(5, 30, 31) {
-                    @Override
-                    public void onNumberChanged() {
-                        ComponentMenuRFCondition.this.sendServerData(0);
-                    }
-                });
+        this.textBoxes.addTextBox(this.textBox = new WideNumberBox(5, 30, 31) {
+
+            @Override
+            public void onNumberChanged() {
+                ComponentMenuRFCondition.this.sendServerData(0);
+            }
+        });
         this.textBox.setNumber(0);
     }
 

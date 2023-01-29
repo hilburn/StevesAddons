@@ -2,11 +2,13 @@ package stevesaddons.naming;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 
 public class NameData extends WorldSavedData {
+
     public static final String KEY = "stevesaddons.namedata";
 
     public Map<BlockCoord, String> names;

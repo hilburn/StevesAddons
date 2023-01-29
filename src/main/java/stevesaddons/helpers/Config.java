@@ -1,13 +1,16 @@
 package stevesaddons.helpers;
 
-import cpw.mods.fml.common.Loader;
 import java.io.File;
 import java.util.Arrays;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
 import stevesaddons.commands.CommandPastebin;
+import cpw.mods.fml.common.Loader;
 
 public class Config {
+
     public static boolean wailaIntegration = true;
     public static boolean aeIntegration = Loader.isModLoaded("appliedenergistics2");
     public static boolean buildIndexEagerly;
@@ -15,7 +18,7 @@ public class Config {
     public static void init(File file) {
         Configuration config = new Configuration(file);
 
-        Property whitelist = config.get("General", "pastebin_whitelist", new String[] {"hilburn"});
+        Property whitelist = config.get("General", "pastebin_whitelist", new String[] { "hilburn" });
         whitelist.comment = "Add player names permitted to use Pastebin";
         CommandPastebin.usernameWhitelist.addAll(Arrays.asList(whitelist.getStringList()));
 

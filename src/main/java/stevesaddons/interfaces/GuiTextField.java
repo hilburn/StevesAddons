@@ -2,13 +2,17 @@ package stevesaddons.interfaces;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+
 import org.lwjgl.input.Keyboard;
 
 public class GuiTextField extends Gui {
+
     private class ToggleCursor extends TimerTask {
+
         @Override
         public void run() {
             toggleCursor = !toggleCursor;

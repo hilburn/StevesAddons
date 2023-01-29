@@ -1,11 +1,13 @@
 package stevesaddons.commands;
 
 import java.util.List;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
 public class CommandClear extends CommandDuplicator {
+
     public static CommandClear instance = new CommandClear();
 
     @Override

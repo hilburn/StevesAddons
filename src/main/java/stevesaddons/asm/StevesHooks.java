@@ -1,12 +1,8 @@
 package stevesaddons.asm;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import java.util.*;
 import java.util.regex.Pattern;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -14,6 +10,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
@@ -30,13 +27,21 @@ import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.settings.Settings;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class StevesHooks {
+
     public static final Multimap<TileEntityManager, FlowComponent> delayedRegistry = HashMultimap.create();
 
     public static void addCopyButton(final TileEntityManager manager) {
         int index = getAfterDelete(manager.buttons);
         manager.buttons.add(index, manager.new Button(StevesEnum.COPY_COMMAND) {
+
             @Override
             protected void onClick(DataReader dataReader) {
                 if (Settings.isLimitless(manager) || manager.getFlowItems().size() < 511) {
@@ -47,8 +52,10 @@ public class StevesHooks {
                         if (!itr.hasNext()) return;
                         item = itr.next();
                     } while (item.getId() != id);
-                    Collection<FlowComponent> added =
-                            copyConnectionsWithChildren(manager.getFlowItems(), item, Settings.isLimitless(manager));
+                    Collection<FlowComponent> added = copyConnectionsWithChildren(
+                            manager.getFlowItems(),
+                            item,
+                            Settings.isLimitless(manager));
                     manager.getFlowItems().addAll(added);
                 }
             }
@@ -83,13 +90,12 @@ public class StevesHooks {
         return ComponentType.values().length + 1;
     }
 
-    private static Collection<FlowComponent> copyConnectionsWithChildren(
-            List<FlowComponent> existing, FlowComponent toCopy, boolean limitless) {
+    private static Collection<FlowComponent> copyConnectionsWithChildren(List<FlowComponent> existing,
+            FlowComponent toCopy, boolean limitless) {
         Map<FlowComponent, FlowComponent> added = new LinkedHashMap<FlowComponent, FlowComponent>();
         copyConnectionsWithChildren(added, existing, toCopy, toCopy.getParent(), true);
         if (added.size() + existing.size() >= 511 && !limitless) {
-            Iterator<Map.Entry<FlowComponent, FlowComponent>> itr =
-                    added.entrySet().iterator();
+            Iterator<Map.Entry<FlowComponent, FlowComponent>> itr = added.entrySet().iterator();
             for (int index = 0; itr.hasNext(); index++) {
                 itr.next();
                 if (index >= 511 - existing.size()) itr.remove();
@@ -99,12 +105,8 @@ public class StevesHooks {
         return added.values();
     }
 
-    private static void copyConnectionsWithChildren(
-            Map<FlowComponent, FlowComponent> added,
-            List<FlowComponent> existing,
-            FlowComponent toCopy,
-            FlowComponent newParent,
-            boolean reset) {
+    private static void copyConnectionsWithChildren(Map<FlowComponent, FlowComponent> added,
+            List<FlowComponent> existing, FlowComponent toCopy, FlowComponent newParent, boolean reset) {
         FlowComponent newComponent = toCopy.copy();
         newComponent.clearConnections();
         newComponent.setParent(newParent);
@@ -129,14 +131,13 @@ public class StevesHooks {
         }
 
         for (FlowComponent component : added.keySet()) {
-            for (Map.Entry<Integer, Connection> entry :
-                    component.getConnections().entrySet()) {
+            for (Map.Entry<Integer, Connection> entry : component.getConnections().entrySet()) {
                 try {
-                    FlowComponent connectTo =
-                            added.get(oldComponents.get(entry.getValue().getComponentId()));
+                    FlowComponent connectTo = added.get(oldComponents.get(entry.getValue().getComponentId()));
                     if (connectTo != null) {
                         Connection newConnection = new Connection(
-                                connectTo.getId(), entry.getValue().getConnectionId());
+                                connectTo.getId(),
+                                entry.getValue().getConnectionId());
                         added.get(component).setConnection(entry.getKey(), newConnection);
                     }
                 } catch (NullPointerException ignored) {
@@ -176,8 +177,7 @@ public class StevesHooks {
                 }
             }
 
-            if (manager.getSelectedComponent() != null
-                    && manager.getSelectedComponent().getId() == id) {
+            if (manager.getSelectedComponent() != null && manager.getSelectedComponent().getId() == id) {
                 manager.setSelectedComponent(null);
             }
 
@@ -187,16 +187,15 @@ public class StevesHooks {
         }
 
         if (isManagerList && manager.getWorldObj().isRemote) {
-            for (FlowComponent remove : removed)
-                manager.getZLevelRenderingList().remove(remove);
-            //            for (Iterator<FlowComponent> itr = manager.getZLevelRenderingList().iterator();
+            for (FlowComponent remove : removed) manager.getZLevelRenderingList().remove(remove);
+            // for (Iterator<FlowComponent> itr = manager.getZLevelRenderingList().iterator();
             // itr.hasNext();)
-            //            {
-            //                if (removed.contains(itr.next()))
-            //                {
-            //                    itr.remove();
-            //                }
-            //            }
+            // {
+            // if (removed.contains(itr.next()))
+            // {
+            // itr.remove();
+            // }
+            // }
         }
     }
 
@@ -217,8 +216,7 @@ public class StevesHooks {
     }
 
     public static boolean instanceOf(Class clazz, TileEntity entity) {
-        return clazz.isInstance(entity)
-                || entity instanceof IHiddenTank && clazz == IFluidHandler.class
+        return clazz.isInstance(entity) || entity instanceof IHiddenTank && clazz == IFluidHandler.class
                 || entity instanceof IHiddenInventory && clazz == IInventory.class
                 || clazz == IEnergyConnection.class
                         && (entity instanceof IEnergyProvider || entity instanceof IEnergyReceiver);
@@ -231,9 +229,8 @@ public class StevesHooks {
             String contains = "\n";
             if (stack == null || stack.isItemEqual(Null.NULL_STACK))
                 contains += StatCollector.translateToLocal("stevesaddons.idsucompat.isEmpty");
-            else
-                contains += StatCollector.translateToLocalFormatted(
-                        "stevesaddons.idsucompat.contains", stack.getDisplayName());
+            else contains += StatCollector
+                    .translateToLocalFormatted("stevesaddons.idsucompat.contains", stack.getDisplayName());
             result += contains;
         } else if (tileEntity instanceof IFluidHandler) {
             String tankInfo = "";
@@ -284,9 +281,8 @@ public class StevesHooks {
 
     private static void tick(Collection<FlowComponent> triggers) {
         if (triggers != null) {
-            for (Iterator<FlowComponent> itr = triggers.iterator(); itr.hasNext(); ) {
-                ComponentMenuTriggered toTrigger =
-                        (ComponentMenuTriggered) itr.next().getMenus().get(6);
+            for (Iterator<FlowComponent> itr = triggers.iterator(); itr.hasNext();) {
+                ComponentMenuTriggered toTrigger = (ComponentMenuTriggered) itr.next().getMenus().get(6);
                 if (toTrigger.isVisible()) {
                     toTrigger.tick();
                     if (toTrigger.remove()) itr.remove();

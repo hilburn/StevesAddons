@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+
 import stevesaddons.commands.*;
 
 public class CommandRegistry extends CommandBase {
+
     public static Map<String, ISubCommand> commands = new LinkedHashMap<String, ISubCommand>();
     public static CommandRegistry instance = new CommandRegistry();
 
@@ -45,12 +48,13 @@ public class CommandRegistry extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         if (args.length < 1) {
-            args = new String[] {"help"};
+            args = new String[] { "help" };
         }
         ISubCommand command = commands.get(args[0]);
         if (command != null) {
             if (sender.canCommandSenderUseCommand(
-                            command.getPermissionLevel(), "stevesaddons " + command.getCommandName())
+                    command.getPermissionLevel(),
+                    "stevesaddons " + command.getCommandName())
                     || (sender instanceof EntityPlayerMP && command.getPermissionLevel() <= 0)) {
                 command.handleCommand(sender, args);
                 return;

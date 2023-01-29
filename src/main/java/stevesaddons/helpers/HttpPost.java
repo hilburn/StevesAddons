@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class HttpPost implements Callable<String> {
+
     private static final String ENCODING = "UTF-8";
     private HashMap<String, String> postData;
     private String url;
@@ -21,9 +22,8 @@ public class HttpPost implements Callable<String> {
 
     public void put(String key, String value) {
         try {
-            this.postData.put(
-                    URLEncoder.encode(key, ENCODING),
-                    URLEncoder.encode(value, ENCODING).replaceAll("%00", ""));
+            this.postData
+                    .put(URLEncoder.encode(key, ENCODING), URLEncoder.encode(value, ENCODING).replaceAll("%00", ""));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

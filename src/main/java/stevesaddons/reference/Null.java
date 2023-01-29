@@ -6,7 +6,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class Null {
+
     private static class NullInventory implements IInventory {
+
         @Override
         public int getSizeInventory() {
             return 1;

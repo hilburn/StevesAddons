@@ -1,18 +1,19 @@
 package stevesaddons.interfaces;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
 import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.animation.AnimationController;
@@ -23,13 +24,17 @@ import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.interfaces.IInterfaceRenderer;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiRFManager extends GuiManager {
+
     private static final ResourceLocation BACKGROUND_1 = registerTexture("Background1");
     private static final ResourceLocation BACKGROUND_2 = registerTexture("Background2");
-    private static final ResourceLocation COMPONENTS =
-            new ResourceLocation("stevesaddons", "textures/gui/FlowComponents.png");
+    private static final ResourceLocation COMPONENTS = new ResourceLocation(
+            "stevesaddons",
+            "textures/gui/FlowComponents.png");
     public static int Z_LEVEL_COMPONENT_OPEN_DIFFERENCE = 100;
     public static int Z_LEVEL_COMPONENT_CLOSED_DIFFERENCE = 1;
     public static int Z_LEVEL_COMPONENT_START = 750;
@@ -49,31 +54,37 @@ public class GuiRFManager extends GuiManager {
     public GuiRFManager(TileEntityManager manager, InventoryPlayer player) {
         super(manager, player);
         this.codes.add(new GuiRFManager.SecretCode("animate") {
+
             protected void trigger() {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 2);
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("animslow") {
+
             protected void trigger() {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 1);
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("animfast") {
+
             protected void trigger() {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 5);
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("animrapid") {
+
             protected void trigger() {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 20);
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("animinstant") {
+
             protected void trigger() {
                 GuiRFManager.this.controller = new AnimationController(GuiRFManager.this.manager, 100);
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("green") {
+
             protected void trigger() {
                 GuiRFManager.this.useGreenScreen = !GuiRFManager.this.useGreenScreen;
                 GuiRFManager.this.useBlueScreen = false;
@@ -81,6 +92,7 @@ public class GuiRFManager extends GuiManager {
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("blue") {
+
             protected void trigger() {
                 GuiRFManager.this.useBlueScreen = !GuiRFManager.this.useBlueScreen;
                 GuiRFManager.this.useGreenScreen = false;
@@ -88,6 +100,7 @@ public class GuiRFManager extends GuiManager {
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("pink") {
+
             protected void trigger() {
                 GuiRFManager.this.usePinkScreen = !GuiRFManager.this.usePinkScreen;
                 GuiRFManager.this.useGreenScreen = false;
@@ -95,16 +108,19 @@ public class GuiRFManager extends GuiManager {
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("buttons") {
+
             protected void trigger() {
                 GuiRFManager.this.useButtons = !GuiRFManager.this.useButtons;
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("info") {
+
             protected void trigger() {
                 GuiRFManager.this.useInfo = !GuiRFManager.this.useInfo;
             }
         });
         this.codes.add(new GuiRFManager.SecretCode("mouse") {
+
             protected void trigger() {
                 GuiRFManager.this.useMouseOver = !GuiRFManager.this.useMouseOver;
             }
@@ -154,12 +170,17 @@ public class GuiRFManager extends GuiManager {
                 for (int ticks = 0; ticks < this.manager.buttons.size(); ++ticks) {
                     Button button = this.manager.buttons.get(ticks);
                     if (button.isVisible()) {
-                        int elapsedSeconds =
-                                CollisionHelper.inBounds(button.getX(), button.getY(), 14, 14, x, y) ? 1 : 0;
+                        int elapsedSeconds = CollisionHelper.inBounds(button.getX(), button.getY(), 14, 14, x, y) ? 1
+                                : 0;
                         int column = ticks / 20;
                         this.drawTexture(button.getX(), button.getY(), 242, elapsedSeconds * 14, 14, 14);
                         this.drawTexture(
-                                button.getX() + 1, button.getY() + 1, 230 - column * 12, (ticks % 20) * 12, 12, 12);
+                                button.getX() + 1,
+                                button.getY() + 1,
+                                230 - column * 12,
+                                (ticks % 20) * 12,
+                                12,
+                                12);
                     }
                 }
             }
@@ -194,14 +215,13 @@ public class GuiRFManager extends GuiManager {
                     }
 
                     itemBase.draw(this, x, y, var13);
-                    if (itemBase.isBeingMoved()
-                            || CollisionHelper.inBounds(
-                                    itemBase.getX(),
-                                    itemBase.getY(),
-                                    itemBase.getComponentWidth(),
-                                    itemBase.getComponentHeight(),
-                                    x,
-                                    y)) {
+                    if (itemBase.isBeingMoved() || CollisionHelper.inBounds(
+                            itemBase.getX(),
+                            itemBase.getY(),
+                            itemBase.getComponentWidth(),
+                            itemBase.getComponentHeight(),
+                            x,
+                            y)) {
                         CollisionHelper.disableInBoundsCheck = true;
                     }
                 }
@@ -231,14 +251,13 @@ public class GuiRFManager extends GuiManager {
                     itemBase = (FlowComponent) var15.next();
                     if (itemBase.isVisible()) {
                         itemBase.drawMouseOver(this, x, y);
-                        if (itemBase.isBeingMoved()
-                                || CollisionHelper.inBounds(
-                                        itemBase.getX(),
-                                        itemBase.getY(),
-                                        itemBase.getComponentWidth(),
-                                        itemBase.getComponentHeight(),
-                                        x,
-                                        y)) {
+                        if (itemBase.isBeingMoved() || CollisionHelper.inBounds(
+                                itemBase.getX(),
+                                itemBase.getY(),
+                                itemBase.getComponentWidth(),
+                                itemBase.getComponentHeight(),
+                                x,
+                                y)) {
                             CollisionHelper.disableInBoundsCheck = true;
                         }
                     }
@@ -271,8 +290,7 @@ public class GuiRFManager extends GuiManager {
     }
 
     private String getInfo() {
-        String ret = Localization.COMMANDS.toString() + ": "
-                + this.manager.getFlowItems().size() + "  ";
+        String ret = Localization.COMMANDS.toString() + ": " + this.manager.getFlowItems().size() + "  ";
         String path = "";
         FlowComponent component = this.manager.getSelectedComponent();
         if (component != null) {
@@ -349,7 +367,11 @@ public class GuiRFManager extends GuiManager {
         try {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
             itemRender.renderItemAndEffectIntoGUI(
-                    this.fontRendererObj, this.mc.getTextureManager(), itemstack, x + this.guiLeft, y + this.guiTop);
+                    this.fontRendererObj,
+                    this.mc.getTextureManager(),
+                    itemstack,
+                    x + this.guiLeft,
+                    y + this.guiTop);
             itemRender.renderItemOverlayIntoGUI(
                     this.fontRendererObj,
                     this.mc.getTextureManager(),
@@ -387,6 +409,7 @@ public class GuiRFManager extends GuiManager {
     }
 
     private abstract class SecretCode {
+
         private final String code;
         private int triggerNumber;
 

@@ -1,17 +1,16 @@
 package stevesaddons;
 
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import stevesaddons.helpers.Config;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.interfaces.GuiHandler;
@@ -27,6 +26,10 @@ import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.CommandRegistry;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
+import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(
         modid = Reference.ID,
@@ -34,6 +37,7 @@ import vswe.stevesfactory.blocks.TileEntityManager;
         version = Reference.VERSION_FULL,
         dependencies = "required-after:StevesFactoryManager;required-after:CoFHCore")
 public class StevesAddons {
+
     @Mod.Instance(value = Reference.ID)
     public static StevesAddons INSTANCE;
 
@@ -90,8 +94,7 @@ public class StevesAddons {
                 extensions.add(TileEntityManager.class);
                 extensionsNames.add(TileEntityManager.class.getSimpleName());
                 map.put(TileEntityManager.class.getSimpleName(), TileEntityManager.class);
-            } catch (Exception ignore) {
-            }
+            } catch (Exception ignore) {}
         }
         StevesEnum.applyEnumHacks();
     }

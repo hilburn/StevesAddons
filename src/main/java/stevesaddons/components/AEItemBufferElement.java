@@ -1,14 +1,16 @@
 package stevesaddons.components;
 
-import appeng.api.storage.data.IAEItemStack;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
 import stevesaddons.helpers.AEHelper;
 import stevesaddons.reference.Null;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.components.SlotStackInventoryHolder;
+import appeng.api.storage.data.IAEItemStack;
 
 public class AEItemBufferElement extends SlotStackInventoryHolder {
+
     private IAEItemStack item;
     private TileEntityAENode inventory;
     private int sizeLeft;

@@ -5,12 +5,14 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.blocks.ModBlocks;
 
 public class BlockCableAE extends BlockContainer {
+
     public BlockCableAE() {
         super(Material.glass);
         this.setCreativeTab(ModBlocks.creativeTab);

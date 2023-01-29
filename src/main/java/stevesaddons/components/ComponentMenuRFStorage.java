@@ -2,12 +2,14 @@ package stevesaddons.components;
 
 import java.util.EnumSet;
 import java.util.List;
+
 import stevesaddons.helpers.StevesEnum;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.FlowComponent;
 
 public class ComponentMenuRFStorage extends ComponentMenuContainer {
+
     public ComponentMenuRFStorage(FlowComponent parent) {
         super(parent, StevesEnum.RF_CONNECTION);
     }

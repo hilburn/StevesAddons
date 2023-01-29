@@ -1,14 +1,15 @@
 package stevesaddons.network;
 
+import stevesaddons.network.message.*;
+import stevesaddons.reference.Reference;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import stevesaddons.network.message.*;
-import stevesaddons.reference.Reference;
 
 public class MessageHandler implements IMessageHandler {
+
     public static SimpleNetworkWrapper INSTANCE = new SimpleNetworkWrapper(Reference.ID);
 
     public static void init() {
@@ -19,7 +20,10 @@ public class MessageHandler implements IMessageHandler {
         INSTANCE.registerMessage(WorldDataSyncMessage.class, WorldDataSyncMessage.class, 4, Side.CLIENT);
         INSTANCE.registerMessage(LabelSyncMessage.class, LabelSyncMessage.class, 5, Side.SERVER);
         INSTANCE.registerMessage(
-                SearchRegistryGenerateMessage.class, SearchRegistryGenerateMessage.class, 6, Side.CLIENT);
+                SearchRegistryGenerateMessage.class,
+                SearchRegistryGenerateMessage.class,
+                6,
+                Side.CLIENT);
     }
 
     @Override

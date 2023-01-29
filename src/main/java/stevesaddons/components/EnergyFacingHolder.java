@@ -1,9 +1,11 @@
 package stevesaddons.components;
 
-import cofh.api.energy.IEnergyProvider;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyProvider;
+
 public class EnergyFacingHolder {
+
     private IEnergyProvider energyHandler;
     private ForgeDirection accessibleFace;
 

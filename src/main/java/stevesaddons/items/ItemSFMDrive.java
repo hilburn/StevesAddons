@@ -1,6 +1,7 @@
 package stevesaddons.items;
 
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -8,12 +9,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import stevesaddons.reference.Names;
 import stevesaddons.reference.Reference;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
 public class ItemSFMDrive extends Item {
+
     public ItemSFMDrive() {
         this.setCreativeTab(ModBlocks.creativeTab);
         this.setUnlocalizedName(Names.DRIVE);
@@ -38,25 +41,16 @@ public class ItemSFMDrive extends Item {
     }
 
     public static boolean validateNBT(ItemStack stack) {
-        if (stack.hasTagCompound()
-                && (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")
-                        || stack.getTagCompound().getString("id").equals("TileEntityRFManager"))) return true;
+        if (stack.hasTagCompound() && (stack.getTagCompound().getString("id").equals("TileEntityMachineManagerName")
+                || stack.getTagCompound().getString("id").equals("TileEntityRFManager")))
+            return true;
         stack.setTagCompound(null);
         return false;
     }
 
     @Override
-    public boolean onItemUseFirst(
-            ItemStack stack,
-            EntityPlayer player,
-            World world,
-            int x,
-            int y,
-            int z,
-            int side,
-            float hitX,
-            float hitY,
-            float hitZ) {
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+            float hitX, float hitY, float hitZ) {
         if (!world.isRemote && player.isSneaking()) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof TileEntityManager) {
@@ -93,11 +87,13 @@ public class ItemSFMDrive extends Item {
                     NBTTagCompound connection = connections.getCompoundTagAt(i);
                     if (connection.hasKey("ConnectionComponent")) {
                         if (version < 9) {
-                            connection.setByte("ConnectionComponent", (byte)
-                                    (connection.getByte("ConnectionComponent") + currentFlow));
+                            connection.setByte(
+                                    "ConnectionComponent",
+                                    (byte) (connection.getByte("ConnectionComponent") + currentFlow));
                         } else {
-                            connection.setShort("ConnectionComponent", (short)
-                                    (connection.getShort("ConnectionComponent") + currentFlow));
+                            connection.setShort(
+                                    "ConnectionComponent",
+                                    (short) (connection.getShort("ConnectionComponent") + currentFlow));
                         }
                     }
                     newConnections.appendTag(connection);

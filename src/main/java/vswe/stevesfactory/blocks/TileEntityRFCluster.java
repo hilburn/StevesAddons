@@ -1,13 +1,16 @@
 package vswe.stevesfactory.blocks;
 
-import cofh.api.energy.IEnergyHandler;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.tileentities.TileEntityRFNode;
+import cofh.api.energy.IEnergyHandler;
 
 public class TileEntityRFCluster extends TileEntityCluster implements IEnergyHandler {
+
     private List getRegistrations(ClusterMethodRegistration clusterMethodRegistration) {
         return new ArrayList(); // This gets ASMed out when the access transformers take place
     }

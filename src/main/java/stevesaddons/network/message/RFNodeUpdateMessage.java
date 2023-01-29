@@ -1,15 +1,17 @@
 package stevesaddons.network.message;
 
+import net.minecraft.tileentity.TileEntity;
+
+import stevesaddons.network.MessageHelper;
+import stevesaddons.tileentities.TileEntityRFNode;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.tileentity.TileEntity;
-import stevesaddons.network.MessageHelper;
-import stevesaddons.tileentities.TileEntityRFNode;
 
 public class RFNodeUpdateMessage implements IMessage, IMessageHandler<RFNodeUpdateMessage, IMessage> {
+
     public int posX, posY, posZ;
     public byte input, output;
 
@@ -43,18 +45,18 @@ public class RFNodeUpdateMessage implements IMessage, IMessageHandler<RFNodeUpda
 
     @Override
     public IMessage onMessage(RFNodeUpdateMessage message, MessageContext ctx) {
-        TileEntity tileEntity = FMLClientHandler.instance()
-                .getClient()
-                .theWorld
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld
                 .getTileEntity(message.posX, message.posY, message.posZ);
         if (tileEntity instanceof TileEntityRFNode) {
             ((TileEntityRFNode) tileEntity).setInputSides(MessageHelper.byteToBooleanArray(message.input));
             ((TileEntityRFNode) tileEntity).setOutputSides(MessageHelper.byteToBooleanArray(message.output));
-            FMLClientHandler.instance()
-                    .getClient()
-                    .theWorld
-                    .markBlockRangeForRenderUpdate(
-                            message.posX, message.posY, message.posZ, message.posX, message.posY, message.posZ);
+            FMLClientHandler.instance().getClient().theWorld.markBlockRangeForRenderUpdate(
+                    message.posX,
+                    message.posY,
+                    message.posZ,
+                    message.posX,
+                    message.posY,
+                    message.posZ);
         }
         return null;
     }

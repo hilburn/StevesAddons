@@ -1,29 +1,34 @@
 package stevesaddons.interfaces;
 
-import codechicken.nei.VisiblityData;
-import codechicken.nei.api.INEIGuiHandler;
-import codechicken.nei.api.TaggedInventoryArea;
-import cpw.mods.fml.common.Optional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
 import stevesaddons.items.ItemLabeler;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.LabelSyncMessage;
+import codechicken.nei.VisiblityData;
+import codechicken.nei.api.INEIGuiHandler;
+import codechicken.nei.api.TaggedInventoryArea;
+import cpw.mods.fml.common.Optional;
 
 @Optional.Interface(iface = "codechicken.nei.api.INEIGuiHandler", modid = "NotEnoughItems")
 public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, INEIGuiHandler {
+
     private static Comparator<GuiTextEntry> ALPHABETICAL_ORDER = new Comparator<GuiTextEntry>() {
+
         @Override
         public int compare(GuiTextEntry o1, GuiTextEntry o2) {
             if (o1.isEditing) return 1;
@@ -253,8 +258,7 @@ public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, I
     @Override
     @Optional.Method(modid = "NotEnoughItems")
     public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h) {
-        return !(x + w < this.guiLeft
-                || x > this.guiLeft + this.width
+        return !(x + w < this.guiLeft || x > this.guiLeft + this.width
                 || y + h < this.guiTop
                 || y > this.guiTop + this.height);
     }

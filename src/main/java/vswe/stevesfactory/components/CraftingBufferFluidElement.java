@@ -1,6 +1,7 @@
 package vswe.stevesfactory.components;
 
 import java.util.*;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -8,11 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import stevesaddons.api.IHiddenInventory;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
 public class CraftingBufferFluidElement implements IItemBufferElement, IItemBufferSubElement {
+
     private static final ItemStack DUMMY_ITEM = new ItemStack(Item.getItemById(1), 0, 0);
     private CommandExecutor executor;
     private ComponentMenuCrafting craftingMenu;
@@ -27,8 +30,8 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
     private static final Random rand = new Random();
     private List<IInventory> inventories = new ArrayList<IInventory>();
 
-    public CraftingBufferFluidElement(
-            CommandExecutor executor, ComponentMenuCrafting craftingMenu, ComponentMenuContainerScrap scrapMenu) {
+    public CraftingBufferFluidElement(CommandExecutor executor, ComponentMenuCrafting craftingMenu,
+            ComponentMenuContainerScrap scrapMenu) {
         this.executor = executor;
         this.craftingMenu = craftingMenu;
         this.scrapMenu = scrapMenu;
@@ -76,8 +79,8 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
 
     private void disposeOfExtraItem(ItemStack itemStack) {
         TileEntityManager manager = this.craftingMenu.getParent().getManager();
-        List<SlotInventoryHolder> inventories =
-                CommandExecutor.getContainers(manager, this.scrapMenu, ConnectionBlockType.INVENTORY);
+        List<SlotInventoryHolder> inventories = CommandExecutor
+                .getContainers(manager, this.scrapMenu, ConnectionBlockType.INVENTORY);
 
         for (SlotInventoryHolder inventoryHolder : inventories) {
             if (inventoryHolder.getTile() instanceof IHiddenInventory) {
@@ -99,8 +102,7 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
                     if (inventory.isItemValidForSlot(i, itemStack)) {
                         ItemStack stack = inventory.getStackInSlot(i);
                         if (stack == null
-                                || stack.isItemEqual(itemStack)
-                                        && ItemStack.areItemStackTagsEqual(itemStack, stack)
+                                || stack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, stack)
                                         && itemStack.isStackable()) {
                             int itemCountInSlot = stack == null ? 0 : stack.stackSize;
                             int stackSize = Math.min(
@@ -208,16 +210,14 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
                             foundItems.put(i, DUMMY_ITEM);
                         } else if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack)) {
                             foundItems.put(i, itemstack.copy());
-                            if (this.craftingMenu
-                                    .getDummy()
+                            if (this.craftingMenu.getDummy()
                                     .isItemValidForRecipe(this.recipe, this.craftingMenu.getResultItem(), foundItems)) {
                                 usedStacks.add(itemstack);
                                 --subCount;
                                 --count;
                                 if (remove) {
                                     if (itemstack.getItem().hasContainerItem(itemstack)) {
-                                        this.containerItems.add(
-                                                itemstack.getItem().getContainerItem(itemstack));
+                                        this.containerItems.add(itemstack.getItem().getContainerItem(itemstack));
                                     }
 
                                     itemBufferElement.decreaseStackSize(1);
@@ -227,8 +227,8 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
                                         iterator.remove();
                                     }
 
-                                    this.inventories.add(
-                                            ((SlotStackInventoryHolder) itemBufferSubElement).getInventory());
+                                    this.inventories
+                                            .add(((SlotStackInventoryHolder) itemBufferSubElement).getInventory());
                                 }
                             } else {
                                 foundItems.remove(Integer.valueOf(i));
@@ -259,11 +259,10 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
             if (fluids.size() > 0) {
                 for (LiquidBufferElement liquidBufferElement : this.executor.liquidBuffer) {
                     if (fluids.isEmpty()) break;
-                    Iterator<StackTankHolder> itr =
-                            liquidBufferElement.getHolders().iterator();
+                    Iterator<StackTankHolder> itr = liquidBufferElement.getHolders().iterator();
                     while (itr.hasNext()) {
                         StackTankHolder tank = itr.next();
-                        for (Iterator<FluidElement> fluidItr = fluids.iterator(); fluidItr.hasNext(); ) {
+                        for (Iterator<FluidElement> fluidItr = fluids.iterator(); fluidItr.hasNext();) {
                             FluidElement fluidElement = fluidItr.next();
                             int maxAmount = liquidBufferElement.retrieveItemCount(fluidElement.amountToFind);
                             if (tank.getFluidStack().isFluidEqual(fluidElement.fluid)) {
@@ -302,6 +301,7 @@ public class CraftingBufferFluidElement implements IItemBufferElement, IItemBuff
     }
 
     private static class FluidElement {
+
         public FluidStack fluid;
         public ItemStack bucket;
         public int amountToFind;

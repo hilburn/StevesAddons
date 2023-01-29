@@ -1,17 +1,19 @@
 package stevesaddons.commands;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+
 import stevesaddons.helpers.Threaded;
 import stevesaddons.items.ItemSFMDrive;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CommandPastebin extends CommandDuplicator {
 

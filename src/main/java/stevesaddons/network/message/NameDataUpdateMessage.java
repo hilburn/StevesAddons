@@ -1,16 +1,17 @@
 package stevesaddons.network.message;
 
+import stevesaddons.naming.BlockCoord;
+import stevesaddons.naming.NameRegistry;
+import stevesaddons.network.MessageHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
-import stevesaddons.naming.BlockCoord;
-import stevesaddons.naming.NameRegistry;
-import stevesaddons.network.MessageHandler;
 
 public class NameDataUpdateMessage implements IMessage, IMessageHandler<NameDataUpdateMessage, IMessage> {
+
     public int dimId;
     public boolean remove;
     public BlockCoord blockCoord;

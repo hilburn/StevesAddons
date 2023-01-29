@@ -1,6 +1,7 @@
 package stevesaddons.interfaces;
 
 public interface IVerticalScrollContainer {
+
     public boolean isScrollBarActive();
 
     public int getScreenWidth();

@@ -2,8 +2,10 @@ package stevesaddons.components;
 
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
 import stevesaddons.api.IHiddenInventory;
 import vswe.stevesfactory.components.ItemBufferElement;
 import vswe.stevesfactory.components.ItemSetting;
@@ -11,17 +13,14 @@ import vswe.stevesfactory.components.Setting;
 import vswe.stevesfactory.components.SlotInventoryHolder;
 
 public class AdvancedOutputItemCounter {
+
     private Setting setting;
     private boolean useWhiteList;
     private int currentInventoryStackSize;
     private int currentBufferStackSize;
 
-    public AdvancedOutputItemCounter(
-            List<ItemBufferElement> itemBuffer,
-            List<SlotInventoryHolder> inventories,
-            IInventory inventory,
-            Setting setting,
-            boolean useWhiteList) {
+    public AdvancedOutputItemCounter(List<ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories,
+            IInventory inventory, Setting setting, boolean useWhiteList) {
         this.setting = setting;
         this.useWhiteList = useWhiteList;
         if (setting != null && ((ItemSetting) setting).getItem() != null && setting.isLimitedByAmount()) {
@@ -43,9 +42,8 @@ public class AdvancedOutputItemCounter {
                     this.addInventory(inventory);
                 }
             } else {
-                for (itr = itemBuffer.iterator();
-                        itr.hasNext();
-                        this.currentBufferStackSize += itemBufferElement1.getBufferSize(setting)) {
+                for (itr = itemBuffer.iterator(); itr
+                        .hasNext(); this.currentBufferStackSize += itemBufferElement1.getBufferSize(setting)) {
                     itemBufferElement1 = (ItemBufferElement) itr.next();
                 }
             }
@@ -74,8 +72,8 @@ public class AdvancedOutputItemCounter {
         if (this.setting != null && this.setting.isLimitedByAmount()) {
             int itemsAllowedToBeMoved;
             if (this.useWhiteList) {
-                itemsAllowedToBeMoved =
-                        ((ItemSetting) this.setting).getItem().stackSize - this.currentInventoryStackSize;
+                itemsAllowedToBeMoved = ((ItemSetting) this.setting).getItem().stackSize
+                        - this.currentInventoryStackSize;
             } else {
                 itemsAllowedToBeMoved = this.currentBufferStackSize - ((ItemSetting) this.setting).getItem().stackSize;
             }

@@ -1,14 +1,16 @@
 package stevesaddons.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.interfaces.GuiManager;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class WideNumberBoxList {
+
     private List<WideNumberBox> textBoxes = new ArrayList();
     private WideNumberBox selectedTextBox;
 
@@ -23,7 +25,11 @@ public class WideNumberBoxList {
                 gui.drawTexture(textBox.getX(), textBox.getY(), 0, srcTextBoxY, textBox.getWidth(), 12);
                 String str = String.valueOf(textBox.getNumber());
                 gui.drawString(
-                        str, textBox.getX(), textBox.getY() + textBox.getTextY(), textBox.getTextSize(), 16777215);
+                        str,
+                        textBox.getX(),
+                        textBox.getY() + textBox.getTextY(),
+                        textBox.getTextSize(),
+                        16777215);
             }
         }
     }

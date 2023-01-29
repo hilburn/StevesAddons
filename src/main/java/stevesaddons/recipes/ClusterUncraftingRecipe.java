@@ -1,18 +1,20 @@
 package stevesaddons.recipes;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.RecipeSorter;
+
 import vswe.stevesfactory.blocks.ClusterRegistry;
 import vswe.stevesfactory.blocks.ItemCluster;
 import vswe.stevesfactory.blocks.ModBlocks;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 
 public class ClusterUncraftingRecipe implements IRecipe {
+
     private static ItemStack cluster = new ItemStack(ModBlocks.blockCableCluster);
     private static ItemStack advcluster = new ItemStack(ModBlocks.blockCableCluster, 1, 8);
 
@@ -76,16 +78,12 @@ public class ClusterUncraftingRecipe implements IRecipe {
             ItemStack stack = getCluster(e.craftMatrix);
             if (stack != null) {
                 if (stack.hasTagCompound()) {
-                    byte[] types = stack.getTagCompound()
-                            .getCompoundTag(ItemCluster.NBT_CABLE)
+                    byte[] types = stack.getTagCompound().getCompoundTag(ItemCluster.NBT_CABLE)
                             .getByteArray(ItemCluster.NBT_TYPES);
                     int stackSize = e.crafting.stackSize;
                     stackSize = stackSize == 0 ? 1 : stackSize;
                     for (byte type : types) {
-                        ItemStack component = ClusterRegistry.getRegistryList()
-                                .get(type)
-                                .getItemStack()
-                                .copy();
+                        ItemStack component = ClusterRegistry.getRegistryList().get(type).getItemStack().copy();
                         component.stackSize = stackSize;
                         if (!e.player.inventory.addItemStackToInventory(component))
                             e.player.dropPlayerItemWithRandomChoice(component, false);

@@ -1,14 +1,16 @@
 package stevesaddons.components;
 
-import appeng.api.storage.data.IAEFluidStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import stevesaddons.helpers.AEHelper;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.components.StackTankHolder;
+import appeng.api.storage.data.IAEFluidStack;
 
 public class AEFluidBufferElement extends StackTankHolder {
+
     private IAEFluidStack fluid;
     private TileEntityAENode node;
     private int sizeLeft;

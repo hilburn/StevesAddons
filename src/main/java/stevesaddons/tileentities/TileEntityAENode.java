@@ -1,5 +1,23 @@
 package stevesaddons.tileentities;
 
+import java.util.*;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+
+import stevesaddons.api.IHiddenInventory;
+import stevesaddons.api.IHiddenTank;
+import stevesaddons.components.AEFluidBufferElement;
+import stevesaddons.components.AEItemBufferElement;
+import stevesaddons.helpers.AEHelper;
+import stevesaddons.registry.BlockRegistry;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.TileEntityClusterElement;
+import vswe.stevesfactory.components.*;
 import appeng.api.AEApi;
 import appeng.api.networking.*;
 import appeng.api.networking.security.IActionHost;
@@ -10,27 +28,13 @@ import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Optional;
-import java.util.*;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import stevesaddons.api.IHiddenInventory;
-import stevesaddons.api.IHiddenTank;
-import stevesaddons.components.AEFluidBufferElement;
-import stevesaddons.components.AEItemBufferElement;
-import stevesaddons.helpers.AEHelper;
-import stevesaddons.registry.BlockRegistry;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
-import vswe.stevesfactory.blocks.TileEntityClusterElement;
-import vswe.stevesfactory.components.*;
 
 @Optional.Interface(iface = "stevesaddons.api.IHiddenTank", modid = "extracells")
 public class TileEntityAENode extends TileEntityClusterElement
         implements IGridHost, IActionHost, IHiddenInventory, IHiddenTank {
+
     private class GridBlock implements IGridBlock {
+
         @Override
         public double getIdlePowerUsage() {
             return 10;
@@ -82,6 +86,7 @@ public class TileEntityAENode extends TileEntityClusterElement
     }
 
     private class AEFakeTank implements IFluidHandler {
+
         @Override
         public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
             IAEFluidStack toAdd = AEHelper.insert(getNode(), resource, TileEntityAENode.this, doFill);
@@ -151,9 +156,7 @@ public class TileEntityAENode extends TileEntityClusterElement
     }
 
     public IGridNode getNode() {
-        if (this.gridNode == null
-                && FMLCommonHandler.instance().getEffectiveSide().isServer()
-                && this.isReady) {
+        if (this.gridNode == null && FMLCommonHandler.instance().getEffectiveSide().isServer() && this.isReady) {
             this.gridNode = AEApi.instance().createGridNode(this.gridBlock);
             this.gridNode.updateState();
         }
@@ -216,11 +219,8 @@ public class TileEntityAENode extends TileEntityClusterElement
     }
 
     @Override
-    public void addItemsToBuffer(
-            ComponentMenuStuff menuItem,
-            SlotInventoryHolder inventory,
-            List<ItemBufferElement> itemBuffer,
-            CommandExecutorRF commandExecutorRF) {
+    public void addItemsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory,
+            List<ItemBufferElement> itemBuffer, CommandExecutorRF commandExecutorRF) {
         Iterator<IAEItemStack> itr = AEHelper.getItrItems(this.getNode());
         if (itr == null) return;
         while (itr.hasNext()) {
@@ -233,15 +233,15 @@ public class TileEntityAENode extends TileEntityClusterElement
     }
 
     @Override
-    public void isItemValid(
-            Collection<Setting> settings, Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
+    public void isItemValid(Collection<Setting> settings,
+            Map<Integer, ConditionSettingChecker> conditionSettingCheckerMap) {
         for (Setting setting : settings) {
             ItemStack stack = AEHelper.find(getNode(), ((ItemSetting) setting).getItem());
             if (stack != null) {
                 ConditionSettingChecker conditionSettingChecker = conditionSettingCheckerMap.get(setting.getId());
                 if (conditionSettingChecker == null) {
-                    conditionSettingCheckerMap.put(
-                            setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
+                    conditionSettingCheckerMap
+                            .put(setting.getId(), conditionSettingChecker = new ConditionSettingChecker(setting));
                 }
                 conditionSettingChecker.addCount(stack.stackSize);
             }
@@ -261,12 +261,8 @@ public class TileEntityAENode extends TileEntityClusterElement
         return amount;
     }
 
-    private void addAEItemToBuffer(
-            ComponentMenuStuff menuItem,
-            SlotInventoryHolder inventory,
-            Setting setting,
-            IAEItemStack stack,
-            List<ItemBufferElement> itemBuffer) {
+    private void addAEItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting,
+            IAEItemStack stack, List<ItemBufferElement> itemBuffer) {
         if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount()) {
             FlowComponent owner = menuItem.getParent();
             SlotStackInventoryHolder target = new AEItemBufferElement(stack, this);
@@ -285,11 +281,8 @@ public class TileEntityAENode extends TileEntityClusterElement
     }
 
     @Override
-    public void addFluidsToBuffer(
-            ComponentMenuStuff menuItem,
-            SlotInventoryHolder tank,
-            List<LiquidBufferElement> liquidBuffer,
-            CommandExecutorRF commandExecutorRF) {
+    public void addFluidsToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank,
+            List<LiquidBufferElement> liquidBuffer, CommandExecutorRF commandExecutorRF) {
         Iterator<IAEFluidStack> itr = AEHelper.getItrFluids(this.getNode());
         if (itr == null) return;
         while (itr.hasNext()) {
@@ -301,12 +294,8 @@ public class TileEntityAENode extends TileEntityClusterElement
         }
     }
 
-    private void addAEFluidToBuffer(
-            ComponentMenuStuff menuItem,
-            SlotInventoryHolder tank,
-            Setting setting,
-            IAEFluidStack stack,
-            List<LiquidBufferElement> liquidBuffer) {
+    private void addAEFluidToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder tank, Setting setting,
+            IAEFluidStack stack, List<LiquidBufferElement> liquidBuffer) {
         if (menuItem.useWhiteList() == (setting != null) || setting != null && setting.isLimitedByAmount()) {
             FlowComponent owner = menuItem.getParent();
             StackTankHolder target = new AEFluidBufferElement(stack, (TileEntityAENode) tank.getTile());

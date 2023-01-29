@@ -7,12 +7,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
 public abstract class CommandDuplicator implements ISubCommand {
+
     public static NBTTagCompound defaultTagCompound = new NBTTagCompound();
-    public static String[] keys = {"id", "Variables", "Components", "Timer", "ProtocolVersion", "ench"};
+    public static String[] keys = { "id", "Variables", "Components", "Timer", "ProtocolVersion", "ench" };
 
     static {
         new TileEntityManager().writeToNBT(defaultTagCompound);
