@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.interfaces.GuiManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import vswe.stevesfactory.CollisionHelper;
+import vswe.stevesfactory.interfaces.GuiManager;
 
 public class WideNumberBoxList {
 

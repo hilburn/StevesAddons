@@ -4,14 +4,14 @@ import java.lang.reflect.Field;
 
 import net.minecraftforge.common.util.EnumHelper;
 
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import stevesaddons.components.*;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.components.*;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
 public class StevesEnum {
 

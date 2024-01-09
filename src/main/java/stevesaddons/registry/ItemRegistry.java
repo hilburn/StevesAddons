@@ -9,11 +9,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import stevesaddons.items.ItemLabeler;
 import stevesaddons.items.ItemSFMDrive;
 import stevesaddons.reference.Names;
 import vswe.stevesfactory.blocks.ModBlocks;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ItemRegistry {
 

@@ -6,8 +6,8 @@ import java.util.Arrays;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
-import stevesaddons.commands.CommandPastebin;
 import cpw.mods.fml.common.Loader;
+import stevesaddons.commands.CommandPastebin;
 
 public class Config {
 

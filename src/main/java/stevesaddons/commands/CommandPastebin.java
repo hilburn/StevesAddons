@@ -11,9 +11,9 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import stevesaddons.helpers.Threaded;
 import stevesaddons.items.ItemSFMDrive;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CommandPastebin extends CommandDuplicator {
 

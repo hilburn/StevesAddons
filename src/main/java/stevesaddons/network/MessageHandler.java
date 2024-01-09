@@ -1,12 +1,12 @@
 package stevesaddons.network;
 
-import stevesaddons.network.message.*;
-import stevesaddons.reference.Reference;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
+import stevesaddons.network.message.*;
+import stevesaddons.reference.Reference;
 
 public class MessageHandler implements IMessageHandler {
 

@@ -6,6 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import stevesaddons.blocks.BlockCableAE;
 import stevesaddons.blocks.BlockCableRF;
 import stevesaddons.helpers.Config;
@@ -16,7 +17,6 @@ import vswe.stevesfactory.blocks.ClusterRegistry;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.blocks.TileEntityRFCluster;
 import vswe.stevesfactory.blocks.TileEntityRFManager;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockRegistry {
 

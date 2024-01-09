@@ -16,13 +16,13 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import stevesaddons.items.ItemLabeler;
-import stevesaddons.network.MessageHandler;
-import stevesaddons.network.message.LabelSyncMessage;
 import codechicken.nei.VisiblityData;
 import codechicken.nei.api.INEIGuiHandler;
 import codechicken.nei.api.TaggedInventoryArea;
 import cpw.mods.fml.common.Optional;
+import stevesaddons.items.ItemLabeler;
+import stevesaddons.network.MessageHandler;
+import stevesaddons.network.message.LabelSyncMessage;
 
 @Optional.Interface(iface = "codechicken.nei.api.INEIGuiHandler", modid = "NotEnoughItems")
 public class GuiLabeler extends GuiScreen implements IVerticalScrollContainer, INEIGuiHandler {

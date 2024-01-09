@@ -4,6 +4,8 @@ import java.util.EnumSet;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import stevesaddons.asm.StevesHooks;
 import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.interfaces.ContainerManager;
@@ -12,8 +14,6 @@ import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class ComponentMenuTriggered extends ComponentMenu {
 

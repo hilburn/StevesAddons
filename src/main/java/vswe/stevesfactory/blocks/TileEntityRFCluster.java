@@ -5,9 +5,9 @@ import java.util.List;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyHandler;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.tileentities.TileEntityRFNode;
-import cofh.api.energy.IEnergyHandler;
 
 public class TileEntityRFCluster extends TileEntityCluster implements IEnergyHandler {
 

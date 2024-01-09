@@ -4,6 +4,8 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import stevesaddons.helpers.StevesEnum;
 import vswe.stevesfactory.components.CheckBox;
 import vswe.stevesfactory.components.CheckBoxList;
@@ -14,8 +16,6 @@ import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ComponentMenuRFCondition extends ComponentMenu {
 

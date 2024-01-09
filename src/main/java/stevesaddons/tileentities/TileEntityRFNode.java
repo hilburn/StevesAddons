@@ -7,6 +7,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import stevesaddons.components.ComponentMenuRF;
 import stevesaddons.components.ComponentMenuRFInput;
 import stevesaddons.components.ComponentMenuTargetRF;
@@ -16,8 +18,6 @@ import stevesaddons.network.message.RFNodeUpdateMessage;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.FlowComponent;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
 public class TileEntityRFNode extends TileEntityClusterElement
         implements IEnergyProvider, IEnergyReceiver, ISystemListener {

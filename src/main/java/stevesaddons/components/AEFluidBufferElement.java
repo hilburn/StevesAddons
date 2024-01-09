@@ -4,10 +4,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import appeng.api.storage.data.IAEFluidStack;
 import stevesaddons.helpers.AEHelper;
 import stevesaddons.tileentities.TileEntityAENode;
 import vswe.stevesfactory.components.StackTankHolder;
-import appeng.api.storage.data.IAEFluidStack;
 
 public class AEFluidBufferElement extends StackTankHolder {
 

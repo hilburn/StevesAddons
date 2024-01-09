@@ -9,15 +9,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import stevesaddons.api.IHiddenInventory;
-import stevesaddons.api.IHiddenTank;
-import stevesaddons.components.AEFluidBufferElement;
-import stevesaddons.components.AEItemBufferElement;
-import stevesaddons.helpers.AEHelper;
-import stevesaddons.registry.BlockRegistry;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
-import vswe.stevesfactory.blocks.TileEntityClusterElement;
-import vswe.stevesfactory.components.*;
 import appeng.api.AEApi;
 import appeng.api.networking.*;
 import appeng.api.networking.security.IActionHost;
@@ -28,6 +19,15 @@ import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Optional;
+import stevesaddons.api.IHiddenInventory;
+import stevesaddons.api.IHiddenTank;
+import stevesaddons.components.AEFluidBufferElement;
+import stevesaddons.components.AEItemBufferElement;
+import stevesaddons.helpers.AEHelper;
+import stevesaddons.registry.BlockRegistry;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.TileEntityClusterElement;
+import vswe.stevesfactory.components.*;
 
 @Optional.Interface(iface = "stevesaddons.api.IHiddenTank", modid = "extracells")
 public class TileEntityAENode extends TileEntityClusterElement

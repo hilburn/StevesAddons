@@ -12,14 +12,14 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import stevesaddons.items.ItemLabeler;
 import stevesaddons.items.ItemSFMDrive;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.SearchRegistryGenerateMessage;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 
 public class EventHandler {
 

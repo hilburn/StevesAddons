@@ -11,6 +11,10 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import stevesaddons.helpers.Config;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.interfaces.GuiHandler;
@@ -26,10 +30,6 @@ import stevesaddons.registry.BlockRegistry;
 import stevesaddons.registry.CommandRegistry;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.TileEntityManager;
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(
         modid = Reference.ID,

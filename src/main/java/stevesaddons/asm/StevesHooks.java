@@ -11,6 +11,12 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
@@ -27,12 +33,6 @@ import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.settings.Settings;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 public class StevesHooks {
 

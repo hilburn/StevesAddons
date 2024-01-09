@@ -7,11 +7,11 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.RecipeSorter;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import vswe.stevesfactory.blocks.ClusterRegistry;
 import vswe.stevesfactory.blocks.ItemCluster;
 import vswe.stevesfactory.blocks.ModBlocks;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 
 public class ClusterUncraftingRecipe implements IRecipe {
 

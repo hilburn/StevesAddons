@@ -17,6 +17,10 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import stevesaddons.StevesAddons;
 import stevesaddons.naming.NameRegistry;
 import stevesaddons.reference.Names;
@@ -24,10 +28,6 @@ import stevesaddons.reference.Reference;
 import stevesaddons.registry.ItemRegistry;
 import vswe.stevesfactory.blocks.ModBlocks;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemLabeler extends Item {
 

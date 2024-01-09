@@ -7,10 +7,10 @@ import java.util.Map;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-import vswe.stevesfactory.components.ScrollController;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import vswe.stevesfactory.components.ScrollController;
 
 @SideOnly(Side.CLIENT)
 public class ThreadSafeHandler {

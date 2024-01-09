@@ -12,6 +12,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
@@ -24,9 +27,6 @@ import vswe.stevesfactory.blocks.TileEntityCreative;
 import vswe.stevesfactory.blocks.TileEntityManager;
 import vswe.stevesfactory.components.ComponentMenuListOrder.LoopOrder;
 import vswe.stevesfactory.components.ComponentMenuVariable.VariableMode;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
 public class CommandExecutorRF extends CommandExecutor {
 
