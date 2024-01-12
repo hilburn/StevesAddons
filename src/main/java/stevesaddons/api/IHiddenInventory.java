@@ -6,7 +6,13 @@ import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 
-import vswe.stevesfactory.components.*;
+import vswe.stevesfactory.components.CommandExecutorRF;
+import vswe.stevesfactory.components.ComponentMenuStuff;
+import vswe.stevesfactory.components.ConditionSettingChecker;
+import vswe.stevesfactory.components.ItemBufferElement;
+import vswe.stevesfactory.components.ItemSetting;
+import vswe.stevesfactory.components.Setting;
+import vswe.stevesfactory.components.SlotInventoryHolder;
 
 public interface IHiddenInventory {
 

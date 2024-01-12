@@ -1,6 +1,11 @@
 package stevesaddons.asm;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -10,7 +15,21 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InnerClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LineNumberNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import stevesaddons.StevesAddons;
 
@@ -64,7 +83,7 @@ public class StevesAddonsTransformer implements IClassTransformer, Opcodes {
             @Override
             protected InsnList modifyInstructions(InsnList list) {
                 AbstractInsnNode node = list.getLast();
-                while (!(node instanceof LineNumberNode && ((LineNumberNode) node).line == 85)
+                while (!(node instanceof LineNumberNode && ((LineNumberNode) node).line == 114)
                         && node != list.getFirst())
                     node = node.getPrevious();
                 list.insertBefore(node, new VarInsnNode(ALOAD, 0));

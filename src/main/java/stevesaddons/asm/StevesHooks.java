@@ -1,6 +1,13 @@
 package stevesaddons.asm;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import net.minecraft.inventory.IInventory;
@@ -29,7 +36,12 @@ import stevesaddons.threading.SearchItems;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.components.*;
+import vswe.stevesfactory.components.ComponentHelper;
+import vswe.stevesfactory.components.ComponentMenuItem;
+import vswe.stevesfactory.components.ComponentType;
+import vswe.stevesfactory.components.Connection;
+import vswe.stevesfactory.components.FlowComponent;
+import vswe.stevesfactory.components.ScrollController;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.settings.Settings;

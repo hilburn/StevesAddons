@@ -1,6 +1,11 @@
 package stevesaddons.tileentities;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -10,7 +15,12 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import appeng.api.AEApi;
-import appeng.api.networking.*;
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.GridNotification;
+import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridBlock;
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
@@ -27,7 +37,17 @@ import stevesaddons.helpers.AEHelper;
 import stevesaddons.registry.BlockRegistry;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.blocks.TileEntityClusterElement;
-import vswe.stevesfactory.components.*;
+import vswe.stevesfactory.components.CommandExecutorRF;
+import vswe.stevesfactory.components.ComponentMenuStuff;
+import vswe.stevesfactory.components.ConditionSettingChecker;
+import vswe.stevesfactory.components.FlowComponent;
+import vswe.stevesfactory.components.ItemBufferElement;
+import vswe.stevesfactory.components.ItemSetting;
+import vswe.stevesfactory.components.LiquidBufferElement;
+import vswe.stevesfactory.components.Setting;
+import vswe.stevesfactory.components.SlotInventoryHolder;
+import vswe.stevesfactory.components.SlotStackInventoryHolder;
+import vswe.stevesfactory.components.StackTankHolder;
 
 @Optional.Interface(iface = "stevesaddons.api.IHiddenTank", modid = "extracells")
 public class TileEntityAENode extends TileEntityClusterElement

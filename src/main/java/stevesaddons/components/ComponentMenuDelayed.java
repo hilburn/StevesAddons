@@ -7,7 +7,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import stevesaddons.asm.StevesHooks;
 import stevesaddons.helpers.StevesEnum;
-import vswe.stevesfactory.components.*;
+import vswe.stevesfactory.components.ConnectionOption;
+import vswe.stevesfactory.components.FlowComponent;
+import vswe.stevesfactory.components.RadioButton;
+import vswe.stevesfactory.components.RadioButtonList;
+import vswe.stevesfactory.components.TextBoxNumber;
 import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;

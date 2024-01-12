@@ -1,17 +1,2 @@
 repositories {
-    maven {
-        name 'GTNH Maven'
-        url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public/'
-        allowInsecureProtocol
-    }
-    maven {
-        url 'https://cursemaven.com'
-        content {
-            includeGroup 'curse.maven'
-        }
-    }
-    maven {
-        name 'jitpack.io'
-        url 'https://jitpack.io'
-    }
 }

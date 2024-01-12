@@ -11,7 +11,12 @@ import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-import stevesaddons.commands.*;
+import stevesaddons.commands.CommandClear;
+import stevesaddons.commands.CommandHelp;
+import stevesaddons.commands.CommandLoad;
+import stevesaddons.commands.CommandPastebin;
+import stevesaddons.commands.CommandSave;
+import stevesaddons.commands.ISubCommand;
 
 public class CommandRegistry extends CommandBase {
 

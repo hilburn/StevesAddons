@@ -1,6 +1,9 @@
 package stevesaddons.tileentities;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
@@ -15,7 +18,10 @@ import stevesaddons.components.ComponentMenuTargetRF;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.network.MessageHandler;
 import stevesaddons.network.message.RFNodeUpdateMessage;
-import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ISystemListener;
+import vswe.stevesfactory.blocks.TileEntityClusterElement;
+import vswe.stevesfactory.blocks.TileEntityManager;
 import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.FlowComponent;
 

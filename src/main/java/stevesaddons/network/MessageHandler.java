@@ -5,7 +5,12 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import stevesaddons.network.message.*;
+import stevesaddons.network.message.FullDataSyncMessage;
+import stevesaddons.network.message.LabelSyncMessage;
+import stevesaddons.network.message.NameDataUpdateMessage;
+import stevesaddons.network.message.RFNodeUpdateMessage;
+import stevesaddons.network.message.SearchRegistryGenerateMessage;
+import stevesaddons.network.message.WorldDataSyncMessage;
 import stevesaddons.reference.Reference;
 
 public class MessageHandler implements IMessageHandler {

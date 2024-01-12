@@ -1,6 +1,12 @@
 package vswe.stevesfactory.components;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -18,7 +24,13 @@ import cofh.api.energy.IEnergyReceiver;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import stevesaddons.api.IHiddenInventory;
 import stevesaddons.api.IHiddenTank;
-import stevesaddons.components.*;
+import stevesaddons.components.AdvancedOutputItemCounter;
+import stevesaddons.components.AdvancedSlotInventoryHolder;
+import stevesaddons.components.ComponentMenuRFCondition;
+import stevesaddons.components.ComponentMenuTargetRF;
+import stevesaddons.components.ComponentMenuTriggered;
+import stevesaddons.components.EnergyFacingHolder;
+import stevesaddons.components.RFBufferElement;
 import stevesaddons.helpers.StevesEnum;
 import stevesaddons.tileentities.TileEntityRFNode;
 import vswe.stevesfactory.blocks.ConnectionBlock;
